@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+
+  <!-- Window / General -->
+  <data name="AppTitle"            xml:space="preserve"><value>PortPane by ShackDesk</value></data>
+  <data name="Tagline"             xml:space="preserve"><value>Takes the pain out of ports</value></data>
+  <data name="RefreshButton"       xml:space="preserve"><value>Refresh</value></data>
+  <data name="SettingsButton"      xml:space="preserve"><value>Settings</value></data>
+  <data name="AlwaysOnTop"         xml:space="preserve"><value>Always on Top</value></data>
+  <data name="CopyButton"          xml:space="preserve"><value>Copy</value></data>
+  <data name="CopyTooltip"         xml:space="preserve"><value>Copy port name to clipboard</value></data>
+
+  <!-- Section Headers -->
+  <data name="SectionComPorts"     xml:space="preserve"><value>COM Ports</value></data>
+  <data name="SectionPlayback"     xml:space="preserve"><value>Audio Playback</value></data>
+  <data name="SectionCapture"      xml:space="preserve"><value>Audio Capture</value></data>
+
+  <!-- Status / Messages -->
+  <data name="NoComPorts"          xml:space="preserve"><value>No COM ports detected</value></data>
+  <data name="NoAudioDevices"      xml:space="preserve"><value>No audio devices detected</value></data>
+  <data name="UpdateAvailable"     xml:space="preserve"><value>Update available: {0}</value></data>
+  <data name="UpdateNow"           xml:space="preserve"><value>Update Now</value></data>
+
+  <!-- Settings -->
+  <data name="SettingsTitle"       xml:space="preserve"><value>Settings — PortPane</value></data>
+  <data name="TelemetryOptIn"      xml:space="preserve"><value>Send anonymous usage data to help improve PortPane</value></data>
+  <data name="TelemetryLearnMore"  xml:space="preserve"><value>Learn more about what is collected</value></data>
+  <data name="LicenseLabel"        xml:space="preserve"><value>License</value></data>
+  <data name="FreeTierLabel"       xml:space="preserve"><value>Free (GPL v3)</value></data>
+  <data name="CommercialTierLabel" xml:space="preserve"><value>Commercial</value></data>
+
+  <!-- About -->
+  <data name="AboutTitle"          xml:space="preserve"><value>About PortPane</value></data>
+  <data name="AboutVersion"        xml:space="preserve"><value>Version {0}</value></data>
+  <data name="AboutAuthor"         xml:space="preserve"><value>By {0} ({1})</value></data>
+  <data name="AboutLicense"        xml:space="preserve"><value>Licensed under GPL v3 / Commercial</value></data>
+  <data name="GitHubLink"          xml:space="preserve"><value>View on GitHub</value></data>
+  <data name="SupportLink"         xml:space="preserve"><value>Get Support</value></data>
+</root>

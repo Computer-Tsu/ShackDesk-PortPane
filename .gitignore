@@ -1,0 +1,41 @@
+## .NET / Visual Studio
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+bin/
+obj/
+publish/
+TestResults/
+*.nupkg
+*.snupkg
+
+## Velopack
+Releases/
+
+## Logs
+*.log
+Logs/
+
+## User-specific settings
+*.rsuser
+appsettings.Development.json
+launchSettings.json
+
+## OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## JetBrains Rider
+.idea/
+*.DotSettings.user
+
+## VS Code
+.vscode/
+
+## Icon source files (keep .ico, ignore source files like .psd / .ai)
+*.psd
+*.ai
+*.xcf

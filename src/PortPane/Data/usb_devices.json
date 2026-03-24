@@ -1,0 +1,166 @@
+{
+  "version": 1,
+  "last_updated": "2026-03-23",
+  "devices": [
+    {
+      "vid": "0D8C",
+      "pid": "000C",
+      "name": "C-Media USB Audio CODEC",
+      "type": "audio",
+      "radio_interface": true,
+      "baud_hint": null,
+      "flow_control": "none",
+      "notes": "Common generic USB CODEC chipset used in many radio interfaces"
+    },
+    {
+      "vid": "0D8C",
+      "pid": "013C",
+      "name": "C-Media CM108 USB Audio",
+      "type": "audio",
+      "radio_interface": true,
+      "baud_hint": null,
+      "flow_control": "none",
+      "notes": "CM108 chipset — found in SignaLink and RIGblaster clones"
+    },
+    {
+      "vid": "0D8C",
+      "pid": "0014",
+      "name": "C-Media CM119 USB Audio",
+      "type": "audio",
+      "radio_interface": true,
+      "baud_hint": null,
+      "flow_control": "none",
+      "notes": "CM119/CM119A chipset — common in radio-grade USB CODECs"
+    },
+    {
+      "vid": "0403",
+      "pid": "6001",
+      "name": "FTDI FT232R USB UART",
+      "type": "serial",
+      "radio_interface": true,
+      "baud_hint": 9600,
+      "flow_control": "none",
+      "notes": "Very common rig control and PTT cable chipset"
+    },
+    {
+      "vid": "0403",
+      "pid": "6015",
+      "name": "FTDI FT231X USB UART",
+      "type": "serial",
+      "radio_interface": true,
+      "baud_hint": 9600,
+      "flow_control": "none",
+      "notes": "Newer FTDI serial chipset"
+    },
+    {
+      "vid": "10C4",
+      "pid": "EA60",
+      "name": "Silicon Labs CP2102 USB Serial",
+      "type": "serial",
+      "radio_interface": true,
+      "baud_hint": 115200,
+      "flow_control": "none",
+      "notes": "Common on DigiRig and many radio interface clones"
+    },
+    {
+      "vid": "10C4",
+      "pid": "EA71",
+      "name": "Silicon Labs CP2108 Quad USB Serial",
+      "type": "serial",
+      "radio_interface": true,
+      "baud_hint": 115200,
+      "flow_control": "none",
+      "notes": "Found in Icom IC-7300 and IC-705 direct USB"
+    },
+    {
+      "vid": "1A86",
+      "pid": "7523",
+      "name": "CH340 USB Serial",
+      "type": "serial",
+      "radio_interface": true,
+      "baud_hint": 115200,
+      "flow_control": "none",
+      "notes": "Common on Arduino clones and cheap USB cables"
+    },
+    {
+      "vid": "1A86",
+      "pid": "55D4",
+      "name": "CH9102 USB Serial",
+      "type": "serial",
+      "radio_interface": true,
+      "baud_hint": 115200,
+      "flow_control": "none",
+      "notes": "Newer QinHeng serial chipset"
+    },
+    {
+      "vid": "067B",
+      "pid": "2303",
+      "name": "Prolific PL2303 USB Serial",
+      "type": "serial",
+      "radio_interface": false,
+      "baud_hint": 9600,
+      "flow_control": "none",
+      "notes": "Very common USB-serial adapter; not radio-specific"
+    },
+    {
+      "vid": "08BB",
+      "pid": "29B0",
+      "name": "Tigertronics SignaLink USB",
+      "type": "audio",
+      "radio_interface": true,
+      "baud_hint": null,
+      "flow_control": "none",
+      "notes": "SignaLink USB audio interface — very common in digital modes"
+    },
+    {
+      "vid": "0403",
+      "pid": "6A11",
+      "name": "West Mountain Radio RIGblaster Pro",
+      "type": "audio",
+      "radio_interface": true,
+      "baud_hint": null,
+      "flow_control": "none",
+      "notes": "RIGblaster Pro radio interface"
+    },
+    {
+      "vid": "0839",
+      "pid": "000A",
+      "name": "Yaesu SCU-17 USB Interface",
+      "type": "serial",
+      "radio_interface": true,
+      "baud_hint": 9600,
+      "flow_control": "none",
+      "notes": "Yaesu SCU-17 USB CAT/audio interface"
+    },
+    {
+      "vid": "2341",
+      "pid": "0043",
+      "name": "Arduino Uno R3",
+      "type": "serial",
+      "radio_interface": false,
+      "baud_hint": 115200,
+      "flow_control": "none",
+      "notes": "Arduino Uno R3 USB interface"
+    },
+    {
+      "vid": "2341",
+      "pid": "0010",
+      "name": "Arduino Mega 2560",
+      "type": "serial",
+      "radio_interface": false,
+      "baud_hint": 115200,
+      "flow_control": "none",
+      "notes": "Arduino Mega 2560 USB interface"
+    },
+    {
+      "vid": "239A",
+      "pid": "800B",
+      "name": "Adafruit Feather M0",
+      "type": "serial",
+      "radio_interface": false,
+      "baud_hint": 115200,
+      "flow_control": "none",
+      "notes": "Adafruit Feather M0 microcontroller"
+    }
+  ]
+}

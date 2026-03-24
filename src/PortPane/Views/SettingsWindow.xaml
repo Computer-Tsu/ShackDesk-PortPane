@@ -1,0 +1,178 @@
+<Window x:Class="PortPane.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:PortPane.ViewModels"
+        Title="Settings — PortPane"
+        Width="480"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource WindowBackgroundBrush}"
+        ShowInTaskbar="False"
+        d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d">
+
+    <TabControl Background="{StaticResource WindowBackgroundBrush}"
+                Foreground="{StaticResource TextPrimaryBrush}"
+                Margin="12,12,12,0">
+
+        <!-- ── General ── -->
+        <TabItem Header="General">
+            <StackPanel Margin="12,12,12,12">
+                <TextBlock Text="Appearance" Style="{StaticResource SectionHeaderStyle}"/>
+                <DockPanel Margin="0,0,0,8">
+                    <TextBlock Text="Scale:" Foreground="{StaticResource TextPrimaryBrush}"
+                               VerticalAlignment="Center" Width="80"/>
+                    <ComboBox ItemsSource="{Binding ScaleOptions}"
+                              SelectedItem="{Binding SelectedScale}"
+                              MinHeight="36" DisplayMemberPath="Label"
+                              Background="{StaticResource SurfaceBrush}"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              ToolTip="Adjusts the entire PortPane interface size"/>
+                </DockPanel>
+
+                <TextBlock Text="Behavior" Style="{StaticResource SectionHeaderStyle}"/>
+                <!-- Future stubs — disabled per spec -->
+                <CheckBox IsChecked="{Binding AudioNotificationEnabled}"
+                          IsEnabled="False"
+                          Foreground="{StaticResource TextSecondaryBrush}"
+                          Margin="0,4,0,4"
+                          ToolTip="Audio notification on profile switch — coming soon">
+                    Audio notification on profile switch (coming soon)
+                </CheckBox>
+                <CheckBox IsEnabled="False"
+                          Foreground="{StaticResource TextSecondaryBrush}"
+                          ToolTip="Minimize to system tray — coming soon">
+                    Minimize to tray (coming soon)
+                </CheckBox>
+            </StackPanel>
+        </TabItem>
+
+        <!-- ── Audio Profiles ── -->
+        <TabItem Header="Audio Profiles">
+            <StackPanel Margin="12,12,12,12">
+                <TextBlock Text="PC Mode Devices" Style="{StaticResource SectionHeaderStyle}"/>
+                <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="Playback:" Foreground="{StaticResource TextPrimaryBrush}"
+                               VerticalAlignment="Center" Width="80"/>
+                    <ComboBox ItemsSource="{Binding PlaybackDeviceNames}"
+                              SelectedItem="{Binding PCPlayback}"
+                              MinHeight="36"
+                              Background="{StaticResource SurfaceBrush}"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              ToolTip="Default playback device when in PC Mode"/>
+                </DockPanel>
+                <DockPanel Margin="0,0,0,12">
+                    <TextBlock Text="Capture:" Foreground="{StaticResource TextPrimaryBrush}"
+                               VerticalAlignment="Center" Width="80"/>
+                    <ComboBox ItemsSource="{Binding CaptureDeviceNames}"
+                              SelectedItem="{Binding PCRecording}"
+                              MinHeight="36"
+                              Background="{StaticResource SurfaceBrush}"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              ToolTip="Default recording device when in PC Mode"/>
+                </DockPanel>
+
+                <TextBlock Text="Radio Mode Devices" Style="{StaticResource SectionHeaderStyle}"/>
+                <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="Playback:" Foreground="{StaticResource TextPrimaryBrush}"
+                               VerticalAlignment="Center" Width="80"/>
+                    <ComboBox ItemsSource="{Binding PlaybackDeviceNames}"
+                              SelectedItem="{Binding RadioPlayback}"
+                              MinHeight="36"
+                              Background="{StaticResource SurfaceBrush}"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              ToolTip="Default playback device when in Radio Mode (e.g. SignaLink, DigiRig)"/>
+                </DockPanel>
+                <DockPanel Margin="0,0,0,4">
+                    <TextBlock Text="Capture:" Foreground="{StaticResource TextPrimaryBrush}"
+                               VerticalAlignment="Center" Width="80"/>
+                    <ComboBox ItemsSource="{Binding CaptureDeviceNames}"
+                              SelectedItem="{Binding RadioRecording}"
+                              MinHeight="36"
+                              Background="{StaticResource SurfaceBrush}"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              ToolTip="Default recording device when in Radio Mode (e.g. SignaLink, DigiRig)"/>
+                </DockPanel>
+            </StackPanel>
+        </TabItem>
+
+        <!-- ── Privacy ── -->
+        <TabItem Header="Privacy">
+            <StackPanel Margin="12,12,12,12">
+                <TextBlock Text="Anonymous Data Sharing" Style="{StaticResource SectionHeaderStyle}"/>
+                <CheckBox IsChecked="{Binding TelemetryEnabled}"
+                          Foreground="{StaticResource TextPrimaryBrush}"
+                          FontSize="13"
+                          Margin="0,0,0,6"
+                          ToolTip="Send anonymous USB device detection reports to help improve PortPane">
+                    Help improve PortPane by sharing anonymous device detection reports
+                </CheckBox>
+                <TextBlock Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="12" TextWrapping="Wrap" Margin="20,0,0,0"
+                           Text="No personal information is collected. You can review exactly what would be sent via Help → View Collected Data."/>
+            </StackPanel>
+        </TabItem>
+
+        <!-- ── License ── -->
+        <TabItem Header="License">
+            <StackPanel Margin="12,12,12,12">
+                <TextBlock Text="License Status" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBlock Text="{Binding LicenseTierDisplay}"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="14" FontWeight="SemiBold"
+                           Margin="0,0,0,12"/>
+
+                <TextBlock Text="Activate License" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBlock Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="12" TextWrapping="Wrap" Margin="0,0,0,6"
+                           Text="Drag and drop a .portpane license file here, or paste your license key below."/>
+                <TextBox x:Name="LicenseKeyBox"
+                         Text="{Binding LicenseKeyInput, UpdateSourceTrigger=PropertyChanged}"
+                         MinHeight="60"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Background="{StaticResource SurfaceBrush}"
+                         Foreground="{StaticResource TextPrimaryBrush}"
+                         CaretBrush="{StaticResource TextPrimaryBrush}"
+                         Margin="0,0,0,6"
+                         FontFamily="Consolas"
+                         FontSize="11"
+                         AllowDrop="True"
+                         Drop="LicenseKeyBox_Drop"
+                         ToolTip="Paste your license key or drag a .portpane file here"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Activate"
+                            Command="{Binding ActivateLicenseCommand}"
+                            MinHeight="36" Padding="14,0"
+                            Background="{StaticResource AccentBrush}"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Margin="0,0,8,0"
+                            ToolTip="Validate and activate the entered license key"/>
+                    <Button Content="Remove License"
+                            Command="{Binding DeactivateLicenseCommand}"
+                            MinHeight="36" Padding="14,0"
+                            Background="{StaticResource SurfaceElevatedBrush}"
+                            Foreground="{StaticResource TextPrimaryBrush}"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            ToolTip="Remove the current license and revert to Free tier"/>
+                </StackPanel>
+                <TextBlock Text="{Binding LicenseStatus}"
+                           Foreground="{StaticResource RadioModeBrush}"
+                           FontSize="12"
+                           Margin="0,8,0,0"/>
+            </StackPanel>
+        </TabItem>
+
+    </TabControl>
+
+    <!-- Save / Close row -->
+    <Window.ContentTemplate>
+        <DataTemplate/>
+    </Window.ContentTemplate>
+</Window>

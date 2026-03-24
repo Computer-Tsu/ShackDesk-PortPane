@@ -1,0 +1,26 @@
+# Normalize line endings to LF in the repository, CRLF in working copy on Windows.
+* text=auto
+
+# Force LF for these file types regardless of platform
+*.cs        text eol=lf
+*.xaml      text eol=lf
+*.csproj    text eol=lf
+*.sln       text eol=lf
+*.json      text eol=lf
+*.xml       text eol=lf
+*.resx      text eol=lf
+*.md        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.iss       text eol=lf
+*.manifest  text eol=lf
+*.txt       text eol=lf
+
+# Binary files — no line ending conversion
+*.ico       binary
+*.png       binary
+*.jpg       binary
+*.gif       binary
+*.exe       binary
+*.dll       binary
+*.nupkg     binary

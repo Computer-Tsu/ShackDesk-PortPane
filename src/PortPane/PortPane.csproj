@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>12</LangVersion>
+    <RootNamespace>PortPane</RootNamespace>
+    <AssemblyName>PortPane</AssemblyName>
+    <ApplicationIcon>..\..\docs\assets\icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <!-- Single self-contained exe -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+
+    <!-- Assembly metadata — values sourced from BrandingInfo constants -->
+    <AssemblyTitle>PortPane</AssemblyTitle>
+    <Product>PortPane by ShackDesk</Product>
+    <Company>My Computer Guru LLC</Company>
+    <Authors>Mark McDow (N4TEK)</Authors>
+    <Copyright>Copyright © 2024-2026 Mark McDow. All rights reserved.</Copyright>
+    <Trademark>PortPane is a trademark of My Computer Guru LLC</Trademark>
+    <Version>0.5.0-beta</Version>
+    <FileVersion>0.5.0.0</FileVersion>
+    <AssemblyVersion>0.5.0.0</AssemblyVersion>
+    <Description>Takes the pain out of ports — amateur radio USB device helper</Description>
+    <RepositoryUrl>https://github.com/Computer-Tsu/shackdesk-portpane</RepositoryUrl>
+
+    <!-- Windows 10 1809 minimum -->
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="NAudio"                                    Version="2.2.1" />
+    <PackageReference Include="Serilog"                                   Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.File"                        Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.RollingFile"                 Version="3.3.0" />
+    <PackageReference Include="Velopack"                                   Version="0.0.878" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Strings.resx" />
+    <EmbeddedResource Include="Resources\Strings.de.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Data\usb_devices.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

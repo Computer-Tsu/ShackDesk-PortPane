@@ -1,0 +1,245 @@
+name: Build · Test · Publish · Release
+
+on:
+  push:
+    branches: [ main ]
+    tags:     [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:          # Manual trigger always present
+
+env:
+  DOTNET_VERSION:   '8.0.x'
+  SOLUTION:         'ShackDesk-PortPane.sln'
+  APP_PROJECT:      'src/PortPane/PortPane.csproj'
+  TEST_PROJECT:     'src/PortPane.Tests/PortPane.Tests.csproj'
+  RID:              'win-x64'
+  APP_EXE:          'PortPane.exe'
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────
+  build-and-test:
+    name: Build & Test
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore NuGet packages
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Build — Debug
+        run: dotnet build ${{ env.SOLUTION }} --configuration Debug --no-restore
+
+      - name: Run xUnit tests
+        run: >
+          dotnet test ${{ env.TEST_PROJECT }}
+          --configuration Debug
+          --no-build
+          --verbosity normal
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory ./TestResults
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ github.sha }}
+          path: ./TestResults/*.trx
+
+  # ─────────────────────────────────────────────────────────────────────
+  publish:
+    name: Publish Release Exe
+    runs-on: windows-latest
+    needs: build-and-test
+    if: >
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+
+    outputs:
+      sha256: ${{ steps.hash.outputs.sha256 }}
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore NuGet packages
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Extract version from BrandingInfo
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Select-String -Path 'src/PortPane/BrandingInfo.cs' `
+            -Pattern 'Version\s*=\s*"([^"]+)"').Matches[0].Groups[1].Value
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "Version: $version"
+
+      - name: Publish — single self-contained exe
+        run: >
+          dotnet publish ${{ env.APP_PROJECT }}
+          --configuration Release
+          --runtime ${{ env.RID }}
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:ReadyToRun=true
+          --output ./publish
+
+      - name: Apply ConfuserEx obfuscation
+        # TODO: Add ConfuserEx step here when crconf.exe is available in CI.
+        # Example:
+        #   - name: Obfuscate
+        #     run: confuserex -n PortPane.crproj
+        #     # crproj references ./publish/PortPane.exe as input
+        shell: pwsh
+        run: |
+          # Placeholder — ConfuserEx not yet configured.
+          # Obfuscation will be added before v1.0 stable release.
+          Write-Host "Obfuscation step placeholder — skipping"
+
+      # Code signing placeholder:
+      # When an EV or OV certificate is obtained, add the following step here:
+      #   - name: Sign executable
+      #     run: >
+      #       signtool.exe sign
+      #         /fd sha256
+      #         /tr http://timestamp.digicert.com
+      #         /td sha256
+      #         /f certificate.pfx
+      #         /p ${{ secrets.SIGNING_PASSWORD }}
+      #         ./publish/${{ env.APP_EXE }}
+
+      - name: Compute SHA-256
+        id: hash
+        shell: pwsh
+        run: |
+          $hash = (Get-FileHash -Algorithm SHA256 './publish/${{ env.APP_EXE }}').Hash.ToLower()
+          $hash | Out-File -FilePath './publish/${{ env.APP_EXE }}.sha256' -NoNewline
+          echo "sha256=$hash" >> $env:GITHUB_OUTPUT
+          echo "SHA256: $hash"
+
+      - name: Upload exe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PortPane-${{ steps.version.outputs.version }}-${{ github.sha }}
+          path: |
+            ./publish/${{ env.APP_EXE }}
+            ./publish/${{ env.APP_EXE }}.sha256
+
+  # ─────────────────────────────────────────────────────────────────────
+  installer:
+    name: Build Inno Setup Installer
+    runs-on: windows-latest
+    needs: publish
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore & Publish for installer
+        run: |
+          dotnet restore ${{ env.SOLUTION }}
+          dotnet publish ${{ env.APP_PROJECT }} --configuration Release --runtime ${{ env.RID }} --self-contained true -p:PublishSingleFile=true --output ./publish
+
+      - name: Build Inno Setup installer
+        shell: pwsh
+        run: |
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (Test-Path $iscc) {
+            & $iscc installer\PortPane.iss
+          } else {
+            Write-Warning "Inno Setup not found — skipping installer build"
+          }
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        if: hashFiles('installer/Output/*.exe') != ''
+        with:
+          name: PortPane-Installer-${{ github.ref_name }}
+          path: installer/Output/*.exe
+
+  # ─────────────────────────────────────────────────────────────────────
+  release:
+    name: Create GitHub Release
+    runs-on: windows-latest
+    needs: [ publish, installer ]
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download exe artifact
+        uses: actions/download-artifact@v4
+        with:
+          pattern: PortPane-*-${{ github.sha }}
+          path: ./release
+          merge-multiple: true
+
+      - name: Download installer artifact (optional)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: PortPane-Installer-*
+          path: ./release
+          merge-multiple: true
+
+      - name: Extract CHANGELOG entry for this version
+        id: notes
+        shell: pwsh
+        run: |
+          $tag     = '${{ github.ref_name }}'
+          $version = $tag.TrimStart('v')
+          $content = Get-Content CHANGELOG.md -Raw
+          # Extract the section between this version header and the next
+          $pattern = "(?s)## \[$version\].*?(?=## \[|\z)"
+          $match   = [regex]::Match($content, $pattern)
+          $notes   = if ($match.Success) { $match.Value.Trim() } else { "See CHANGELOG.md for details." }
+          $notes | Out-File -FilePath ./release_notes.md -Encoding utf8
+          echo "notes_file=./release_notes.md" >> $env:GITHUB_OUTPUT
+
+      - name: Rename artifacts with version
+        shell: pwsh
+        run: |
+          $tag = '${{ github.ref_name }}'
+          Get-ChildItem ./release/${{ env.APP_EXE }} -ErrorAction SilentlyContinue |
+            Rename-Item -NewName "PortPane-$tag-win-x64.exe"
+          Get-ChildItem ./release/${{ env.APP_EXE }}.sha256 -ErrorAction SilentlyContinue |
+            Rename-Item -NewName "PortPane-$tag-win-x64.exe.sha256"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./release/PortPane-*.exe
+            ./release/PortPane-*.sha256
+          body_path: ./release_notes.md
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
+          generate_release_notes: false

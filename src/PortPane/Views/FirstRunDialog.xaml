@@ -1,0 +1,99 @@
+<Window x:Class="PortPane.Views.FirstRunDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:PortPane"
+        Title="Welcome to PortPane"
+        Width="440"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource WindowBackgroundBrush}"
+        ShowInTaskbar="False">
+
+    <StackPanel Margin="28,24,28,20">
+
+        <!-- App name -->
+        <TextBlock FontSize="26" FontWeight="Bold"
+                   Foreground="{StaticResource AccentBrush}"
+                   HorizontalAlignment="Center"
+                   Text="{x:Static local:BrandingInfo.AppName}"/>
+
+        <TextBlock FontSize="13"
+                   Foreground="{StaticResource TextSecondaryBrush}"
+                   HorizontalAlignment="Center"
+                   Text="by ShackDesk — Takes the pain out of ports"
+                   Margin="0,2,0,16"/>
+
+        <!-- Author credit -->
+        <Border Background="{StaticResource SurfaceBrush}"
+                CornerRadius="6" Padding="14,10" Margin="0,0,0,14">
+            <StackPanel>
+                <TextBlock Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"
+                           TextWrapping="Wrap">
+                    <Run Text="By "/>
+                    <Run Text="{x:Static local:BrandingInfo.AuthorName}" FontWeight="SemiBold"/>
+                    <Run Text=" ("/>
+                    <Run Text="{x:Static local:BrandingInfo.AuthorCallsign}" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold"/>
+                    <Run Text=")"/>
+                    <Run Text=" — "/>
+                    <Run Text="{x:Static local:BrandingInfo.AuthorCompany}"/>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- License notice -->
+        <Border Background="{StaticResource SurfaceBrush}"
+                CornerRadius="6" Padding="14,10" Margin="0,0,0,14">
+            <StackPanel>
+                <TextBlock Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="13" TextWrapping="Wrap"
+                           Text="Free for personal and non-commercial use under GPL v3. Please do not rebrand or resell."/>
+                <TextBlock Margin="0,6,0,0">
+                    <Hyperlink Click="License_Click"
+                               Foreground="{StaticResource AccentBrush}">
+                        Read full license
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- Data sharing opt-in (OFF by default) -->
+        <Border Background="{StaticResource SurfaceBrush}"
+                CornerRadius="6" Padding="14,10" Margin="0,0,0,20">
+            <StackPanel>
+                <CheckBox x:Name="TelemetryCheckBox"
+                          Foreground="{StaticResource TextPrimaryBrush}"
+                          FontSize="13"
+                          IsChecked="False"
+                          Margin="0,0,0,6"
+                          ToolTip="Help improve PortPane by sharing anonymous device detection data. No personal information is collected.">
+                    Help improve PortPane by sharing anonymous device detection reports
+                </CheckBox>
+                <TextBlock Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="11" TextWrapping="Wrap"
+                           Margin="20,0,0,4"
+                           Text="No personal information is collected. You can review data before it is sent. Change this anytime in Settings."/>
+                <TextBlock Margin="20,0,0,0">
+                    <Hyperlink Click="Privacy_Click"
+                               Foreground="{StaticResource AccentBrush}"
+                               FontSize="11">
+                        Learn more about what is collected
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- Get Started button -->
+        <Button Content="Get Started"
+                Click="GetStarted_Click"
+                Height="44"
+                FontSize="15"
+                FontWeight="SemiBold"
+                Background="{StaticResource AccentBrush}"
+                Foreground="White"
+                BorderThickness="0"
+                Cursor="Hand"
+                HorizontalAlignment="Stretch"
+                ToolTip="Close this dialog and start using PortPane"/>
+    </StackPanel>
+</Window>

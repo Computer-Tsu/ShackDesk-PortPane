@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+
+  <!-- PLACEHOLDER: German translation — community contributions welcome. -->
+  <!-- See TRANSLATING.md for contribution instructions. -->
+
+  <data name="AppTitle"            xml:space="preserve"><value>PortPane von ShackDesk</value></data>
+  <data name="Tagline"             xml:space="preserve"><value>Schluss mit dem Port-Chaos</value></data>
+  <data name="RefreshButton"       xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="SettingsButton"      xml:space="preserve"><value>Einstellungen</value></data>
+  <data name="AlwaysOnTop"         xml:space="preserve"><value>Immer im Vordergrund</value></data>
+  <data name="CopyButton"          xml:space="preserve"><value>Kopieren</value></data>
+  <data name="SectionComPorts"     xml:space="preserve"><value>COM-Ports</value></data>
+  <data name="SectionPlayback"     xml:space="preserve"><value>Audiowiedergabe</value></data>
+  <data name="SectionCapture"      xml:space="preserve"><value>Audioaufnahme</value></data>
+  <data name="NoComPorts"          xml:space="preserve"><value>Keine COM-Ports gefunden</value></data>
+  <data name="NoAudioDevices"      xml:space="preserve"><value>Keine Audiogeräte gefunden</value></data>
+</root>

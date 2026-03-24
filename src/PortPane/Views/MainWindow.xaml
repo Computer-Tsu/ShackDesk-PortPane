@@ -1,0 +1,349 @@
+<Window x:Class="PortPane.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:PortPane.ViewModels"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        AllowsTransparency="False"
+        Background="{StaticResource WindowBackgroundBrush}"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="CanResize"
+        MinWidth="360"
+        MinHeight="200"
+        Topmost="{Binding IsAlwaysOnTop}"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+
+    <!-- WindowChrome: keeps resize handles and drop shadow without system title bar -->
+    <WindowChrome.WindowChrome>
+        <WindowChrome ResizeBorderThickness="6"
+                      CaptionHeight="0"
+                      GlassFrameThickness="0"
+                      CornerRadius="0"
+                      UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <!-- Root grid — ScaleTransform applied here for whole-layout scaling -->
+    <Grid x:Name="RootGrid" MinWidth="340">
+        <Grid.LayoutTransform>
+            <ScaleTransform ScaleX="{Binding ScaleFactor}" ScaleY="{Binding ScaleFactor}"/>
+        </Grid.LayoutTransform>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Drag strip (always visible) -->
+            <RowDefinition Height="Auto"/>  <!-- Chrome overlay (toggled) -->
+            <RowDefinition Height="Auto"/>  <!-- Update banner -->
+            <RowDefinition Height="*"/>     <!-- Main content -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Row 0: Always-visible drag strip ─────────────────────────── -->
+        <Border Grid.Row="0" Style="{StaticResource DragStripStyle}"
+                MouseLeftButtonDown="DragStrip_MouseDown">
+            <!-- Grip dots texture -->
+            <ItemsControl HorizontalAlignment="Center" VerticalAlignment="Center"
+                          IsHitTestVisible="False">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+            </ItemsControl>
+        </Border>
+
+        <!-- ── Row 1: Chrome overlay (hidden by default, shown on click) ── -->
+        <Border Grid.Row="1"
+                Visibility="{Binding IsChromeVisible, Converter={StaticResource BoolToVis}}"
+                Style="{StaticResource ChromeBarStyle}">
+            <DockPanel>
+                <!-- Window control buttons (right side) -->
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="─"
+                            Style="{StaticResource ChromeButtonStyle}"
+                            ToolTip="Minimize"
+                            Click="MinimizeButton_Click"
+                            WindowChrome.IsHitTestVisibleInChrome="True"/>
+                    <Button Content="✕"
+                            Style="{StaticResource CloseButtonStyle}"
+                            ToolTip="Close PortPane"
+                            Click="CloseButton_Click"
+                            WindowChrome.IsHitTestVisibleInChrome="True"/>
+                </StackPanel>
+
+                <!-- Title + menu (left side) -->
+                <StackPanel DockPanel.Dock="Left">
+                    <!-- App title -->
+                    <TextBlock Text="{Binding Title}"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               FontSize="11"
+                               Margin="8,2,0,0"
+                               IsHitTestVisible="False"/>
+
+                    <!-- Menu bar -->
+                    <Menu WindowChrome.IsHitTestVisibleInChrome="True">
+                        <MenuItem Header="_File">
+                            <MenuItem Header="Open _Settings" InputGestureText="Ctrl+,"
+                                      Click="OpenSettings_Click"/>
+                            <MenuItem Header="_Save Settings" InputGestureText="Ctrl+S"
+                                      Click="SaveSettings_Click"/>
+                            <Separator/>
+                            <MenuItem Header="E_xit" InputGestureText="Alt+F4"
+                                      Click="Exit_Click"/>
+                        </MenuItem>
+                        <MenuItem Header="_Edit">
+                            <MenuItem Header="_Copy Port Name" InputGestureText="Ctrl+C"
+                                      Command="{Binding ComPorts.CopyPortNameCommand}"
+                                      CommandParameter="{Binding ComPorts.SelectedPort.PortName}"/>
+                            <MenuItem Header="Copy _All Info" InputGestureText="Ctrl+Shift+C"
+                                      Click="CopyAll_Click"/>
+                        </MenuItem>
+                        <MenuItem Header="_View">
+                            <MenuItem Header="Stay on _Top" InputGestureText="Ctrl+T"
+                                      IsCheckable="True"
+                                      IsChecked="{Binding IsAlwaysOnTop}"/>
+                            <MenuItem Header="Show _COM Panel" InputGestureText="Ctrl+P"
+                                      IsCheckable="True"
+                                      IsChecked="{Binding IsComPanelVisible}"/>
+                            <Separator/>
+                            <MenuItem Header="_Scale">
+                                <MenuItem Header="Small (85%)"        Click="Scale_Click" Tag="0.85"/>
+                                <MenuItem Header="Normal (100%)"      Click="Scale_Click" Tag="1.0"/>
+                                <MenuItem Header="Large (135%)"       Click="Scale_Click" Tag="1.35"/>
+                                <MenuItem Header="Extra Large (175%)" Click="Scale_Click" Tag="1.75"/>
+                                <MenuItem Header="Huge (225%)"        Click="Scale_Click" Tag="2.25"/>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="_Help">
+                            <MenuItem Header="_Contents"          InputGestureText="F1"
+                                      Click="HelpContents_Click"/>
+                            <MenuItem Header="Check for _Updates" Click="CheckUpdates_Click"/>
+                            <MenuItem Header="View Collected _Data" Click="ViewTelemetry_Click"/>
+                            <Separator/>
+                            <MenuItem Header="_About"             Click="About_Click"/>
+                        </MenuItem>
+                    </Menu>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ── Row 2: Update banner ──────────────────────────────────────── -->
+        <Border Grid.Row="2"
+                Visibility="{Binding HasUpdate, Converter={StaticResource BoolToVis}}"
+                Style="{StaticResource UpdateBannerStyle}">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Later"
+                        Command="{Binding DismissUpdateCommand}"
+                        Style="{StaticResource CopyButtonStyle}"
+                        ToolTip="Dismiss this update notification"
+                        Margin="4,0,0,0"/>
+                <Button DockPanel.Dock="Right" Content="Update Now"
+                        Click="ApplyUpdate_Click"
+                        Background="{StaticResource AccentBrush}"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Padding="10,4"
+                        ToolTip="{Binding UpdateText}"/>
+                <TextBlock Text="{Binding UpdateText}"
+                           Foreground="White"
+                           VerticalAlignment="Center"
+                           FontWeight="SemiBold"/>
+            </DockPanel>
+        </Border>
+
+        <!-- ── Row 3: Main content ───────────────────────────────────────── -->
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="10,6,10,10">
+
+                <!-- DEFAULT DEVICE DISPLAY (prominent, top of content) -->
+                <Border Style="{StaticResource DeviceCardStyle}" Margin="0,0,0,4">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Text="▶" Foreground="{StaticResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding Audio.DefaultPlaybackName}"
+                                   Style="{StaticResource DefaultDeviceLabelStyle}"
+                                   ToolTip="Current Windows default playback device"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="🎤" Foreground="{StaticResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center" Margin="0,0,8,0" FontSize="11"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1"
+                                   Text="{Binding Audio.DefaultCaptureName}"
+                                   Style="{StaticResource DefaultDeviceLabelStyle}"
+                                   FontSize="13"
+                                   ToolTip="Current Windows default recording device"/>
+                    </Grid>
+                </Border>
+
+                <!-- PROFILE SWITCH BUTTON — primary UI action -->
+                <Button Style="{StaticResource ProfileSwitchButtonStyle}"
+                        Content="{Binding Audio.ProfileButtonLabel}"
+                        Command="{Binding Audio.SwitchProfileCommand}"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,2,0,2"/>
+
+                <!-- Profile switch status message (brief, non-modal) -->
+                <TextBlock Text="{Binding Audio.StatusMessage}"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="11"
+                           HorizontalAlignment="Center"
+                           Visibility="{Binding Audio.HasStatusMessage, Converter={StaticResource BoolToVis}}"
+                           Margin="0,2"/>
+
+                <!-- ── USB / External Audio Devices ────────────────────── -->
+                <TextBlock Text="USB / External Devices" Style="{StaticResource SectionHeaderStyle}"/>
+                <ItemsControl ItemsSource="{Binding Audio.UsbPlayback}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource RadioDeviceCardStyle}">
+                                <DockPanel>
+                                    <Border DockPanel.Dock="Right"
+                                            Style="{StaticResource RadioBadgeStyle}"
+                                            Visibility="{Binding IsRadioInterface, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="RADIO" FontSize="9" FontWeight="Bold"
+                                                   Foreground="White"/>
+                                    </Border>
+                                    <TextBlock Text="▶" Foreground="{StaticResource TextSecondaryBrush}"
+                                               VerticalAlignment="Center" Margin="0,0,6,0" FontSize="11"/>
+                                    <TextBlock Text="{Binding FriendlyName}"
+                                               Style="{StaticResource BodyStyle}"
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding FriendlyName}"/>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Audio.UsbCapture}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource RadioDeviceCardStyle}">
+                                <DockPanel>
+                                    <TextBlock Text="🎤" Foreground="{StaticResource TextSecondaryBrush}"
+                                               VerticalAlignment="Center" Margin="0,0,6,0" FontSize="11"/>
+                                    <TextBlock Text="{Binding FriendlyName}"
+                                               Style="{StaticResource BodyStyle}"
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding FriendlyName}"/>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- ── Built-in Audio Devices ───────────────────────────── -->
+                <TextBlock Text="Built-in / System Devices" Style="{StaticResource SectionHeaderStyle}"/>
+                <ItemsControl ItemsSource="{Binding Audio.BuiltinPlayback}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource DeviceCardStyle}">
+                                <TextBlock Text="{Binding FriendlyName}"
+                                           Style="{StaticResource BodyStyle}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding FriendlyName}"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- ── COM Port Panel (collapsible) ─────────────────────── -->
+                <Border Visibility="{Binding IsComPanelVisible, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Text="COM Ports" Style="{StaticResource SectionHeaderStyle}"/>
+
+                        <ItemsControl ItemsSource="{Binding ComPorts.Ports}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource DeviceCardStyle}">
+                                        <Border.Style>
+                                            <Style TargetType="Border" BasedOn="{StaticResource DeviceCardStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsGhost}" Value="True">
+                                                        <Setter Property="Opacity" Value="0.45"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip Content="{Binding GhostTooltip}"
+                                                     Visibility="{Binding IsGhost, Converter={StaticResource BoolToVis}}"/>
+                                        </ToolTipService.ToolTip>
+                                        <DockPanel>
+                                            <Button DockPanel.Dock="Right"
+                                                    Style="{StaticResource CopyButtonStyle}"
+                                                    Content="Copy"
+                                                    Command="{Binding DataContext.ComPorts.CopyPortNameCommand,
+                                                              RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding PortName}"
+                                                    Visibility="{Binding IsGhost, Converter={StaticResource BoolToVis},
+                                                                 ConverterParameter=Inverse}"/>
+                                            <Border DockPanel.Dock="Right"
+                                                    Style="{StaticResource RadioBadgeStyle}"
+                                                    Visibility="{Binding IsRadioInterface, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="RADIO" FontSize="9" FontWeight="Bold" Foreground="White"/>
+                                            </Border>
+                                            <TextBlock Text="{Binding DisplayLabel}"
+                                                       Style="{StaticResource PortNameStyle}"
+                                                       Width="68"/>
+                                            <TextBlock Text="{Binding FriendlyName}"
+                                                       Style="{StaticResource BodyStyle}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       VerticalAlignment="Center"
+                                                       ToolTip="{Binding FriendlyName}"/>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Baud rate + PuTTY row -->
+                        <DockPanel Margin="0,4,0,0">
+                            <Button DockPanel.Dock="Right"
+                                    Content="Open in PuTTY"
+                                    Style="{StaticResource PuttyButtonStyle}"
+                                    Command="{Binding ComPorts.OpenInPuttyCommand}"
+                                    Visibility="{Binding ComPorts.IsPuttyAvailable, Converter={StaticResource BoolToVis}}"
+                                    Margin="6,0,0,0"/>
+                            <ComboBox ItemsSource="{Binding ComPorts.BaudRates}"
+                                      SelectedItem="{Binding ComPorts.SelectedBaudRate}"
+                                      MinHeight="44"
+                                      MinWidth="110"
+                                      ToolTip="Baud rate for PuTTY launch and heuristic suggestions"
+                                      Background="{StaticResource SurfaceBrush}"
+                                      Foreground="{StaticResource TextPrimaryBrush}"/>
+                        </DockPanel>
+
+                        <!-- Copy confirmation (non-modal) -->
+                        <TextBlock Text="{Binding ComPorts.CopyConfirmation}"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   FontSize="11"
+                                   Visibility="{Binding ComPorts.ShowCopyConfirmation, Converter={StaticResource BoolToVis}}"
+                                   Margin="0,2"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Footer -->
+                <TextBlock Style="{StaticResource FooterStyle}"
+                           Margin="0,10,0,2">
+                    <Run Text="{x:Static local:BrandingInfo.FullName}"
+                         xmlns:local="clr-namespace:PortPane"/>
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
