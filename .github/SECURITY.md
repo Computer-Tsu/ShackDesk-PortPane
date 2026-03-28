@@ -15,6 +15,7 @@ Report security issues privately via GitHub's
 feature, or email the maintainer directly (see profile).
 
 Include:
+
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact

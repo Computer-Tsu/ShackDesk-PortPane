@@ -1,7 +1,9 @@
 ## Summary
+
 <!-- Describe what this PR changes and why. -->
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] USB device database addition
@@ -11,6 +13,7 @@
 - [ ] CI / build
 
 ## Testing
+
 - [ ] I tested this on Windows 10
 - [ ] I tested this on Windows 11
 - [ ] Unit tests pass (`dotnet test`)
@@ -19,6 +22,7 @@
 **Device tested:**
 
 ## Checklist
+
 - [ ] No hardcoded branding strings (all values reference `BrandingInfo`)
 - [ ] No business logic added to code-behind files (MVVM maintained)
 - [ ] No admin rights required
@@ -26,4 +30,5 @@
 - [ ] I have read CONTRIBUTING.md and agree to the CLA
 
 ## Related Issues
+
 Closes #

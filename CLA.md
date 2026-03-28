@@ -25,19 +25,19 @@ By submitting a pull request or any other contribution to PortPane by ShackDesk,
 
 ## Representations
 
-3. You represent that you have the legal right to grant the above licenses.
+1. You represent that you have the legal right to grant the above licenses.
 
-4. You represent that each of your contributions is your original creation or that you have sufficient rights to submit it.
+2. You represent that each of your contributions is your original creation or that you have sufficient rights to submit it.
 
-5. You represent that your contributions do not violate any third-party license, patent, copyright, or other intellectual property right.
+3. You represent that your contributions do not violate any third-party license, patent, copyright, or other intellectual property right.
 
 ## Dual Licensing
 
-6. You acknowledge that PortPane is dual-licensed under GPL v3 and a commercial license, and that your contributions may be distributed under either license at the maintainer's discretion.
+1. You acknowledge that PortPane is dual-licensed under GPL v3 and a commercial license, and that your contributions may be distributed under either license at the maintainer's discretion.
 
 ## No Obligation
 
-7. You are not expected to provide support for your contributions beyond what you choose to offer.
+1. You are not expected to provide support for your contributions beyond what you choose to offer.
 
 ---
 

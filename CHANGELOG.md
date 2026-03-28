@@ -37,6 +37,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Fixed
+
 - CI build failure (NETSDK1135): changed `net8.0-windows` to `net8.0-windows10.0.17763.0`
   in both `.csproj` files so `TargetPlatformVersion` is explicit; resolves conflict with
   .NET SDK 10 pre-installed on `windows-latest` runners
@@ -44,6 +45,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   preventing SDK 10 from becoming the ambient default for this repo on future runner images
 
 ### Added
+
+- `LicenseService.cs`: implemented RSA-2048 / SHA-256 / PKCS1 offline signature verification;
+  embedded real public key; defined pipe-delimited signable payload format;
+  `LicenseInfo` record extended with `Issued`, `ExpiresRaw`, `Signature` fields
+- `keys/portpane-public.pem`: updated with actual RSA-2048 public key (XML format)
+- `MAINTENANCE.md`: new maintainer reference covering RSA key generation and rotation,
+  GitHub secret setup, public key embedding, release process, Velopack update setup,
+  code signing setup, and NuGet/Actions dependency update guidance
+- `SECURITY.md` + `.github/SECURITY.md`: added Key Rotation section referencing MAINTENANCE.md
 - GitHub Actions: `codeql.yml` — weekly C# security analysis via CodeQL
 - GitHub Actions: `dependency-review.yml` — NuGet vulnerability check on PRs (moderate+)
 - GitHub Actions: `json-validate.yml` — validates `data/usb_devices.json` structure and required fields
@@ -62,6 +72,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (Spanish, French, Japanese) with contributor-friendly headers
 
 ### Changed
+
 - `build.yml`: added 24-line comment header documenting triggers, secrets, outputs, and
   manual trigger instructions (workflow_dispatch was already present)
 - `data/usb_devices.json` + `src/PortPane/Data/usb_devices.json`: added 64 `_comment_N`
@@ -99,6 +110,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [0.5.0-beta] — 2026-03-23
 
 ### Added
+
 - Complete project scaffold with full MVVM architecture
 - .NET 8 built-in dependency injection container
 - COM port enumeration via WMI (VID/PID extraction) + Registry fallback
@@ -142,6 +154,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Community documentation: CONTRIBUTING, TRANSLATING, CLA, PRIVACY, LEGAL
 
 ### Architecture
+
 - MVVM strictly enforced — zero business logic in code-behind files
 - All services registered as interfaces via .NET DI container
 - All branding values reference BrandingInfo constants (never hardcoded)

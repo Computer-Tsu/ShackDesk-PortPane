@@ -27,17 +27,17 @@ You do not need to know what VID and PID mean — just follow these steps:
 
 ## Device Information
 
-| Field            | Your Answer                                    |
-|-----------------|------------------------------------------------|
-| Manufacturer     |                                                |
-| Product Name     |                                                |
-| VID (4 hex chars)| e.g. `10C4`                                   |
-| PID (4 hex chars)| e.g. `EA60`                                   |
-| Device Type      | Serial (COM port) / Audio / Both               |
-| Radio Interface? | Yes — used with amateur or professional radio  |
-|                  | No — general purpose adapter                   |
-| Baud Rate        | e.g. 9600, 115200, or "not applicable" (audio) |
-| Flow Control     | None / Hardware (RTS/CTS) / Software (XON/XOFF)|
+| Field             | Your Answer                                     |
+|------------------|-------------------------------------------------|
+| Manufacturer      |                                                 |
+| Product Name      |                                                 |
+| VID (4 hex chars) | e.g. `10C4`                                     |
+| PID (4 hex chars) | e.g. `EA60`                                     |
+| Device Type       | Serial (COM port) / Audio / Both                |
+| Radio Interface?  | Yes — used with amateur or professional radio   |
+|                   | No — general purpose adapter                    |
+| Baud Rate         | e.g. 9600, 115200, or "not applicable" (audio)  |
+| Flow Control      | None / Hardware (RTS/CTS) / Software (XON/XOFF) |
 
 ---
 
@@ -61,6 +61,7 @@ Check all that apply:
 ## Additional Notes
 
 Any notes about this device — for example:
+
 - Driver requirements or known Windows driver issues
 - Which specific radios this cable/interface is used with
 - Any special configuration needed (e.g. specific baud rate required)

@@ -44,6 +44,7 @@ What did you use to help with the translation?
 
 Any cultural or language-specific notes the maintainer should know.
 For example:
+
 - Preferred term for "COM port" in your language
 - Preferred term for "Refresh" (some languages have formal/informal variants)
 - Any strings where a literal translation doesn't make sense

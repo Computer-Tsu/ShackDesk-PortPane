@@ -15,6 +15,7 @@ Report privately via GitHub's
 or contact the maintainer directly via their GitHub profile.
 
 Please include:
+
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact

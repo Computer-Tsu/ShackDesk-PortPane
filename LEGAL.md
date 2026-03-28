@@ -47,16 +47,16 @@ are the property of their respective owners.
 
 | Library | License | Copyright | URL |
 |---------|---------|-----------|-----|
-| NAudio | MIT | © Mark Heath | https://github.com/naudio/NAudio |
-| Serilog | Apache 2.0 | © Serilog contributors | https://github.com/serilog/serilog |
-| Serilog.Sinks.File | Apache 2.0 | © Serilog contributors | https://github.com/serilog/serilog-sinks-file |
-| Velopack | MIT | © Caelan Sayler and contributors | https://github.com/velopack/velopack |
-| xUnit | Apache 2.0 | © .NET Foundation and contributors | https://github.com/xunit/xunit |
-| Microsoft.Extensions.DependencyInjection | MIT | © Microsoft Corporation | https://github.com/dotnet/runtime |
-| ConfuserEx (planned) | MIT | © yck1509 | https://github.com/mkaring/ConfuserEx |
+| NAudio | MIT | © Mark Heath | [naudio/NAudio](https://github.com/naudio/NAudio) |
+| Serilog | Apache 2.0 | © Serilog contributors | [serilog/serilog](https://github.com/serilog/serilog) |
+| Serilog.Sinks.File | Apache 2.0 | © Serilog contributors | [serilog-sinks-file](https://github.com/serilog/serilog-sinks-file) |
+| Velopack | MIT | © Caelan Sayler and contributors | [velopack/velopack](https://github.com/velopack/velopack) |
+| xUnit | Apache 2.0 | © .NET Foundation and contributors | [xunit/xunit](https://github.com/xunit/xunit) |
+| Microsoft.Extensions.DependencyInjection | MIT | © Microsoft Corporation | [dotnet/runtime](https://github.com/dotnet/runtime) |
+| ConfuserEx (planned) | MIT | © yck1509 | [mkaring/ConfuserEx](https://github.com/mkaring/ConfuserEx) |
 
-USB device identification data sourced in part from the USB ID Repository
-(https://usb-ids.gowdy.us/) and community contributions.
+USB device identification data sourced in part from the
+[USB ID Repository](https://usb-ids.gowdy.us/) and community contributions.
 
 ---
 
