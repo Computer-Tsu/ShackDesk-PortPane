@@ -24,55 +24,56 @@ public sealed class LogFileHeaderHooks : FileLifecycleHooks
         string thin = new string('-', 78);
         string now  = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + " UTC";
 
-        return $"""
-{line}
+        // $$""" raw string: single { } are literal; {{ expr }} are interpolations.
+        return $$"""
+{{line}}
   PortPane by ShackDesk — Application Log
   Project  : https://github.com/Computer-Tsu/shackdesk-portpane
-  Suite    : ShackDesk | App: PortPane | Version: {BrandingInfo.Version}
-  Author   : {BrandingInfo.AuthorName} ({BrandingInfo.AuthorCallsign}) — {BrandingInfo.AuthorCompany}
-  Support  : {BrandingInfo.SupportURL}
-  Log opened: {now}
-{line}
+  Suite    : ShackDesk | App: PortPane | Version: {{BrandingInfo.Version}}
+  Author   : {{BrandingInfo.AuthorName}} ({{BrandingInfo.AuthorCallsign}}) — {{BrandingInfo.AuthorCompany}}
+  Support  : {{BrandingInfo.SupportURL}}
+  Log opened: {{now}}
+{{line}}
 
   PURPOSE
   This log records PortPane runtime events for troubleshooting and support.
   It is stored locally on your machine and is never uploaded automatically.
   You control whether usage data is shared — see the Privacy Statement below.
 
-{thin}
+{{thin}}
   ROTATION & RETENTION POLICY
-{thin}
+{{thin}}
   - A new log file is created each day (daily rolling).
   - Log files are kept for 7 days; older files are deleted automatically.
   - File naming: portpane-YYYYMMDD.log
   - Portable mode logs: <exe folder>\PortPane-Data\logs\
   - Standard mode logs: %APPDATA%\ShackDesk\PortPane\logs\
 
-{thin}
+{{thin}}
   LOG LEVEL DEFINITIONS
-{thin}
+{{thin}}
   DBG  Debug    — detailed diagnostic information (device detection, DI setup)
   INF  Info     — normal application events (start, stop, profile switch)
   WRN  Warning  — recoverable problems (settings unreadable, device not in DB)
   ERR  Error    — failures that affect a feature but the app continues running
   FTL  Fatal    — unhandled exceptions that caused the app to close
 
-{thin}
+{{thin}}
   LOG LINE FORMAT
-{thin}
-  YYYY-MM-DD HH:MM:SS.mmm [LVL] Message {{structured properties}}
+{{thin}}
+  YYYY-MM-DD HH:MM:SS.mmm [LVL] Message {structured properties}
   Example:
-  2026-03-23 14:07:42.318 [INF] Audio profile switched {{"From": "PC", "To": "Radio"}}
+  2026-03-23 14:07:42.318 [INF] Audio profile switched {"From": "PC", "To": "Radio"}
 
   Fields:
     YYYY-MM-DD HH:MM:SS.mmm — Timestamp in UTC (see Timestamp Format below)
     [LVL]                   — Log level abbreviation (DBG/INF/WRN/ERR/FTL)
     Message                 — Human-readable event description
-    {{property: value}}      — Structured key-value pairs appended inline
+    {property: value}       — Structured key-value pairs appended inline
 
-{thin}
+{{thin}}
   SOURCE COMPONENT REFERENCE
-{thin}
+{{thin}}
   AudioService      — USB/built-in audio device enumeration, profile switching
   ComPortService    — COM port enumeration via WMI and registry, baud heuristics
   HotplugService    — USB device connect/disconnect detection (WMI event watcher)
@@ -83,9 +84,9 @@ public sealed class LogFileHeaderHooks : FileLifecycleHooks
   MainViewModel     — Main window coordination, chrome/scale/always-on-top state
   App               — Application startup, DI container, global exception handler
 
-{thin}
+{{thin}}
   ABBREVIATIONS
-{thin}
+{{thin}}
   VID    USB Vendor ID  (4 hex chars, e.g. 10C4 = Silicon Labs)
   PID    USB Product ID (4 hex chars, e.g. EA60 = CP2102)
   CODEC  USB Audio CODEC chip (e.g. C-Media CM108, CM119)
@@ -94,25 +95,25 @@ public sealed class LogFileHeaderHooks : FileLifecycleHooks
   WMI    Windows Management Instrumentation — device enumeration API
   DI     Dependency Injection — service container pattern used throughout
 
-{thin}
+{{thin}}
   ENCODED VALUE REFERENCE
-{thin}
+{{thin}}
   Boolean      : logged as true/false in structured properties
   VID / PID    : logged as 4-character uppercase hex (e.g. VID=10C4 PID=EA60)
   Base64        : license key content is never logged in full (truncated to prefix)
   Scale factor  : logged as decimal (e.g. 1.35 = 135% zoom)
   Profile       : "PC" or "Radio" — the two audio routing modes
 
-{thin}
+{{thin}}
   TIMESTAMP FORMAT
-{thin}
+{{thin}}
   All timestamps are UTC. Format: YYYY-MM-DD HH:MM:SS.mmm
   Example: 2026-03-23 14:07:42.318
   To convert to local time, add your UTC offset (e.g. UTC-5 = subtract 5 hours).
 
-{thin}
+{{thin}}
   PRIVACY STATEMENT
-{thin}
+{{thin}}
   What IS in this log:
     - Device names, VID/PID values, COM port assignments
     - Audio device friendly names
@@ -129,9 +130,9 @@ public sealed class LogFileHeaderHooks : FileLifecycleHooks
   This file is stored only on your computer. It is not uploaded automatically.
   If you choose to submit it for support, please review it first.
 
-{thin}
+{{thin}}
   TROUBLESHOOTING GUIDE
-{thin}
+{{thin}}
   Device not recognized (not in the known-device list):
     - Search this log for "VID=" to find the VID:PID values.
     - Open a USB Device Database Addition issue on GitHub with those values.
@@ -155,9 +156,9 @@ public sealed class LogFileHeaderHooks : FileLifecycleHooks
     - The app resets to defaults and saves a fresh settings file.
     - If this happens repeatedly, delete settings.json and restart.
 
-{thin}
+{{thin}}
   SUPPORT SUBMISSION INSTRUCTIONS
-{thin}
+{{thin}}
   To report a bug or request help:
   1. Go to: https://github.com/Computer-Tsu/shackdesk-portpane/issues
   2. Click "New issue" and choose "Bug Report".
@@ -172,9 +173,9 @@ public sealed class LogFileHeaderHooks : FileLifecycleHooks
   For sensitive issues (security vulnerabilities), see SECURITY.md instead.
   Do NOT post license keys or personal information in public issues.
 
-{line}
+{{line}}
   Log entries begin below this line.
-{line}
+{{line}}
 
 """;
     }
