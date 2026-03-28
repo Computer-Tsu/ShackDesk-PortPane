@@ -3,8 +3,8 @@
 ## Supported Versions
 
 | Version     | Supported |
-|------------|-----------|
-| 0.5.x-beta | Yes       |
+|-------------|-----------|
+| 0.5.x-beta  | Yes       |
 
 ## Reporting a Vulnerability
 

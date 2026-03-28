@@ -28,7 +28,7 @@ You do not need to know what VID and PID mean — just follow these steps:
 ## Device Information
 
 | Field             | Your Answer                                     |
-|------------------|-------------------------------------------------|
+|-------------------|---------------------------------------------------|
 | Manufacturer      |                                                 |
 | Product Name      |                                                 |
 | VID (4 hex chars) | e.g. `10C4`                                     |

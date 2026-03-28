@@ -99,7 +99,7 @@ portpane|{type}|{licensee}|{email}|{issued}|{expires}
 | `type`     | `personal`, `club`, or `emcomm`                    |
 | `licensee` | Full name of the licensee                          |
 | `email`    | Email address of the licensee                      |
-| `issued`   | ISO 8601 UTC string, e.g. `2026-03-27T00:00:00Z`  |
+| `issued`   | ISO 8601 UTC string, e.g. `2026-03-27T00:00:00Z`   |
 | `expires`  | ISO 8601 UTC string, or the literal string `never` |
 
 Use empty string for any null/missing field. Values must match the JSON exactly.
@@ -162,7 +162,7 @@ RSA keys do not expire on their own. Rotate the key pair if:
 ### Files to update before tagging
 
 | File | What to change |
-|------|---------------|
+| ------ | ---------------- |
 | `src/PortPane/BrandingInfo.cs` | `Version` constant |
 | `src/PortPane/PortPane.csproj` | `<Version>`, `<FileVersion>`, `<AssemblyVersion>` |
 | `installer/PortPane.iss` | `#define AppVersion` |

@@ -13,7 +13,7 @@ Thank you for your interest in contributing to PortPane by ShackDesk.
 ## Ways to Contribute
 
 | Type | How |
-|------|-----|
+| ------ | ----- |
 | Bug report | Open a [Bug Report issue](.github/ISSUE_TEMPLATE/bug_report.md) |
 | Feature request | Open a [Feature Request issue](.github/ISSUE_TEMPLATE/feature_request.md) |
 | USB device addition | Open a [USB Device issue](.github/ISSUE_TEMPLATE/usb_device_addition.md) or submit a PR editing `data/usb_devices.json` |

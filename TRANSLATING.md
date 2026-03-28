@@ -11,13 +11,13 @@ avoid duplicating work that someone else may already have in progress.
 
 ## Current Languages
 
-| Language              | File                  | Status                          |
-|-----------------------|-----------------------|---------------------------------|
-| English (default)     | `Strings.resx`        | Complete                        |
-| German (Deutsch)      | `Strings.de.resx`     | Partial — help wanted           |
-| Spanish (Español)     | `Strings.es.resx`     | Placeholder — needs translation |
-| French (Français)     | `Strings.fr.resx`     | Placeholder — needs translation |
-| Japanese (日本語)      | `Strings.ja.resx`     | Placeholder — needs translation |
+| Language | File | Status |
+| --- | --- | --- |
+| English (default) | `Strings.resx` | Complete |
+| German (Deutsch) | `Strings.de.resx` | Partial — help wanted |
+| Spanish (Español) | `Strings.es.resx` | Placeholder — needs translation |
+| French (Français) | `Strings.fr.resx` | Placeholder — needs translation |
+| Japanese (日本語) | `Strings.ja.resx` | Placeholder — needs translation |
 
 ---
 
@@ -59,19 +59,19 @@ avoid duplicating work that someone else may already have in progress.
 Use any standard IETF tag — this list is a reference, not a restriction.
 Any language not listed here is equally welcome.
 
-| Code    | Language                        |
-|---------|---------------------------------|
-| `de`    | German (Deutsch)                |
-| `es`    | Spanish (Español)               |
-| `fr`    | French (Français)               |
-| `ja`    | Japanese (日本語)                |
-| `ko`    | Korean (한국어)                  |
-| `zh-CN` | Chinese Simplified (简体中文)    |
-| `zh-TW` | Chinese Traditional (繁體中文)   |
-| `pt-BR` | Portuguese, Brazil              |
-| `pt`    | Portuguese, Portugal            |
-| `it`    | Italian (Italiano)              |
-| `nl`    | Dutch (Nederlands)              |
+| Code | Language |
+| --- | --- |
+| `de` | German (Deutsch) |
+| `es` | Spanish (Español) |
+| `fr` | French (Français) |
+| `ja` | Japanese (日本語) |
+| `ko` | Korean (한국어) |
+| `zh-CN` | Chinese Simplified (简体中文) |
+| `zh-TW` | Chinese Traditional (繁體中文) |
+| `pt-BR` | Portuguese, Brazil |
+| `pt` | Portuguese, Portugal |
+| `it` | Italian (Italiano) |
+| `nl` | Dutch (Nederlands) |
 | `pl`    | Polish (Polski)                 |
 | `sv`    | Swedish (Svenska)               |
 | `fi`    | Finnish (Suomi)                 |

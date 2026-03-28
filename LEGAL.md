@@ -19,7 +19,7 @@ PortPane is not affiliated with, endorsed by, or sponsored by any of these compa
 References are for interoperability and identification purposes only.
 
 | Trademark | Owner |
-|-----------|-------|
+| ----------- | ------- |
 | Icom, IC-7300, IC-705 | Icom Incorporated |
 | Yaesu, SCU-17 | Yaesu Musen Co., Ltd. |
 | Kenwood | Kenwood Corporation |
@@ -46,7 +46,7 @@ are the property of their respective owners.
 ## Third-Party Library Attributions
 
 | Library | License | Copyright | URL |
-|---------|---------|-----------|-----|
+| --------- | --------- | ----------- | ----- |
 | NAudio | MIT | © Mark Heath | [naudio/NAudio](https://github.com/naudio/NAudio) |
 | Serilog | Apache 2.0 | © Serilog contributors | [serilog/serilog](https://github.com/serilog/serilog) |
 | Serilog.Sinks.File | Apache 2.0 | © Serilog contributors | [serilog-sinks-file](https://github.com/serilog/serilog-sinks-file) |

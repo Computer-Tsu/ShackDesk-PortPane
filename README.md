@@ -85,7 +85,7 @@ WSJT-X · Winlink Express · Fldigi · JS8Call · VARA HF · VARA FM · Direwolf
 ## Recognized USB Radio Hardware
 
 | Device | VID:PID | Type |
-|--------|---------|------|
+| -------- | --------- | ------ |
 | Tigertronics SignaLink USB | 08BB:29B0 | Audio |
 | DigiRig (Silicon Labs CP2102) | 10C4:EA60 | Serial |
 | West Mountain Radio RIGblaster | 0403:6A11 | Audio |

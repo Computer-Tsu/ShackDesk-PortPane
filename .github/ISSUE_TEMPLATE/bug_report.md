@@ -35,7 +35,7 @@ What actually happened.
 ## Environment
 
 | Field | Your Answer |
-|-------|------------|
+| ------- | ------------- |
 | PortPane version | (see window title bar or Help → About) |
 | Windows version | (Settings → System → About → "Windows specifications") |
 | USB device name | (brand and model, e.g. "SignaLink USB" or "DigiRig Mobile") |
