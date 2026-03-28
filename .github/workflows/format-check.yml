@@ -28,6 +28,10 @@ name: .NET Format Check
 on:
   pull_request:
     branches: [ main ]
+    paths:
+      - '**/*.cs'
+      - '**/*.csproj'
+      - '.editorconfig'
   workflow_dispatch:    # Manual trigger always present
 
 jobs:

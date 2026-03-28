@@ -26,9 +26,9 @@ name: JSON Data File Validation
 
 on:
   push:
-    paths: [ 'data/**' ]
+    paths: [ 'src/PortPane/Data/**' ]
   pull_request:
-    paths: [ 'data/**' ]
+    paths: [ 'src/PortPane/Data/**' ]
   workflow_dispatch:    # Manual trigger always present
 
 jobs:
@@ -45,7 +45,7 @@ jobs:
           echo "Checking JSON syntax..."
           python3 -c "
           import json, sys
-          with open('data/usb_devices.json', 'r') as f:
+          with open('src/PortPane/Data/usb_devices.json', 'r') as f:
               data = json.load(f)
           print('JSON syntax: OK')
           print(f'Schema version: {data.get(\"version\", \"missing\")}')
@@ -60,7 +60,7 @@ jobs:
           REQUIRED = ['vid', 'pid', 'name', 'type', 'radio_interface', 'baud_hint', 'flow_control', 'notes']
           VALID_TYPES = {'audio', 'serial'}
 
-          with open('data/usb_devices.json', 'r') as f:
+          with open('src/PortPane/Data/usb_devices.json', 'r') as f:
               data = json.load(f)
 
           devices = data.get('devices', [])
@@ -92,10 +92,10 @@ jobs:
         if: always()
         run: |
           echo "### JSON Validation Result" >> $GITHUB_STEP_SUMMARY
-          echo "File: \`data/usb_devices.json\`" >> $GITHUB_STEP_SUMMARY
+          echo "File: \`src/PortPane/Data/usb_devices.json\`" >> $GITHUB_STEP_SUMMARY
           python3 -c "
           import json
-          with open('data/usb_devices.json') as f:
+          with open('src/PortPane/Data/usb_devices.json') as f:
               data = json.load(f)
           count = len(data.get('devices', []))
           print(f'- Device entries: **{count}**')
