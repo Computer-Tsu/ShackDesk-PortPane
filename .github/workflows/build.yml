@@ -203,6 +203,7 @@ jobs:
           path: |
             ./publish/${{ env.APP_EXE }}
             ./publish/${{ env.APP_EXE }}.sha256
+            ./publish/Data/
 
   # ─────────────────────────────────────────────────────────────────────
   installer:

@@ -13,9 +13,12 @@ public sealed class LogFileHeaderHooks : FileLifecycleHooks
 {
     public override Stream OnFileOpened(Stream underlyingStream, Encoding encoding)
     {
-        using var writer = new StreamWriter(underlyingStream, encoding, bufferSize: 4096, leaveOpen: true);
-        writer.WriteLine(BuildHeader());
-        writer.Flush();
+        if (underlyingStream.Length == 0)
+        {
+            using var writer = new StreamWriter(underlyingStream, encoding, bufferSize: 4096, leaveOpen: true);
+            writer.WriteLine(BuildHeader());
+            writer.Flush();
+        }
         return underlyingStream;
     }
 

@@ -35,7 +35,7 @@
 
                 <TextBlock Text="Behavior" Style="{StaticResource SectionHeaderStyle}"/>
                 <!-- Future stubs — disabled per spec -->
-                <CheckBox IsChecked="{Binding AudioNotificationEnabled}"
+                <CheckBox IsChecked="{Binding AudioNotificationEnabled, Mode=OneWay}"
                           IsEnabled="False"
                           Foreground="{StaticResource TextSecondaryBrush}"
                           Margin="0,4,0,4"
