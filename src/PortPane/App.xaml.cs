@@ -16,7 +16,7 @@ namespace PortPane;
 public partial class App : Application
 {
     private const string MutexName = "Global\\PortPane_ShackDesk_SingleInstance";
-    private Mutex?           _mutex;
+    private Mutex? _mutex;
     private ServiceProvider? _serviceProvider;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -36,8 +36,8 @@ public partial class App : Application
         InitLogging(isPortable: File.Exists(Path.Combine(AppContext.BaseDirectory, "portable.txt")));
 
         // ── Global unhandled exception handlers ───────────────────────────────
-        DispatcherUnhandledException                  += OnDispatcherException;
-        AppDomain.CurrentDomain.UnhandledException    += OnDomainException;
+        DispatcherUnhandledException += OnDispatcherException;
+        AppDomain.CurrentDomain.UnhandledException += OnDomainException;
 
         Log.Information("{AppName} {Version} starting. Fingerprint: {FP}",
             BrandingInfo.AppName, BrandingInfo.Version, Attribution.Fingerprint);
@@ -73,7 +73,7 @@ public partial class App : Application
         _ = Task.Run(async () =>
         {
             var updateSvc = _serviceProvider.GetRequiredService<IUpdateService>();
-            var info      = await updateSvc.CheckForUpdateAsync();
+            var info = await updateSvc.CheckForUpdateAsync();
             if (info is not null)
             {
                 Dispatcher.Invoke(() =>
@@ -122,13 +122,13 @@ public partial class App : Application
         });
 
         // Core services
-        services.AddSingleton<IAudioService,    AudioService>();
-        services.AddSingleton<IComPortService,  ComPortService>();
-        services.AddSingleton<IHotplugService,  HotplugService>();
+        services.AddSingleton<IAudioService, AudioService>();
+        services.AddSingleton<IComPortService, ComPortService>();
+        services.AddSingleton<IHotplugService, HotplugService>();
         services.AddSingleton<ITelemetryService, TelemetryService>();
-        services.AddSingleton<IUpdateService,   UpdateService>();
-        services.AddSingleton<ILicenseService,  LicenseService>();
-        services.AddSingleton<IPuttyService,    PuttyService>();
+        services.AddSingleton<IUpdateService, UpdateService>();
+        services.AddSingleton<ILicenseService, LicenseService>();
+        services.AddSingleton<IPuttyService, PuttyService>();
 
         // ViewModels
         services.AddSingleton<MainViewModel>();

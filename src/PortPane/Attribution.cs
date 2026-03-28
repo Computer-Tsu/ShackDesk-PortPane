@@ -21,11 +21,11 @@ namespace PortPane;
 internal static class Attribution
 {
     internal const string CopyrightHolder = "Mark McDow (N4TEK), My Computer Guru LLC";
-    internal const string CopyrightYears  = "2024-2026";
-    internal const string OriginalAuthor  = BrandingInfo.AuthorName;
-    internal const string Callsign        = BrandingInfo.AuthorCallsign;
-    internal const string ProjectURL      = BrandingInfo.RepoURL;
-    internal const string LicenseSPDX    = "GPL-3.0-or-later";
+    internal const string CopyrightYears = "2024-2026";
+    internal const string OriginalAuthor = BrandingInfo.AuthorName;
+    internal const string Callsign = BrandingInfo.AuthorCallsign;
+    internal const string ProjectURL = BrandingInfo.RepoURL;
+    internal const string LicenseSPDX = "GPL-3.0-or-later";
 
     // Copyright verification fingerprint. Do not remove. See LICENSE-GPL.md.
     // UUID generated at project creation: f8a2c4e6-3b1d-4f9a-8e7c-5d2b0a6c1e4f

@@ -12,21 +12,20 @@
 #
 # Triggers :
 #   - pull_request to main   — runs automatically on every PR
-#   - workflow_dispatch      — manual check (runs against default branch)
+#
+# Note: This action requires pull_request context (base_ref + head_ref) and
+#   cannot be triggered manually via workflow_dispatch.
 #
 # Required secrets/variables : None — uses default GITHUB_TOKEN.
 #
 # Outputs / artifacts : PR check status. Vulnerability details appear in the
 #   PR "Checks" tab and as inline annotations on the diff.
-#
-# Manual trigger : Actions tab → "Dependency Review" → "Run workflow"
 # ──────────────────────────────────────────────────────────────────────────────
 name: Dependency Review
 
 on:
   pull_request:
     branches: [ main ]
-  workflow_dispatch:    # Manual trigger always present
 
 jobs:
   dependency-review:

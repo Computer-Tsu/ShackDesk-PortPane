@@ -72,23 +72,23 @@ Any language not listed here is equally welcome.
 | `pt` | Portuguese, Portugal |
 | `it` | Italian (Italiano) |
 | `nl` | Dutch (Nederlands) |
-| `pl`    | Polish (Polski)                 |
-| `sv`    | Swedish (Svenska)               |
-| `fi`    | Finnish (Suomi)                 |
-| `no`    | Norwegian (Norsk)               |
-| `da`    | Danish (Dansk)                  |
-| `ru`    | Russian (Русский)               |
-| `ar`    | Arabic (العربية)                |
-| `he`    | Hebrew (עברית)                  |
-| `tr`    | Turkish (Türkçe)                |
-| `cs`    | Czech (Čeština)                 |
-| `hu`    | Hungarian (Magyar)              |
-| `ro`    | Romanian (Română)               |
-| `uk`    | Ukrainian (Українська)          |
-| `el`    | Greek (Ελληνικά)                |
-| `id`    | Indonesian (Bahasa Indonesia)   |
-| `th`    | Thai (ภาษาไทย)                  |
-| `vi`    | Vietnamese (Tiếng Việt)         |
+| `pl` | Polish (Polski) |
+| `sv` | Swedish (Svenska) |
+| `fi` | Finnish (Suomi) |
+| `no` | Norwegian (Norsk) |
+| `da` | Danish (Dansk) |
+| `ru` | Russian (Русский) |
+| `ar` | Arabic (العربية) |
+| `he` | Hebrew (עברית) |
+| `tr` | Turkish (Türkçe) |
+| `cs` | Czech (Čeština) |
+| `hu` | Hungarian (Magyar) |
+| `ro` | Romanian (Română) |
+| `uk` | Ukrainian (Українська) |
+| `el` | Greek (Ελληνικά) |
+| `id` | Indonesian (Bahasa Indonesia) |
+| `th` | Thai (ภาษาไทย) |
+| `vi` | Vietnamese (Tiếng Việt) |
 
 Not listed? Your language is still welcome. Use the correct IETF tag and follow
 the same contribution steps above.
