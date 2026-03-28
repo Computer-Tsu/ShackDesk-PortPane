@@ -145,7 +145,7 @@ public sealed class MainViewModel : ViewModelBase
         if (_pendingUpdate is null) return;
         try
         {
-            var updateSvc = App.Current.MainWindow?.DataContext is MainViewModel
+            object? updateSvc = App.Current.MainWindow?.DataContext is MainViewModel
                 ? null : null; // resolved via DI by caller
             // The update service is invoked from the view (Apply button) — resolved via DI in view
         }

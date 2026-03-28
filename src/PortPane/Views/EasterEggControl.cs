@@ -134,7 +134,7 @@ public sealed class EasterEggControl : Canvas
                 var tb = new TextBlock
                 {
                     Text       = chars[_rng.Next(chars.Length)].ToString(),
-                    Foreground = new SolidColorBrush(Color.FromRgb(0, (byte)Math.Max(g, 0), 0)),
+                    Foreground = new SolidColorBrush(Color.FromRgb(0, (byte)Math.Max(g, (byte)0), 0)),
                     FontFamily = new FontFamily("Consolas"),
                     FontSize   = 11
                 };
