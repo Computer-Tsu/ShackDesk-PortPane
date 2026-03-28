@@ -46,7 +46,6 @@
         <Setter Property="FontWeight"   Value="SemiBold"/>
         <Setter Property="Foreground"   Value="{StaticResource TextSecondaryBrush}"/>
         <Setter Property="Margin"       Value="0,8,0,3"/>
-        <Setter Property="TextTransform" Value="Uppercase"/>
     </Style>
 
     <Style x:Key="DefaultDeviceLabelStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyStyle}">

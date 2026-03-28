@@ -42,7 +42,7 @@
     <PackageReference Include="Serilog"                                   Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File"                        Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.RollingFile"                 Version="3.3.0" />
-    <PackageReference Include="Velopack"                                   Version="0.0.878" />
+    <PackageReference Include="Velopack"                                   Version="0.0.915" />
   </ItemGroup>
 
   <ItemGroup>

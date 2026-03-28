@@ -269,7 +269,7 @@
                         <ItemsControl ItemsSource="{Binding ComPorts.Ports}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Style="{StaticResource DeviceCardStyle}">
+                                    <Border>
                                         <Border.Style>
                                             <Style TargetType="Border" BasedOn="{StaticResource DeviceCardStyle}">
                                                 <Style.Triggers>
