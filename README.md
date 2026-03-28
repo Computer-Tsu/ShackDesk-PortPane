@@ -12,6 +12,10 @@ Device Manager.
 [![Build](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE-GPL.md)
 [![Version](https://img.shields.io/badge/version-0.5.1--beta-orange)](CHANGELOG.md)
+[![Last Commit](https://img.shields.io/github/last-commit/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane/commits/main)
+[![Repo Size](https://img.shields.io/github/repo-size/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane)
+[![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078D4?logo=windows)](https://github.com/Computer-Tsu/shackdesk-portpane)
 
 ---
 
