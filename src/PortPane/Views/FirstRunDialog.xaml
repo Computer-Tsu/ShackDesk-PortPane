@@ -67,7 +67,8 @@
                           IsChecked="False"
                           Margin="0,0,0,6"
                           ToolTip="Help improve PortPane by sharing anonymous device detection data. No personal information is collected.">
-                    Help improve PortPane by sharing anonymous device detection reports
+                    <TextBlock TextWrapping="Wrap"
+                               Text="Help improve PortPane by sharing anonymous device detection reports"/>
                 </CheckBox>
                 <TextBlock Foreground="{StaticResource TextSecondaryBrush}"
                            FontSize="11" TextWrapping="Wrap"

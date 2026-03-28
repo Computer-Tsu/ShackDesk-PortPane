@@ -53,6 +53,11 @@ public partial class App : Application
         base.OnStartup(e);
 
         // ── First run dialog ──────────────────────────────────────────────────
+        // ShutdownMode must be OnExplicitShutdown while the dialog is open;
+        // with the default OnLastWindowClose, closing the dialog before MainWindow
+        // is visible causes WPF to shut down the application immediately.
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
         var settingsSvc = _serviceProvider.GetRequiredService<ISettingsService>();
         if (!settingsSvc.Current.FirstRunComplete)
         {
@@ -62,6 +67,7 @@ public partial class App : Application
         // ── Main window ───────────────────────────────────────────────────────
         MainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         MainWindow.Show();
+        ShutdownMode = ShutdownMode.OnMainWindowClose;
 
         // ── Background: update check ──────────────────────────────────────────
         _ = Task.Run(async () =>

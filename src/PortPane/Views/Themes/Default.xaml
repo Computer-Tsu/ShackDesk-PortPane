@@ -225,13 +225,25 @@
 
     <!-- ═══════════════════════════════════════════════════════════════
          MENU (revealed chrome)
+         WPF's built-in MenuItem ControlTemplate reads SystemColors for
+         popup backgrounds. Override those keys here so dropdown menus
+         use the app's dark palette instead of the Windows system theme.
     ══════════════════════════════════════════════════════════════════ -->
+
+    <!-- System color overrides consumed by the default MenuItem template -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}"          Color="#2C2C2E"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}"        Color="#111113"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}"       Color="#EBEBF5"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuHighlightBrushKey}"  Color="#0A84FF"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"      Color="#0A84FF"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"  Color="White"/>
 
     <Style TargetType="Menu">
         <Setter Property="Background" Value="{StaticResource ChromeBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
     </Style>
     <Style TargetType="MenuItem">
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
     </Style>
 
