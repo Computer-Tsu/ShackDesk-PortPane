@@ -11,10 +11,12 @@
 #            artifacts when a version tag is pushed.
 #
 # Triggers :
-#   - push to main           — run tests, publish exe artifact
-#   - push of v* tag         — publish + build installer + create GitHub Release
-#   - pull_request to main   — run tests only (no publish)
-#   - workflow_dispatch      — manual run, follows same path as push to main
+#   - push to main                   — build, run tests, publish exe artifact
+#   - push of v* tag                 — publish + build installer + create GitHub Release
+#   - pull_request to main           — build and run tests only (no publish)
+#   - workflow_dispatch (manual)     — always builds; two optional inputs:
+#       skip_tests:       skip xUnit tests (useful when you just need a compile check)
+#       publish_artifact: upload PortPane.exe artifact even without a tag/push to main
 #
 # Required secrets/variables : None for build/test. GitHub token is provided
 #   automatically by Actions for the release job (contents: write permission).
@@ -37,7 +39,18 @@ on:
     tags:     [ 'v*' ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:          # Manual trigger always present
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip xUnit tests (build only — useful for compile check)'
+        required: false
+        default: false
+        type: boolean
+      publish_artifact:
+        description: 'Upload PortPane.exe artifact (even without a tag)'
+        required: false
+        default: false
+        type: boolean
 
 env:
   DOTNET_VERSION:   '8.0.x'
@@ -71,6 +84,7 @@ jobs:
         run: dotnet build ${{ env.SOLUTION }} --configuration Debug --no-restore
 
       - name: Run xUnit tests
+        if: ${{ !inputs.skip_tests }}
         run: >
           dotnet test ${{ env.TEST_PROJECT }}
           --configuration Debug
@@ -81,7 +95,7 @@ jobs:
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ !inputs.skip_tests && always() }}
         with:
           name: test-results-${{ github.sha }}
           path: ./TestResults/*.trx
@@ -93,7 +107,9 @@ jobs:
     needs: build-and-test
     if: >
       github.event_name != 'pull_request' &&
-      (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+      (github.ref == 'refs/heads/main' ||
+       startsWith(github.ref, 'refs/tags/v') ||
+       (github.event_name == 'workflow_dispatch' && inputs.publish_artifact))
 
     outputs:
       sha256: ${{ steps.hash.outputs.sha256 }}

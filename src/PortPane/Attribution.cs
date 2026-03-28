@@ -6,6 +6,11 @@
 // It is intentionally retained in all distributions, including commercial builds.
 // Removal or modification of this file constitutes a violation of the license terms.
 
+using System.Runtime.CompilerServices;
+
+// Allow the unit test project to access internal members (Attribution, etc.)
+[assembly: InternalsVisibleTo("PortPane.Tests")]
+
 namespace PortPane;
 
 /// <summary>
