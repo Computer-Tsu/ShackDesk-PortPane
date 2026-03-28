@@ -14,8 +14,9 @@ public interface ILicenseService
 }
 
 /// <summary>
-/// Parsed license details. Signature, Issued, and ExpiresRaw are retained
-/// from the raw JSON so VerifySignature can reconstruct the exact signable payload.
+/// Parsed license details. Signature, Issued, ExpiresRaw, and VersionMax are
+/// retained from the raw JSON so VerifySignature can reconstruct the exact
+/// signable payload.
 /// </summary>
 public sealed record LicenseInfo(
     LicenseTier     Tier,
@@ -26,6 +27,7 @@ public sealed record LicenseInfo(
     bool            IsValid,
     string?         Issued     = null,   // raw ISO 8601 string from JSON
     string?         ExpiresRaw = null,   // raw string from JSON ("never" or ISO 8601)
+    string?         VersionMax = null,   // raw string from JSON (e.g. "0.6", "1.0", or null)
     string?         Signature  = null);  // base64 RSA-SHA256-PKCS1 signature
 
 public enum LicenseTier { Free, Personal, Club, EmComm }
@@ -48,34 +50,35 @@ public sealed class LicenseService : ILicenseService
     // The payload signed by the private key is a pipe-delimited string built
     // from these fields in this exact order:
     //
-    //   portpane|{type}|{licensee}|{email}|{issued}|{expires}
+    //   portpane|{type}|{licensee}|{email}|{issued}|{expires}|{version_max}
     //
     // Rules:
     //   - All values are the exact strings from the license JSON (no reformatting)
-    //   - {type}     : "personal", "club", or "emcomm"
-    //   - {licensee} : licensee name
-    //   - {email}    : licensee email
-    //   - {issued}   : ISO 8601 UTC string, e.g. "2026-03-27T00:00:00Z"
-    //   - {expires}  : ISO 8601 UTC string, or the literal string "never"
-    //   - Null/missing fields use an empty string
+    //   - {type}        : "personal", "club", or "emcomm"
+    //   - {licensee}    : licensee name
+    //   - {email}       : licensee email
+    //   - {issued}      : ISO 8601 UTC string, e.g. "2026-03-28T00:00:00Z"
+    //   - {expires}     : ISO 8601 UTC string, or the literal string "never"
+    //   - {version_max} : version ceiling string (e.g. "0.6"), or "" if absent
+    //   - Null/missing fields use an empty string in the payload
     //
-    // Signing (in your key generator):
+    // Signing (in your key generator / New-License.ps1):
     //   using var rsa  = RSA.Create();
-    //   rsa.FromXmlString(privateKeyXml);  // RSA_LICENSE_PRIVATE_KEY from GitHub Secrets
-    //   string payload = $"portpane|{type}|{licensee}|{email}|{issued}|{expires}";
+    //   rsa.ImportFromPem(privateKeyPem);
+    //   string payload = $"portpane|{type}|{licensee}|{email}|{issued}|{expires}|{versionMax}";
     //   byte[] data    = Encoding.UTF8.GetBytes(payload);
     //   byte[] sig     = rsa.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
     //   string sigB64  = Convert.ToBase64String(sig);
     //
-    // License key format (what gets base64-encoded and handed to the user):
+    // License key format (JSON before base64 encoding):
     //   {
     //     "app":         "portpane",
     //     "type":        "personal" | "club" | "emcomm",
     //     "licensee":    "Full Name",
     //     "email":       "user@example.com",
-    //     "issued":      "2026-03-27T00:00:00Z",
-    //     "expires":     "2027-03-27T00:00:00Z"  (or "never"),
-    //     "version_max": "1.x"                   (optional, informational),
+    //     "issued":      "2026-03-28T00:00:00Z",
+    //     "expires":     "2027-03-28T00:00:00Z"  (or "never"),
+    //     "version_max": "0.6"                   (optional; omit for no ceiling),
     //     "signature":   "<base64 RSA-SHA256-PKCS1 signature of payload above>"
     //   }
     //   Final key = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerialize(above)))
@@ -108,9 +111,20 @@ public sealed class LicenseService : ILicenseService
             Log.Warning("License activation failed: invalid signature");
             return false;
         }
+        if (info.ExpiresAt.HasValue && info.ExpiresAt.Value < DateTimeOffset.UtcNow)
+        {
+            Log.Warning("License activation failed: key expired on {Date}", info.ExpiresAt);
+            return false;
+        }
+        if (!IsVersionAllowed(info.VersionMax))
+        {
+            Log.Warning("License activation failed: version ceiling {Max} already reached", info.VersionMax);
+            return false;
+        }
         _current = info;
         PersistToDisk(licenseKey);
-        Log.Information("License activated: {Tier} for {Licensee}", info.Tier, info.Licensee);
+        Log.Information("License activated: {Tier} for {Licensee} (expires: {Exp}, version_max: {Max})",
+            info.Tier, info.Licensee, info.ExpiresRaw ?? "never", info.VersionMax ?? "none");
         return true;
     }
 
@@ -128,7 +142,54 @@ public sealed class LicenseService : ILicenseService
         return true;
     }
 
-    // ── Internal ──────────────────────────────────────────────────────────────
+    // ── Internal (accessible to PortPane.Tests via InternalsVisibleTo) ────────
+
+    /// <summary>
+    /// Returns true if the running app version is within the license's version ceiling.
+    /// version_max="0.6" means valid for any 0.6.x and below; invalid at 0.7.0+.
+    /// Comparison strips pre-release suffixes (e.g. "0.5.1-beta" → "0.5.1").
+    /// Precision is determined by version_max: "0.6" compares major.minor only.
+    /// </summary>
+    internal static bool IsVersionAllowed(string? versionMax)
+    {
+        if (string.IsNullOrWhiteSpace(versionMax)) return true;
+
+        // Strip pre-release suffix from the running app version
+        string appVer = BrandingInfo.Version;
+        int dash = appVer.IndexOf('-');
+        if (dash >= 0) appVer = appVer[..dash];
+
+        if (!TryParseVersionParts(appVer,    out int[] appParts)) return true;
+        if (!TryParseVersionParts(versionMax, out int[] maxParts)) return true;
+
+        // Compare only to the precision stated in version_max.
+        // If all compared parts are equal, the app is within the ceiling.
+        for (int i = 0; i < maxParts.Length; i++)
+        {
+            int a = i < appParts.Length ? appParts[i] : 0;
+            if (a < maxParts[i]) return true;  // clearly below ceiling
+            if (a > maxParts[i]) return false; // clearly above ceiling
+            // equal so far — continue to next component
+        }
+        return true; // all compared parts equal → within ceiling
+    }
+
+    internal static bool TryParseVersionParts(string version, out int[] parts)
+    {
+        parts = [];
+        string[] segments = version.Trim().Split('.');
+        var result = new List<int>();
+        foreach (string seg in segments)
+        {
+            if (!int.TryParse(seg, out int n)) { parts = []; return false; }
+            result.Add(n);
+        }
+        if (result.Count == 0) return false;
+        parts = [.. result];
+        return true;
+    }
+
+    // ── Private ───────────────────────────────────────────────────────────────
 
     private static LicenseInfo FreeTier()
         => new(LicenseTier.Free, null, null, null, null, IsValid: true);
@@ -168,7 +229,14 @@ public sealed class LicenseService : ILicenseService
                 return FreeTier();
             }
 
-            Log.Information("License loaded: {Tier} for {Licensee}", info.Tier, info.Licensee);
+            if (!IsVersionAllowed(info.VersionMax))
+            {
+                Log.Warning("License version ceiling reached ({Max}); reverting to Free tier", info.VersionMax);
+                return FreeTier();
+            }
+
+            Log.Information("License loaded: {Tier} for {Licensee} (expires: {Exp}, version_max: {Max})",
+                info.Tier, info.Licensee, info.ExpiresRaw ?? "never", info.VersionMax ?? "none");
             return info;
         }
         catch (Exception ex)
@@ -194,12 +262,13 @@ public sealed class LicenseService : ILicenseService
                 || !appProp.GetString()!.Equals("portpane", StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            string? licensee   = root.TryGetProperty("licensee",  out var l)   ? l.GetString()   : null;
-            string? email      = root.TryGetProperty("email",     out var e)   ? e.GetString()   : null;
-            string? type       = root.TryGetProperty("type",      out var t)   ? t.GetString()   : null;
-            string? expires    = root.TryGetProperty("expires",   out var ex)  ? ex.GetString()  : null;
-            string? issued     = root.TryGetProperty("issued",    out var iss) ? iss.GetString() : null;
-            string? signature  = root.TryGetProperty("signature", out var sig) ? sig.GetString() : null;
+            string? licensee   = root.TryGetProperty("licensee",    out var l)   ? l.GetString()   : null;
+            string? email      = root.TryGetProperty("email",       out var e)   ? e.GetString()   : null;
+            string? type       = root.TryGetProperty("type",        out var t)   ? t.GetString()   : null;
+            string? expires    = root.TryGetProperty("expires",     out var ex)  ? ex.GetString()  : null;
+            string? issued     = root.TryGetProperty("issued",      out var iss) ? iss.GetString() : null;
+            string? versionMax = root.TryGetProperty("version_max", out var vm)  ? vm.GetString()  : null;
+            string? signature  = root.TryGetProperty("signature",   out var sig) ? sig.GetString() : null;
 
             LicenseTier tier = type?.ToLowerInvariant() switch
             {
@@ -214,15 +283,16 @@ public sealed class LicenseService : ILicenseService
                 expiresAt = DateTimeOffset.Parse(expires);
 
             return new LicenseInfo(
-                Tier:       tier,
-                Licensee:   licensee,
-                Email:      email,
+                Tier:        tier,
+                Licensee:    licensee,
+                Email:       email,
                 LicenseType: type,
-                ExpiresAt:  expiresAt,
-                IsValid:    true,
-                Issued:     issued,
-                ExpiresRaw: expires,
-                Signature:  signature);
+                ExpiresAt:   expiresAt,
+                IsValid:     true,
+                Issued:      issued,
+                ExpiresRaw:  expires,
+                VersionMax:  versionMax,
+                Signature:   signature);
         }
         catch
         {
@@ -232,7 +302,7 @@ public sealed class LicenseService : ILicenseService
 
     /// <summary>
     /// Verifies the RSA-SHA256-PKCS1 signature on a parsed license.
-    /// The signable payload is: portpane|{type}|{licensee}|{email}|{issued}|{expires}
+    /// Payload: portpane|{type}|{licensee}|{email}|{issued}|{expires}|{version_max}
     /// See the format comment near PublicKeyXml for full details.
     /// </summary>
     private static bool VerifySignature(LicenseInfo info)
@@ -272,7 +342,8 @@ public sealed class LicenseService : ILicenseService
             info.Licensee    ?? "",
             info.Email       ?? "",
             info.Issued      ?? "",
-            info.ExpiresRaw  ?? "");
+            info.ExpiresRaw  ?? "",
+            info.VersionMax  ?? "");
 
     private void PersistToDisk(string licenseKey)
     {

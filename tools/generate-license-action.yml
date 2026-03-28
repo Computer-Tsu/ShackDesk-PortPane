@@ -1,0 +1,150 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# PortPane License Generator — GitHub Actions Workflow
+#
+# !! WHERE THIS FILE BELONGS !!
+# This file must be placed in a PRIVATE repository, not in the public PortPane
+# repo. In a public repo, workflow run inputs (licensee name, email) and
+# artifacts are visible to anyone. GitHub artifacts are not truly private on
+# public repos even with authentication.
+#
+# Recommended setup:
+#   1. Create a private repo, e.g. Computer-Tsu/ShackDesk-Admin
+#   2. Copy this file to: .github/workflows/generate-license.yml
+#   3. Add the RSA_LICENSE_PRIVATE_KEY secret to that private repo
+#      (Settings → Secrets and variables → Actions → New repository secret)
+#   4. Trigger from: Actions tab → Generate PortPane License → Run workflow
+#
+# The generated .portpane artifact is retained for 7 days, then auto-deleted.
+# Download it immediately after the run and send it to the licensee.
+#
+# Required secrets (in the PRIVATE repo):
+#   RSA_LICENSE_PRIVATE_KEY — PEM-encoded RSA-2048 private key
+#                             (-----BEGIN PRIVATE KEY----- or RSA PRIVATE KEY)
+#
+# Triggers: workflow_dispatch only — manual, write access required.
+# ──────────────────────────────────────────────────────────────────────────────
+name: Generate PortPane License
+
+on:
+  workflow_dispatch:
+    inputs:
+      licensee:
+        description: 'Full name of licensee (person or organization)'
+        required: true
+        type: string
+      email:
+        description: 'Licensee email address'
+        required: true
+        type: string
+      tier:
+        description: 'License tier'
+        required: true
+        default: 'personal'
+        type: choice
+        options:
+          - personal
+          - club
+          - emcomm
+      expires:
+        description: 'Expiry date (YYYY-MM-DD) or "never"'
+        required: true
+        default: 'never'
+        type: string
+      version_max:
+        description: 'Max app version (e.g. "0.6", "1.0") — leave blank for no ceiling'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  generate:
+    name: Generate License
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate license key
+        id: generate
+        shell: pwsh
+        env:
+          PRIVATE_KEY_PEM: ${{ secrets.RSA_LICENSE_PRIVATE_KEY }}
+        run: |
+          $licensee   = '${{ inputs.licensee }}'
+          $email      = '${{ inputs.email }}'
+          $tier       = '${{ inputs.tier }}'
+          $expires    = '${{ inputs.expires }}'
+          $versionMax = '${{ inputs.version_max }}'
+
+          # ── Import private key ─────────────────────────────────────────────
+          $pemContent = $env:PRIVATE_KEY_PEM
+          if (-not $pemContent) {
+              Write-Error 'RSA_LICENSE_PRIVATE_KEY secret is not set'
+          }
+          $rsa = [System.Security.Cryptography.RSA]::Create()
+          $rsa.ImportFromPem($pemContent)
+
+          # ── Build dates ────────────────────────────────────────────────────
+          $issued = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+          $expiresValue = if ($expires -eq 'never') {
+              'never'
+          } else {
+              [datetime]::Parse($expires).ToUniversalTime().ToString('yyyy-MM-ddT00:00:00Z')
+          }
+
+          # ── Build and sign payload ─────────────────────────────────────────
+          # portpane|{type}|{licensee}|{email}|{issued}|{expires}|{version_max}
+          $payload      = "portpane|$tier|$licensee|$email|$issued|$expiresValue|$versionMax"
+          $payloadBytes = [System.Text.Encoding]::UTF8.GetBytes($payload)
+          $sigBytes     = $rsa.SignData(
+              $payloadBytes,
+              [System.Security.Cryptography.HashAlgorithmName]::SHA256,
+              [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
+          $signature = [Convert]::ToBase64String($sigBytes)
+          $rsa.Dispose()
+
+          # ── Build license JSON ─────────────────────────────────────────────
+          $licenseObj = [ordered]@{
+              app       = 'portpane'
+              type      = $tier
+              licensee  = $licensee
+              email     = $email
+              issued    = $issued
+              expires   = $expiresValue
+              signature = $signature
+          }
+          if ($versionMax) { $licenseObj['version_max'] = $versionMax }
+
+          $json    = $licenseObj | ConvertTo-Json -Compress -Depth 2
+          $keyData = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))
+
+          # ── Write artifact file ────────────────────────────────────────────
+          $safeName = $licensee -replace '[^a-zA-Z0-9_\-]', '_'
+          $outFile  = "$safeName.portpane"
+          $keyData | Out-File -FilePath $outFile -Encoding ascii -NoNewline
+
+          echo "outfile=$outFile" >> $env:GITHUB_OUTPUT
+
+          # ── Write job summary (visible only to repo members) ───────────────
+          $vmDisplay = if ($versionMax) { $versionMax } else { 'none (all versions)' }
+          @"
+          ## License Generated
+
+          | Field | Value |
+          |---|---|
+          | Tier | $tier |
+          | Licensee | $licensee |
+          | Email | $email |
+          | Issued | $issued |
+          | Expires | $expiresValue |
+          | Version max | $vmDisplay |
+          | File | ``$outFile`` |
+
+          Download the artifact below. Send the ``.portpane`` file to the licensee.
+          **This artifact is retained for 7 days, then deleted automatically.**
+          "@ >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Upload license artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-${{ inputs.tier }}-${{ github.run_number }}
+          path: ${{ steps.generate.outputs.outfile }}
+          retention-days: 7
