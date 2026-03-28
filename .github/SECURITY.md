@@ -22,3 +22,8 @@ Include:
 
 You will receive a response within 7 days.
 Critical vulnerabilities will be patched and released as a priority.
+
+## Key Rotation
+
+If you believe the RSA license signing key has been compromised, contact the maintainer
+immediately via the channel above. See [MAINTENANCE.md](../MAINTENANCE.md#2-key-rotation).

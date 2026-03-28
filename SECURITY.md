@@ -33,3 +33,9 @@ It writes only to `%LOCALAPPDATA%\ShackDesk\PortPane\` and the system clipboard.
 
 - Issues in third-party NuGet dependencies (report to those upstream projects)
 - Issues requiring physical access to the machine
+
+## Key Rotation
+
+If you believe the RSA license signing key has been compromised, contact the maintainer
+immediately via the reporting channel above. Key rotation procedure is documented in
+[MAINTENANCE.md](MAINTENANCE.md#2-key-rotation).

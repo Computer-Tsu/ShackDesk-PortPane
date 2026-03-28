@@ -13,27 +13,72 @@ public interface ILicenseService
     bool        IsFeatureAvailable(string featureKey);
 }
 
+/// <summary>
+/// Parsed license details. Signature, Issued, and ExpiresRaw are retained
+/// from the raw JSON so VerifySignature can reconstruct the exact signable payload.
+/// </summary>
 public sealed record LicenseInfo(
-    LicenseTier Tier,
-    string?     Licensee,
-    string?     Email,
-    string?     LicenseType,
+    LicenseTier     Tier,
+    string?         Licensee,
+    string?         Email,
+    string?         LicenseType,
     DateTimeOffset? ExpiresAt,
-    bool        IsValid);
+    bool            IsValid,
+    string?         Issued     = null,   // raw ISO 8601 string from JSON
+    string?         ExpiresRaw = null,   // raw string from JSON ("never" or ISO 8601)
+    string?         Signature  = null);  // base64 RSA-SHA256-PKCS1 signature
 
 public enum LicenseTier { Free, Personal, Club, EmComm }
 
 public sealed class LicenseService : ILicenseService
 {
-    // ── RSA Public Key ────────────────────────────────────────────────────────
-    // Replace this with the actual 2048-bit RSA public key before v1.0 release.
-    // The corresponding private key must NEVER appear in source or binary.
-    // Key generation: openssl genrsa -out private.pem 2048 && openssl rsa -pubout -in private.pem -out public.pem
-    private const string PublicKeyPem = """
-        -----BEGIN PUBLIC KEY-----
-        PLACEHOLDER_REPLACE_WITH_ACTUAL_RSA_PUBLIC_KEY_BEFORE_RELEASE
-        -----END PUBLIC KEY-----
-        """;
+    // ── RSA Public Key (XML format) ───────────────────────────────────────────
+    // This is the PUBLIC half of the RSA-2048 key pair used to verify license
+    // key signatures. It is safe to embed here — it cannot be used to generate
+    // or forge keys. Only the private key (stored in GitHub Secrets, never in
+    // source) can create valid signatures.
+    // Key setup, rotation procedure, and signing format: see MAINTENANCE.md § 1-2
+    private const string PublicKeyXml =
+        "<RSAKeyValue>" +
+        "<Modulus>vpfgPKk/y+nJhQdiIVBX5u9xZOBwcRn/GyqijBEczgoBWF0+4W4AbdBggljSWP0r7EHKZnOd3CZpOWPLMXfUhS3zYGEKzrXcdquWMFDZZ2tV09YoaEux1mTH2slxprt97WwYpN45XTRHPtOBDXaoXK/DCAtdG7gyNVC7P4MGGAd/XlxcR8PtvEV7KcFmCUZSmNYjcSkBtwN/IOQLXvFj2Ll67PK1H7NwaqHIqmYjmnq/xlTW3IT7do+6AiH4zfwEhuDd3B0wYDohHy4iErACJujdK+BSnNGkYu58+CveNQyWG7L+e0D9g3y8iOCyQ1EBerEz4JZsagELaxcNVsMPEQ==</Modulus>" +
+        "<Exponent>AQAB</Exponent>" +
+        "</RSAKeyValue>";
+
+    // ── Signable payload format ───────────────────────────────────────────────
+    // The payload signed by the private key is a pipe-delimited string built
+    // from these fields in this exact order:
+    //
+    //   portpane|{type}|{licensee}|{email}|{issued}|{expires}
+    //
+    // Rules:
+    //   - All values are the exact strings from the license JSON (no reformatting)
+    //   - {type}     : "personal", "club", or "emcomm"
+    //   - {licensee} : licensee name
+    //   - {email}    : licensee email
+    //   - {issued}   : ISO 8601 UTC string, e.g. "2026-03-27T00:00:00Z"
+    //   - {expires}  : ISO 8601 UTC string, or the literal string "never"
+    //   - Null/missing fields use an empty string
+    //
+    // Signing (in your key generator):
+    //   using var rsa  = RSA.Create();
+    //   rsa.FromXmlString(privateKeyXml);  // RSA_LICENSE_PRIVATE_KEY from GitHub Secrets
+    //   string payload = $"portpane|{type}|{licensee}|{email}|{issued}|{expires}";
+    //   byte[] data    = Encoding.UTF8.GetBytes(payload);
+    //   byte[] sig     = rsa.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+    //   string sigB64  = Convert.ToBase64String(sig);
+    //
+    // License key format (what gets base64-encoded and handed to the user):
+    //   {
+    //     "app":         "portpane",
+    //     "type":        "personal" | "club" | "emcomm",
+    //     "licensee":    "Full Name",
+    //     "email":       "user@example.com",
+    //     "issued":      "2026-03-27T00:00:00Z",
+    //     "expires":     "2027-03-27T00:00:00Z"  (or "never"),
+    //     "version_max": "1.x"                   (optional, informational),
+    //     "signature":   "<base64 RSA-SHA256-PKCS1 signature of payload above>"
+    //   }
+    //   Final key = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerialize(above)))
 
     private static readonly string LicenseFilePath = LicensePath();
     private static readonly string HashFilePath     = LicensePath() + ".sha256";
@@ -135,8 +180,7 @@ public sealed class LicenseService : ILicenseService
 
     /// <summary>
     /// Parses a base64-encoded signed JSON license key.
-    /// Format: base64({ "licensee":"...", "email":"...", "type":"...", "app":"portpane",
-    ///                   "issued":"...", "expires":"...", "version_max":"...", "signature":"..." })
+    /// See the signable payload format comment above for the full JSON schema.
     /// </summary>
     private static LicenseInfo? TryParse(string licenseKey)
     {
@@ -150,24 +194,35 @@ public sealed class LicenseService : ILicenseService
                 || !appProp.GetString()!.Equals("portpane", StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            string?         licensee = root.TryGetProperty("licensee",  out var l) ? l.GetString() : null;
-            string?         email    = root.TryGetProperty("email",     out var e) ? e.GetString() : null;
-            string?         type     = root.TryGetProperty("type",      out var t) ? t.GetString() : null;
-            string?         expires  = root.TryGetProperty("expires",   out var ex) ? ex.GetString() : null;
+            string? licensee   = root.TryGetProperty("licensee",  out var l)   ? l.GetString()   : null;
+            string? email      = root.TryGetProperty("email",     out var e)   ? e.GetString()   : null;
+            string? type       = root.TryGetProperty("type",      out var t)   ? t.GetString()   : null;
+            string? expires    = root.TryGetProperty("expires",   out var ex)  ? ex.GetString()  : null;
+            string? issued     = root.TryGetProperty("issued",    out var iss) ? iss.GetString() : null;
+            string? signature  = root.TryGetProperty("signature", out var sig) ? sig.GetString() : null;
 
             LicenseTier tier = type?.ToLowerInvariant() switch
             {
-                "personal"   => LicenseTier.Personal,
-                "club"       => LicenseTier.Club,
-                "emcomm"     => LicenseTier.EmComm,
-                _            => LicenseTier.Free
+                "personal" => LicenseTier.Personal,
+                "club"     => LicenseTier.Club,
+                "emcomm"   => LicenseTier.EmComm,
+                _          => LicenseTier.Free
             };
 
             DateTimeOffset? expiresAt = null;
             if (!string.IsNullOrWhiteSpace(expires) && !expires!.Equals("never", StringComparison.OrdinalIgnoreCase))
                 expiresAt = DateTimeOffset.Parse(expires);
 
-            return new LicenseInfo(tier, licensee, email, type, expiresAt, IsValid: true);
+            return new LicenseInfo(
+                Tier:       tier,
+                Licensee:   licensee,
+                Email:      email,
+                LicenseType: type,
+                ExpiresAt:  expiresAt,
+                IsValid:    true,
+                Issued:     issued,
+                ExpiresRaw: expires,
+                Signature:  signature);
         }
         catch
         {
@@ -175,19 +230,49 @@ public sealed class LicenseService : ILicenseService
         }
     }
 
+    /// <summary>
+    /// Verifies the RSA-SHA256-PKCS1 signature on a parsed license.
+    /// The signable payload is: portpane|{type}|{licensee}|{email}|{issued}|{expires}
+    /// See the format comment near PublicKeyXml for full details.
+    /// </summary>
     private static bool VerifySignature(LicenseInfo info)
     {
-        // TODO: Replace placeholder logic with actual RSA signature verification.
-        // When PublicKeyPem contains a real key:
-        //   using var rsa = RSA.Create();
-        //   rsa.ImportFromPem(PublicKeyPem);
-        //   byte[] data = Encoding.UTF8.GetBytes(BuildSignablePayload(info));
-        //   byte[] sig  = Convert.FromBase64String(signatureFromParsedKey);
-        //   return rsa.VerifyData(data, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-        //
-        // Until the real key is embedded, all keys parse as Free tier (not invalid).
-        return false; // Placeholder: always reject commercial keys until key is embedded
+        if (string.IsNullOrWhiteSpace(info.Signature))
+        {
+            Log.Warning("License has no signature field");
+            return false;
+        }
+
+        try
+        {
+            string payload = BuildSignablePayload(info);
+            byte[] data    = Encoding.UTF8.GetBytes(payload);
+            byte[] sig     = Convert.FromBase64String(info.Signature);
+
+            using var rsa = RSA.Create();
+            rsa.FromXmlString(PublicKeyXml);
+            bool valid = rsa.VerifyData(data, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+
+            if (!valid)
+                Log.Debug("RSA signature check failed for payload: {Payload}", payload);
+
+            return valid;
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "License signature verification threw an exception");
+            return false;
+        }
     }
+
+    private static string BuildSignablePayload(LicenseInfo info) =>
+        string.Join("|",
+            "portpane",
+            info.LicenseType ?? "",
+            info.Licensee    ?? "",
+            info.Email       ?? "",
+            info.Issued      ?? "",
+            info.ExpiresRaw  ?? "");
 
     private void PersistToDisk(string licenseKey)
     {
