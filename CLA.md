@@ -1,5 +1,20 @@
 # Contributor License Agreement
 
+## Plain English Summary
+
+*This summary is not legal text — the full agreement is below.*
+
+- **You keep ownership** of everything you contribute. You are not giving up your copyright.
+- **You give permission** for your contribution to be used in both the free (GPL v3) and
+  paid (commercial) versions of PortPane.
+- **This is standard practice** for dual-licensed open source projects. Without this
+  agreement, the project could not legally offer a commercial version.
+- Submitting a pull request on GitHub means you agree to these terms.
+
+---
+
+## Full Agreement
+
 By submitting a pull request or any other contribution to PortPane by ShackDesk, you agree to the following terms:
 
 ## Grant of License

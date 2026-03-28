@@ -1,5 +1,13 @@
 # Contributing to PortPane
 
+**You do not need to be a programmer to contribute.** Some of the most valuable
+contributions are device database entries (just a VID and PID from Device Manager)
+and translations (no coding experience required — just copy a file and translate the
+text between tags). If you know a radio interface or USB adapter that PortPane
+should recognize, or if you speak another language, your help is welcome.
+
+---
+
 Thank you for your interest in contributing to PortPane by ShackDesk.
 
 ## Ways to Contribute

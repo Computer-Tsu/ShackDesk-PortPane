@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
+using PortPane.Logging;
 using PortPane.Models;
 using PortPane.Services;
 using PortPane.ViewModels;
@@ -170,7 +171,8 @@ public partial class App : Application
                 path: Path.Combine(logDir, "portpane-.log"),
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 7,
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
+                hooks: new LogFileHeaderHooks())
             .CreateLogger();
     }
 

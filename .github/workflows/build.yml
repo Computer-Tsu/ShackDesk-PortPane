@@ -1,3 +1,34 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# PortPane by ShackDesk
+# Project : https://github.com/Computer-Tsu/shackdesk-portpane
+# Author  : Mark McDow (N4TEK) — My Computer Guru LLC
+# License : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+#
+# Workflow : Build · Test · Publish · Release
+# Purpose  : Main CI/CD pipeline. Builds and tests on every push and PR to main.
+#            Publishes a self-contained Windows executable on pushes to main or
+#            version tags (v*). Creates a GitHub Release with changelog notes and
+#            artifacts when a version tag is pushed.
+#
+# Triggers :
+#   - push to main           — run tests, publish exe artifact
+#   - push of v* tag         — publish + build installer + create GitHub Release
+#   - pull_request to main   — run tests only (no publish)
+#   - workflow_dispatch      — manual run, follows same path as push to main
+#
+# Required secrets/variables : None for build/test. GitHub token is provided
+#   automatically by Actions for the release job (contents: write permission).
+#   Future: SIGNING_PASSWORD when code signing is enabled.
+#
+# Outputs / artifacts :
+#   - test-results-{sha}         : xUnit .trx test results (always)
+#   - PortPane-{version}-{sha}   : PortPane.exe + SHA-256 hash (main/tags)
+#   - PortPane-Installer-{tag}   : Inno Setup installer .exe (tags only)
+#   - GitHub Release             : All artifacts + CHANGELOG notes (tags only)
+#
+# Manual trigger : Go to Actions tab → "Build · Test · Publish · Release" →
+#   "Run workflow" → select branch → click "Run workflow"
+# ──────────────────────────────────────────────────────────────────────────────
 name: Build · Test · Publish · Release
 
 on:

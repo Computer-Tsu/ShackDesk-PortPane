@@ -1,0 +1,52 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# PortPane by ShackDesk
+# Project : https://github.com/Computer-Tsu/shackdesk-portpane
+# Author  : Mark McDow (N4TEK) — My Computer Guru LLC
+# License : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+#
+# Workflow : .NET Format Check
+# Purpose  : Enforces consistent C# code formatting on every pull request.
+#            Runs "dotnet format --verify-no-changes" which fails the PR if any
+#            file needs formatting corrections. Formatting rules are defined in
+#            .editorconfig at the repository root. This ensures all merged code
+#            follows the same style without manual reviewer effort.
+#
+# Triggers :
+#   - pull_request to main   — checks formatting before merging
+#   - workflow_dispatch      — manual check on demand
+#
+# Required secrets/variables : None.
+#
+# Outputs / artifacts : PR check result. Any unformatted files are listed in
+#   the step output with line-level details.
+#
+# Manual trigger : Actions tab → ".NET Format Check" → "Run workflow"
+#   To fix formatting locally before pushing: run "dotnet format" in the repo root.
+# ──────────────────────────────────────────────────────────────────────────────
+name: .NET Format Check
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:    # Manual trigger always present
+
+jobs:
+  format-check:
+    name: Verify C# formatting
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore NuGet packages
+        run: dotnet restore ShackDesk-PortPane.sln
+
+      - name: Check formatting
+        run: |
+          dotnet format ShackDesk-PortPane.sln --verify-no-changes --verbosity diagnostic

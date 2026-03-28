@@ -1,0 +1,50 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# PortPane by ShackDesk
+# Project : https://github.com/Computer-Tsu/shackdesk-portpane
+# Author  : Mark McDow (N4TEK) — My Computer Guru LLC
+# License : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+#
+# Workflow : Markdown Lint
+# Purpose  : Checks all Markdown files for formatting consistency and common
+#            mistakes (broken structure, unclosed tags, inconsistent heading
+#            levels, trailing whitespace, etc.). Keeps documentation readable
+#            and well-structured. Rules are configured in .markdownlint.json
+#            at the repository root. Rules MD013 (line length), MD033 (inline
+#            HTML), and MD041 (first line heading) are disabled for this project.
+#
+# Triggers :
+#   - push (**.md changed)           — check after every doc commit
+#   - pull_request (**.md changed)   — check before merging
+#   - workflow_dispatch              — manual check on demand
+#
+# Required secrets/variables : None.
+#
+# Outputs / artifacts : Lint results printed to the step log with file names
+#   and line numbers for every violation.
+#
+# Manual trigger : Actions tab → "Markdown Lint" → "Run workflow"
+#   To check locally: npm install -g markdownlint-cli && markdownlint "**/*.md"
+# ──────────────────────────────────────────────────────────────────────────────
+name: Markdown Lint
+
+on:
+  push:
+    paths: [ '**.md' ]
+  pull_request:
+    paths: [ '**.md' ]
+  workflow_dispatch:    # Manual trigger always present
+
+jobs:
+  markdown-lint:
+    name: Lint Markdown files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: '**/*.md'
+          config: '.markdownlint.json'

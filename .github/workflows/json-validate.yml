@@ -1,0 +1,104 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# PortPane by ShackDesk
+# Project : https://github.com/Computer-Tsu/shackdesk-portpane
+# Author  : Mark McDow (N4TEK) — My Computer Guru LLC
+# License : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+#
+# Workflow : JSON Data File Validation
+# Purpose  : Validates usb_devices.json whenever the data/ directory changes.
+#            Checks that the file is valid JSON and that every device entry
+#            contains all required fields (vid, pid, name, type,
+#            radio_interface, baud_hint, flow_control, notes). Prevents
+#            malformed database entries from reaching users.
+#
+# Triggers :
+#   - push (data/** changed)         — validate after every data commit
+#   - pull_request (data/** changed) — validate before merging
+#   - workflow_dispatch              — manual validation on demand
+#
+# Required secrets/variables : None.
+#
+# Outputs / artifacts : Step summary with validation results.
+#
+# Manual trigger : Actions tab → "JSON Data File Validation" → "Run workflow"
+# ──────────────────────────────────────────────────────────────────────────────
+name: JSON Data File Validation
+
+on:
+  push:
+    paths: [ 'data/**' ]
+  pull_request:
+    paths: [ 'data/**' ]
+  workflow_dispatch:    # Manual trigger always present
+
+jobs:
+  validate-json:
+    name: Validate USB device database
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JSON syntax
+        run: |
+          echo "Checking JSON syntax..."
+          python3 -c "
+          import json, sys
+          with open('data/usb_devices.json', 'r') as f:
+              data = json.load(f)
+          print('JSON syntax: OK')
+          print(f'Schema version: {data.get(\"version\", \"missing\")}')
+          print(f'Last updated: {data.get(\"last_updated\", \"missing\")}')
+          "
+
+      - name: Validate required fields on every device entry
+        run: |
+          python3 -c "
+          import json, sys
+
+          REQUIRED = ['vid', 'pid', 'name', 'type', 'radio_interface', 'baud_hint', 'flow_control', 'notes']
+          VALID_TYPES = {'audio', 'serial'}
+
+          with open('data/usb_devices.json', 'r') as f:
+              data = json.load(f)
+
+          devices = data.get('devices', [])
+          errors = []
+
+          for i, device in enumerate(devices):
+              label = device.get('name', f'entry #{i}')
+              # Skip _comment keys at top level (not device entries)
+              for field in REQUIRED:
+                  if field not in device:
+                      errors.append(f'  [{label}] missing required field: {field}')
+              if device.get('type') not in VALID_TYPES:
+                  errors.append(f'  [{label}] invalid type \"{device.get(\"type\")}\" — must be \"audio\" or \"serial\"')
+              for hex_field in ['vid', 'pid']:
+                  val = device.get(hex_field, '')
+                  if val and len(val) != 4:
+                      errors.append(f'  [{label}] {hex_field} \"{val}\" should be 4 hex chars (e.g. 10C4)')
+
+          if errors:
+              print(f'FAILED — {len(errors)} error(s) found:')
+              for e in errors:
+                  print(e)
+              sys.exit(1)
+          else:
+              print(f'All {len(devices)} device entries validated successfully.')
+          "
+
+      - name: Report summary
+        if: always()
+        run: |
+          echo "### JSON Validation Result" >> $GITHUB_STEP_SUMMARY
+          echo "File: \`data/usb_devices.json\`" >> $GITHUB_STEP_SUMMARY
+          python3 -c "
+          import json
+          with open('data/usb_devices.json') as f:
+              data = json.load(f)
+          count = len(data.get('devices', []))
+          print(f'- Device entries: **{count}**')
+          print(f'- Schema version: **{data.get(\"version\", \"?\")}**')
+          print(f'- Last updated: **{data.get(\"last_updated\", \"?\")}**')
+          " >> $GITHUB_STEP_SUMMARY

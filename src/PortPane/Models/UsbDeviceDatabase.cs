@@ -20,7 +20,11 @@ public sealed class UsbDeviceDatabase
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        // System.Text.Json silently ignores unknown properties when deserializing
+        // to a typed class — this includes _comment_N header keys at the top of
+        // usb_devices.json. No special configuration is required; the default
+        // behavior already handles contributor comment blocks correctly.
     };
 
     public static UsbDeviceDatabase Load(string jsonPath)

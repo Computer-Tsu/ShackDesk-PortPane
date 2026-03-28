@@ -1,0 +1,98 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# PortPane by ShackDesk — Editor Configuration
+# Project  : https://github.com/Computer-Tsu/shackdesk-portpane
+# Author   : Mark McDow (N4TEK) — My Computer Guru LLC
+#
+# PURPOSE
+# This file defines code formatting rules that apply to all contributors.
+# It ensures consistent indentation, line endings, and C# style across all
+# editors and IDEs, regardless of each contributor's local settings.
+#
+# ENFORCED BY CI/CD
+# The format-check.yml workflow runs "dotnet format --verify-no-changes" on
+# every pull request. A PR will fail if any file needs formatting corrections.
+# To fix formatting before pushing: run "dotnet format" in the repo root.
+#
+# WHY YOUR IDE MAY AUTO-CORRECT FORMATTING
+# Most modern editors (Visual Studio, VS Code with C# extension, Rider) read
+# this file and apply its rules automatically when you save. This is intentional.
+# If your IDE is changing your formatting, it is applying the project's rules —
+# not an error.
+#
+# HOW TO PROPOSE CHANGES TO FORMATTING RULES
+# Open a GitHub Discussion or issue explaining what you'd like to change and why.
+# Formatting changes affect all contributors so they require maintainer approval.
+# ──────────────────────────────────────────────────────────────────────────────
+
+root = true
+
+# ── All files ─────────────────────────────────────────────────────────────────
+[*]
+charset                  = utf-8
+end_of_line              = lf
+insert_final_newline     = true
+trim_trailing_whitespace = true
+
+# ── C# source files ───────────────────────────────────────────────────────────
+[*.cs]
+indent_style             = space
+indent_size              = 4
+tab_width                = 4
+
+# Language conventions
+csharp_style_var_for_built_in_types    = false : suggestion
+csharp_style_var_when_type_is_apparent = true  : suggestion
+csharp_style_var_elsewhere             = false : suggestion
+
+# Expression-bodied members
+csharp_style_expression_bodied_methods     = when_on_single_line : suggestion
+csharp_style_expression_bodied_properties  = when_on_single_line : suggestion
+
+# Braces
+csharp_prefer_braces = true : warning
+
+# Null checking
+csharp_style_conditional_delegate_call = true : suggestion
+
+# Namespace style (file-scoped — C# 10+)
+csharp_style_namespace_declarations = file_scoped : warning
+
+# Using directives — system usings first
+dotnet_sort_system_directives_first = true
+
+# Naming conventions
+dotnet_naming_style.camel_case.capitalization         = camel_case
+dotnet_naming_style.pascal_case.capitalization        = pascal_case
+dotnet_naming_style.underscore_camel.capitalization   = camel_case
+dotnet_naming_style.underscore_camel.required_prefix  = _
+
+dotnet_naming_rule.private_fields.symbols             = private_fields
+dotnet_naming_rule.private_fields.style               = underscore_camel
+dotnet_naming_rule.private_fields.severity            = suggestion
+
+dotnet_naming_symbols.private_fields.applicable_kinds            = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities  = private
+
+# ── XML / XAML / RESX ─────────────────────────────────────────────────────────
+[*.{xml,xaml,resx}]
+indent_style = space
+indent_size  = 2
+
+# ── JSON ──────────────────────────────────────────────────────────────────────
+[*.json]
+indent_style = space
+indent_size  = 2
+
+# ── YAML / GitHub Actions ─────────────────────────────────────────────────────
+[*.{yml,yaml}]
+indent_style = space
+indent_size  = 2
+
+# ── Markdown ──────────────────────────────────────────────────────────────────
+[*.md]
+trim_trailing_whitespace = false    # Trailing spaces = intentional line breaks in Markdown
+
+# ── Inno Setup scripts ────────────────────────────────────────────────────────
+[*.iss]
+indent_style = space
+indent_size  = 2

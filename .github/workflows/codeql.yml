@@ -1,0 +1,70 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# PortPane by ShackDesk
+# Project : https://github.com/Computer-Tsu/shackdesk-portpane
+# Author  : Mark McDow (N4TEK) — My Computer Guru LLC
+# License : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+#
+# Workflow : CodeQL Security Analysis
+# Purpose  : Scans C# source code for security vulnerabilities using GitHub's
+#            CodeQL static analysis engine. Results appear in the GitHub
+#            Security tab under Code scanning alerts.
+#
+# Triggers :
+#   - push to main           — scan after every merge
+#   - pull_request to main   — scan before merging (blocking if critical)
+#   - schedule (Monday 06:00 UTC weekly) — catch new CVE signatures
+#   - workflow_dispatch      — manual scan on demand
+#
+# Required secrets/variables : None — uses default GITHUB_TOKEN.
+#
+# Outputs / artifacts : Code scanning alerts in GitHub Security tab.
+#
+# Manual trigger : Actions tab → "CodeQL Security Analysis" → "Run workflow"
+# ──────────────────────────────────────────────────────────────────────────────
+name: CodeQL Security Analysis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 6 * * 1'     # Weekly — Monday 06:00 UTC
+  workflow_dispatch:         # Manual trigger always present
+
+jobs:
+  analyze:
+    name: Analyze C# with CodeQL
+    runs-on: windows-latest
+    permissions:
+      actions:       read
+      contents:      read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+          queries: security-and-quality
+
+      - name: Restore NuGet packages
+        run: dotnet restore ShackDesk-PortPane.sln
+
+      - name: Build for CodeQL
+        run: dotnet build ShackDesk-PortPane.sln --configuration Debug --no-restore
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:csharp'

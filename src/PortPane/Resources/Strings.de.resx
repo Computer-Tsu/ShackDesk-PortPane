@@ -1,4 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ════════════════════════════════════════════════════════════════════════════
+  PortPane by ShackDesk — UI String Resources
+  Project  : https://github.com/Computer-Tsu/shackdesk-portpane
+  Author   : Mark McDow (N4TEK) — My Computer Guru LLC
+  License  : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+  ════════════════════════════════════════════════════════════════════════════
+
+  LANGUAGE       : German (Deutsch)
+  LANGUAGE CODE  : de  (IETF tag: de)
+  TRANSLATOR     : [Your name here]
+  DATE           : [Date of translation, e.g. 2026-04-01]
+
+  STATUS         : PARTIAL — community contributions welcome!
+  COVERAGE       : Core UI strings translated. Settings, About, and License
+                   strings are still in English. Help wanted — see below.
+
+  HOW TO HELP COMPLETE THIS TRANSLATION
+  1. Fork the repository on GitHub.
+  2. Open this file and translate the <value> content for any strings still
+     in English. Translated strings are marked with their German text.
+  3. NEVER change <data name="..."> key names — only translate <value> text.
+  4. Preserve any {0}, {1} placeholders exactly — they are replaced at runtime.
+  5. Read TRANSLATING.md for the full guide and terminology reference.
+  6. Agree to the CLA (see CLA.md) — required before your PR can be merged.
+  7. Before starting, check open pull requests to avoid duplicate effort.
+
+  XML FORMATTING WARNING
+  This file must be valid XML. Common mistakes that break the file:
+    - Using & instead of &amp;   (e.g. "Suche &amp; Ersetzen")
+    - Using < instead of &lt;    (rarely needed)
+    - Forgetting to close tags   (<value>text</value>)
+  Validate your file at: https://www.xmlvalidation.com
+
+  TRANSLATION EXAMPLE
+  Before (English source):
+    <data name="RefreshButton" xml:space="preserve"><value>Refresh</value></data>
+
+  After (German translation):
+    <data name="RefreshButton" xml:space="preserve"><value>Aktualisieren</value></data>
+
+  Note: The data name="RefreshButton" part did NOT change. Only the value did.
+
+  For more help, see: TRANSLATING.md
+  CLA reminder: All contributions require CLA agreement. See: CLA.md
+  ════════════════════════════════════════════════════════════════════════════
+-->
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -21,18 +68,39 @@
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
 
-  <!-- PLACEHOLDER: German translation — community contributions welcome. -->
-  <!-- See TRANSLATING.md for contribution instructions. -->
-
+  <!-- Window / General -->
   <data name="AppTitle"            xml:space="preserve"><value>PortPane von ShackDesk</value></data>
   <data name="Tagline"             xml:space="preserve"><value>Schluss mit dem Port-Chaos</value></data>
   <data name="RefreshButton"       xml:space="preserve"><value>Aktualisieren</value></data>
   <data name="SettingsButton"      xml:space="preserve"><value>Einstellungen</value></data>
   <data name="AlwaysOnTop"         xml:space="preserve"><value>Immer im Vordergrund</value></data>
   <data name="CopyButton"          xml:space="preserve"><value>Kopieren</value></data>
+  <data name="CopyTooltip"         xml:space="preserve"><value>Portname in die Zwischenablage kopieren</value></data>
+
+  <!-- Section Headers -->
   <data name="SectionComPorts"     xml:space="preserve"><value>COM-Ports</value></data>
   <data name="SectionPlayback"     xml:space="preserve"><value>Audiowiedergabe</value></data>
   <data name="SectionCapture"      xml:space="preserve"><value>Audioaufnahme</value></data>
+
+  <!-- Status / Messages -->
   <data name="NoComPorts"          xml:space="preserve"><value>Keine COM-Ports gefunden</value></data>
   <data name="NoAudioDevices"      xml:space="preserve"><value>Keine Audiogeräte gefunden</value></data>
+  <data name="UpdateAvailable"     xml:space="preserve"><value>Update verfügbar: {0}</value></data>
+  <data name="UpdateNow"           xml:space="preserve"><value>Jetzt aktualisieren</value></data>
+
+  <!-- Settings — TODO: translate remaining strings below -->
+  <data name="SettingsTitle"       xml:space="preserve"><value>Einstellungen — PortPane</value></data>
+  <data name="TelemetryOptIn"      xml:space="preserve"><value>Anonyme Nutzungsdaten senden, um PortPane zu verbessern</value></data>
+  <data name="TelemetryLearnMore"  xml:space="preserve"><value>Mehr erfahren, was gesammelt wird</value></data>
+  <data name="LicenseLabel"        xml:space="preserve"><value>Lizenz</value></data>
+  <data name="FreeTierLabel"       xml:space="preserve"><value>Kostenlos (GPL v3)</value></data>
+  <data name="CommercialTierLabel" xml:space="preserve"><value>Kommerziell</value></data>
+
+  <!-- About — TODO: translate remaining strings below -->
+  <data name="AboutTitle"          xml:space="preserve"><value>Über PortPane</value></data>
+  <data name="AboutVersion"        xml:space="preserve"><value>Version {0}</value></data>
+  <data name="AboutAuthor"         xml:space="preserve"><value>Von {0} ({1})</value></data>
+  <data name="AboutLicense"        xml:space="preserve"><value>Lizenziert unter GPL v3 / Kommerziell</value></data>
+  <data name="GitHubLink"          xml:space="preserve"><value>Auf GitHub ansehen</value></data>
+  <data name="SupportLink"         xml:space="preserve"><value>Support erhalten</value></data>
 </root>

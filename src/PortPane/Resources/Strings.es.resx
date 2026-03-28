@@ -1,51 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ════════════════════════════════════════════════════════════════════════════
-  PortPane by ShackDesk — UI String Resources (English — Source File)
+  PortPane by ShackDesk — UI String Resources
   Project  : https://github.com/Computer-Tsu/shackdesk-portpane
   Author   : Mark McDow (N4TEK) — My Computer Guru LLC
   License  : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
   ════════════════════════════════════════════════════════════════════════════
 
-  LANGUAGE       : English (United States)
-  LANGUAGE CODE  : en  (IETF tag: en-US)
-  TRANSLATOR     : Mark McDow (N4TEK) — project author
-  DATE           : 2026-03-23
+  LANGUAGE       : Spanish (Español)
+  LANGUAGE CODE  : es  (IETF tag: es)
+  TRANSLATOR     : [Your name here]
+  DATE           : [Date of translation, e.g. 2026-04-01]
 
-  PURPOSE
-  This is the English source file for all PortPane UI strings. Every language
-  translation file is a copy of this file with the <value> content translated.
-  If you want to add or update a translation, start here — copy this file.
+  STATUS         : PLACEHOLDER — translation needed! See below to contribute.
 
-  HOW TO CONTRIBUTE A TRANSLATION
-  1. Copy this file. Name the copy using the IETF language tag:
-       French   → Strings.fr.resx
-       Spanish  → Strings.es.resx
-       Japanese → Strings.ja.resx
-       Any other language → Strings.{ietf-tag}.resx
-  2. In your copy, fill in the Language, Language Code, Translator, and Date
-     fields in the header comment (top of the file).
-  3. Translate ONLY the text between <value> and </value> tags.
-  4. NEVER change <data name="..."> key names — the app uses them to find strings.
-  5. Preserve any {0}, {1} placeholders exactly — they are replaced at runtime.
-  6. Read TRANSLATING.md for the full guide and terminology reference.
-  7. Agree to the CLA (see CLA.md) — required before your PR can be merged.
-  8. Before starting, check open pull requests to avoid duplicate effort.
+  HOW TO CONTRIBUTE THIS TRANSLATION
+  1. Fork the repository on GitHub.
+  2. Open this file and translate the <value> content for each string.
+     The English source is in: src/PortPane/Resources/Strings.resx
+  3. NEVER change <data name="..."> key names — only translate <value> text.
+  4. Preserve any {0}, {1} placeholders exactly — they are replaced at runtime.
+  5. Read TRANSLATING.md for the full guide and terminology reference.
+  6. Agree to the CLA (see CLA.md) — required before your PR can be merged.
+  7. Before starting, check open pull requests to avoid duplicate effort.
 
   XML FORMATTING WARNING
   This file must be valid XML. Common mistakes that break the file:
-    - Using & instead of &amp;   (e.g. "Search &amp; Replace", not "Search & Replace")
-    - Using < instead of &lt;    (e.g. "&lt;value&gt;" if needed literally)
-    - Using > instead of &gt;    (rarely needed but: &gt;)
-    - Forgetting to close tags   (<value>text</value> not <value>text)
+    - Using & instead of &amp;   (e.g. "Buscar &amp; Reemplazar")
+    - Using < instead of &lt;    (rarely needed)
+    - Forgetting to close tags   (<value>text</value>)
   Validate your file at: https://www.xmlvalidation.com
 
   TRANSLATION EXAMPLE
   Before (English source):
     <data name="RefreshButton" xml:space="preserve"><value>Refresh</value></data>
 
-  After (French translation):
-    <data name="RefreshButton" xml:space="preserve"><value>Actualiser</value></data>
+  After (Spanish translation):
+    <data name="RefreshButton" xml:space="preserve"><value>Actualizar</value></data>
 
   Note: The data name="RefreshButton" part did NOT change. Only the value did.
 
