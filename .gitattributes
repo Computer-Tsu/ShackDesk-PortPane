@@ -17,7 +17,7 @@
 *.txt       text eol=lf
 
 # GitHub Linguist overrides — include in language statistics
-*.xaml  linguist-detectable=true
+*.xaml  linguist-detectable=true linguist-language=XAML
 *.json  linguist-detectable=true
 *.md    linguist-detectable=true
 
