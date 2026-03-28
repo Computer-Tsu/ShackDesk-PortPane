@@ -11,7 +11,7 @@ Device Manager.
 
 [![Build](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE-GPL.md)
-[![Version](https://img.shields.io/badge/version-0.5.0--beta-orange)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.5.1--beta-orange)](CHANGELOG.md)
 
 ---
 
