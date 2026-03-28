@@ -95,7 +95,7 @@ public sealed class MainViewModel : ViewModelBase
     public ICommand ToggleComPanelCommand  { get; }
     public ICommand ApplyUpdateCommand     { get; }
     public ICommand DismissUpdateCommand   { get; }
-    public ICommand<double> SetScaleCommand { get; }
+    public RelayCommand<double> SetScaleCommand { get; }
 
     public MainViewModel(
         AudioPanelViewModel    audio,
