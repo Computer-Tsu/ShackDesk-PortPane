@@ -16,6 +16,11 @@
 *.manifest  text eol=lf
 *.txt       text eol=lf
 
+# GitHub Linguist overrides — include in language statistics
+*.xaml  linguist-detectable=true
+*.json  linguist-detectable=true
+*.md    linguist-detectable=true
+
 # Binary files — no line ending conversion
 *.ico       binary
 *.png       binary
