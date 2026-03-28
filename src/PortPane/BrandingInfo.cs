@@ -9,7 +9,7 @@ public static class BrandingInfo
     public const string AppName           = "PortPane";
     public const string SuiteName         = "ShackDesk";
     public const string FullName          = "PortPane by ShackDesk";
-    public const string Version           = "0.5.0-beta";
+    public const string Version           = "0.5.1-beta";
     public const string AuthorName        = "Mark McDow";
     public const string AuthorCallsign    = "N4TEK";
     public const string AuthorCompany     = "My Computer Guru LLC";
