@@ -14,6 +14,7 @@ If you choose to enable anonymous telemetry in Settings, PortPane may send:
 - Anonymous session identifiers (no user identity)
 
 **PortPane never collects:**
+
 - Your callsign or name
 - Your IP address (beyond what any HTTP request inherently exposes)
 - File paths or directory names
@@ -23,6 +24,7 @@ If you choose to enable anonymous telemetry in Settings, PortPane may send:
 ### Crash Reports
 
 If crash reporting is enabled (part of telemetry opt-in), PortPane sends:
+
 - Exception type and message
 - Application version and OS version
 

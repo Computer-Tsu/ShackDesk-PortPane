@@ -131,7 +131,7 @@ Ideal for EMCOMM go-kit deployment or running from a USB drive.
 
 > The author builds exclusively via GitHub Actions. These instructions are for contributors.
 
-```
+```powershell
 dotnet restore
 dotnet build
 dotnet test
@@ -145,6 +145,7 @@ dotnet publish src/PortPane/PortPane.csproj -c Release -r win-x64 --self-contain
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Ways to contribute:
+
 - [Bug reports](.github/ISSUE_TEMPLATE/bug_report.md)
 - [Feature requests](.github/ISSUE_TEMPLATE/feature_request.md)
 - [USB device database additions](.github/ISSUE_TEMPLATE/usb_device_addition.md) — edit `data/usb_devices.json`

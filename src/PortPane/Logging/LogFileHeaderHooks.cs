@@ -60,9 +60,9 @@ public sealed class LogFileHeaderHooks : FileLifecycleHooks
 {thin}
   LOG LINE FORMAT
 {thin}
-  YYYY-MM-DD HH:MM:SS.mmm [LVL] Message {structured properties}
+  YYYY-MM-DD HH:MM:SS.mmm [LVL] Message {{structured properties}}
   Example:
-  2026-03-23 14:07:42.318 [INF] Audio profile switched {"From": "PC", "To": "Radio"}
+  2026-03-23 14:07:42.318 [INF] Audio profile switched {{"From": "PC", "To": "Radio"}}
 
   Fields:
     YYYY-MM-DD HH:MM:SS.mmm — Timestamp in UTC (see Timestamp Format below)

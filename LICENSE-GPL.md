@@ -18,7 +18,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 ---
 
 The full text of the GNU General Public License version 3 is available at:
-https://www.gnu.org/licenses/gpl-3.0.txt
+<https://www.gnu.org/licenses/gpl-3.0.txt>
 
 ---
 

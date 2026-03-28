@@ -89,7 +89,7 @@ The secret is used only by the license key generator tool — not by the app bui
 
 The payload signed by the private key is a pipe-delimited string in this exact order:
 
-```
+```text
 portpane|{type}|{licensee}|{email}|{issued}|{expires}
 ```
 
@@ -196,7 +196,7 @@ as a pre-release.
 
 ### Version number format
 
-```
+```text
 MAJOR.MINOR.PATCH[-suffix]
 
 Examples:
@@ -232,6 +232,7 @@ the SHA-256 hash as a step output and artifact (`PortPane.exe.sha256`).
 ### Updating the endpoint URL
 
 The endpoint is defined in `BrandingInfo.cs`:
+
 ```csharp
 public const string UpdateEndpoint = "https://shackdesk.app/update/latest.json";
 ```
@@ -282,12 +283,14 @@ the build step to call `crconf.exe`.
 ## 6. NuGet and Actions Dependency Updates
 
 Dependabot opens pull requests automatically every Monday for:
+
 - NuGet packages (`nuget` ecosystem)
 - GitHub Actions versions (`github-actions` ecosystem)
 
 PRs are labelled `dependencies` and `automated`.
 
 **Review checklist for Dependabot PRs:**
+
 - Check the package changelog for breaking changes before merging.
 - For `Velopack` updates: verify the update/packaging API hasn't changed.
 - For `NAudio` updates: spot-check audio device enumeration still works.
