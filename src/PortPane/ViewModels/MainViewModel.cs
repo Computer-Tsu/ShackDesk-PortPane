@@ -84,7 +84,7 @@ public sealed class MainViewModel : ViewModelBase
                 LicenseTier.EmComm  => $"  [{_license.Current.Licensee}]",
                 _                   => string.Empty
             };
-            return $"{BrandingInfo.FullName}  {BrandingInfo.Version}{tier}";
+            return $"{BrandingInfo.FullName}  {BrandingInfo.FullVersion}{tier}";
         }
     }
 

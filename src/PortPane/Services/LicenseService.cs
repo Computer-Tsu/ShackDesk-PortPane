@@ -196,6 +196,9 @@ public sealed class LicenseService : ILicenseService
 
     private LicenseInfo LoadAndValidate()
     {
+        if (ChannelInfo.UnlockAllForTesting)
+            return new LicenseInfo(LicenseTier.Personal, "Alpha Tester", null, "personal", null, IsValid: true);
+
         if (!File.Exists(LicenseFilePath)) return FreeTier();
 
         try

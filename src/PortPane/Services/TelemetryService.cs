@@ -120,7 +120,7 @@ public sealed class TelemetryService : ITelemetryService
         {
             report_id = Guid.NewGuid().ToString(),
             app       = BrandingInfo.AppName,
-            version   = BrandingInfo.Version,
+            version   = BrandingInfo.FullVersion,
             @event    = eventName,
             os        = Environment.OSVersion.VersionString,
             timestamp = DateTimeOffset.UtcNow,

@@ -39,6 +39,7 @@ public sealed class AppSettings
 
     // Lifecycle
     public bool   FirstRunComplete    { get; set; } = false;
+    public string LastSeenVersion     { get; set; } = string.Empty;
 
     // License
     public string LicenseKey          { get; set; } = string.Empty;

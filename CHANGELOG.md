@@ -36,6 +36,44 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `ChannelInfo.cs`: multi-channel release system — `ReleaseChannel` enum (`Alpha`, `Beta`, `Stable`)
+  with per-branch constants controlling build expiry, feature unlock, telemetry default,
+  logging verbosity, and version suffix; protected from forward merges via `.gitattributes` `merge=ours`
+- `BrandingInfo.FullVersion`: computed property composing base version, channel suffix, and
+  CI-stamped build date (e.g. `0.5.2-alpha.20260329`) for display, logging, and telemetry
+- `BrandingInfo.BuildDate`: CI-stamped ISO 8601 UTC constant; empty in source, patched at publish time
+- `AppSettings.LastSeenVersion`: records running version at each launch for future new-version prompts
+- `App.xaml.cs` — build expiry kill switch: blocks launch with download link when alpha/beta build
+  exceeds `ChannelInfo.BuildExpiryDays` past CI stamp date
+- `App.xaml.cs` — `--reset` flag: wipes all user data and relaunches fresh; enables clean
+  reinstall workflow for alpha/beta testers moving between builds
+- `build.yml` — `dev` branch trigger: push to `dev` builds, tests, and publishes automatically
+- `build.yml` — channel-aware version composition: reads `ChannelInfo.VersionSuffix` and appends
+  `yyyyMMdd-HHmm` timestamp for alpha builds; beta and stable use suffix or base only
+- `build.yml` — `rolling-alpha` job: updates a persistent `latest-alpha` pre-release tag on
+  every `dev` push so testers always have one bookmark to the current alpha exe
+- `build.yml` — `Stamp BuildDate` step: patches `BrandingInfo.BuildDate` at publish time so
+  the compiled exe carries an accurate expiry reference
+
+### Changed
+
+- `BrandingInfo.Version` stripped of channel suffix (was `"0.5.1-beta"`); suffix now provided
+  exclusively by `ChannelInfo.VersionSuffix` on each branch
+- `LicenseService`: `UnlockAllForTesting = true` returns Personal-tier license automatically,
+  bypassing all validation — eliminates license friction for alpha testers
+- `SettingsService`: fresh installs now apply `ChannelInfo.TelemetryOnByDefault` as the default
+  telemetry state (alpha: opt-out / true; beta and stable: opt-in / false)
+- `SetupSerilog`: minimum log level driven by `ChannelInfo.VerboseLogging`
+  (alpha: `Debug`; beta and stable: `Information`)
+- All display, logging, and telemetry version references updated from `BrandingInfo.Version`
+  to `BrandingInfo.FullVersion`
+
+---
+
+## [0.5.1-beta] — 2026-03-28
+
 ### Fixed
 
 - CI build failure (NETSDK1135): changed `net8.0-windows` to `net8.0-windows10.0.17763.0`

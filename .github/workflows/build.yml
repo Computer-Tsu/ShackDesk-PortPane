@@ -11,6 +11,7 @@
 #            artifacts when a version tag is pushed.
 #
 # Triggers :
+#   - push to dev                    — build, test, publish; updates rolling latest-alpha release
 #   - push to main                   — build, run tests, publish exe artifact
 #   - push of v* tag                 — publish + build installer + create GitHub Release
 #   - pull_request to main           — build and run tests only (no publish)
@@ -18,15 +19,21 @@
 #       skip_tests:       skip xUnit tests (useful when you just need a compile check)
 #       publish_artifact: upload PortPane.exe artifact even without a tag/push to main
 #
+# Release channels (controlled by src/PortPane/ChannelInfo.cs on each branch):
+#   dev    — Alpha: rapid builds, 14-day expiry, all features unlocked, verbose logging
+#   beta   — Beta:  60-day expiry, opt-in telemetry, normal logging
+#   main   — Stable: no expiry, release tags only
+#
 # Required secrets/variables : None for build/test. GitHub token is provided
 #   automatically by Actions for the release job (contents: write permission).
 #   Future: SIGNING_PASSWORD when code signing is enabled.
 #
 # Outputs / artifacts :
-#   - test-results-{sha}         : xUnit .trx test results (always)
-#   - PortPane-{version}-{sha}   : PortPane.exe + SHA-256 hash (main/tags)
-#   - PortPane-Installer-{tag}   : Inno Setup installer .exe (tags only)
-#   - GitHub Release             : All artifacts + CHANGELOG notes (tags only)
+#   - test-results-{sha}              : xUnit .trx test results (always)
+#   - PortPane-{version}-{sha}        : PortPane.exe + SHA-256 hash (main/dev/tags)
+#   - PortPane-Installer-{tag}        : Inno Setup installer .exe (tags only)
+#   - GitHub Release (latest-alpha)   : Rolling alpha exe updated on every dev push
+#   - GitHub Release (versioned)      : All artifacts + CHANGELOG notes (tags only)
 #
 # Manual trigger : Go to Actions tab → "Build · Test · Publish · Release" →
 #   "Run workflow" → select branch → click "Run workflow"
@@ -35,7 +42,7 @@ name: Build · Test · Publish · Release
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
     tags:     [ 'v*' ]
     paths-ignore:
       - '**/*.md'
@@ -122,6 +129,7 @@ jobs:
     if: >
       github.event_name != 'pull_request' &&
       (github.ref == 'refs/heads/main' ||
+       github.ref == 'refs/heads/dev' ||
        startsWith(github.ref, 'refs/tags/v') ||
        (github.event_name == 'workflow_dispatch' && inputs.publish_artifact))
 
@@ -143,14 +151,34 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore ${{ env.SOLUTION }}
 
-      - name: Extract version from BrandingInfo
+      - name: Extract and compose version from BrandingInfo and ChannelInfo
         id: version
         shell: pwsh
         run: |
-          $version = (Select-String -Path 'src/PortPane/BrandingInfo.cs' `
+          $base    = (Select-String 'src/PortPane/BrandingInfo.cs' `
             -Pattern 'Version\s*=\s*"([^"]+)"').Matches[0].Groups[1].Value
+          $suffix  = (Select-String 'src/PortPane/ChannelInfo.cs' `
+            -Pattern 'VersionSuffix\s*=\s*"([^"]*)"').Matches[0].Groups[1].Value
+          $channel = (Select-String 'src/PortPane/ChannelInfo.cs' `
+            -Pattern 'Channel\s*=\s*ReleaseChannel\.(\w+)').Matches[0].Groups[1].Value
+          $stamp   = [DateTime]::UtcNow.ToString("yyyyMMdd-HHmm")
+          $version = switch ($channel) {
+            'Alpha'  { "$base-$suffix.$stamp" }
+            'Beta'   { "$base-$suffix" }
+            default  { $base }
+          }
           echo "version=$version" >> $env:GITHUB_OUTPUT
-          echo "Version: $version"
+          echo "channel=$channel" >> $env:GITHUB_OUTPUT
+          echo "Version: $version (channel: $channel)"
+
+      - name: Stamp BuildDate into BrandingInfo
+        shell: pwsh
+        run: |
+          $now  = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+          $file = 'src/PortPane/BrandingInfo.cs'
+          (Get-Content $file) -replace '(BuildDate\s*=\s*)"[^"]*"', "`$1`"$now`"" |
+            Set-Content $file
+          echo "Stamped BuildDate = $now"
 
       - name: Publish — single self-contained exe
         run: >
@@ -305,3 +333,48 @@ jobs:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
           generate_release_notes: false
+
+  # ─────────────────────────────────────────────────────────────────────
+  rolling-alpha:
+    name: Update Rolling Alpha Release
+    runs-on: windows-latest
+    needs: publish
+    if: github.ref == 'refs/heads/dev'
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download exe artifact
+        uses: actions/download-artifact@v8
+        with:
+          pattern: PortPane-*-${{ github.sha }}
+          path: ./release
+          merge-multiple: true
+
+      - name: Rename artifact with composed version
+        shell: pwsh
+        run: |
+          $version = '${{ needs.publish.outputs.version }}'
+          Get-ChildItem './release/${{ env.APP_EXE }}' -ErrorAction SilentlyContinue |
+            Rename-Item -NewName "PortPane-$version-win-x64.exe"
+          Get-ChildItem './release/${{ env.APP_EXE }}.sha256' -ErrorAction SilentlyContinue |
+            Rename-Item -NewName "PortPane-$version-win-x64.exe.sha256"
+
+      - name: Update rolling latest-alpha release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-alpha
+          name: "Latest Alpha — ${{ needs.publish.outputs.version }}"
+          body: |
+            Automated alpha build from the `dev` branch.
+
+            **Version:** `${{ needs.publish.outputs.version }}`
+            **Commit:** `${{ github.sha }}`
+
+            This build has a 14-day expiry. Always download the current version from this page.
+            Not recommended for general use — for testing purposes only.
+          prerelease: true
+          files: |
+            ./release/PortPane-*.exe
+            ./release/PortPane-*.sha256
