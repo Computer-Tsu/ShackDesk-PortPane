@@ -9,9 +9,11 @@ When you plug in a USB radio interface, PortPane instantly shows you which audio
 COM ports Windows assigned — so you can configure your digital mode software without opening
 Device Manager.
 
-[![Build](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
+[![dev](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg?branch=dev)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
+[![main](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
+[![Alpha](https://img.shields.io/badge/alpha-0.5.2-orange)](https://github.com/Computer-Tsu/shackdesk-portpane/releases)
+[![Stable](https://img.shields.io/github/v/release/Computer-Tsu/shackdesk-portpane?label=stable&color=brightgreen)](https://github.com/Computer-Tsu/shackdesk-portpane/releases/latest)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE-GPL.md)
-[![Version](https://img.shields.io/badge/version-0.5.1--beta-orange)](CHANGELOG.md)
 [![Last Commit](https://img.shields.io/github/last-commit/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane/commits/main)
 [![Repo Size](https://img.shields.io/github/repo-size/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
@@ -27,7 +29,10 @@ Device Manager.
 
 ## Download
 
-**[→ Download the latest release](https://github.com/Computer-Tsu/shackdesk-portpane/releases)**
+| Channel | Link | Notes |
+| --- | --- | --- |
+| **Alpha** | [Latest Alpha release](https://github.com/Computer-Tsu/shackdesk-portpane/releases/tag/latest-alpha) | Updated on every `dev` push. 14-day expiry. For testers. |
+| **Stable** | [Latest stable release](https://github.com/Computer-Tsu/shackdesk-portpane/releases/latest) | No stable release yet — coming soon. |
 
 Download `PortPane.exe`. Run it directly. No installation required.
 

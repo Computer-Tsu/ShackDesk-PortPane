@@ -21,6 +21,11 @@
 *.json  linguist-detectable=true
 *.md    linguist-detectable=true
 
+# Channel isolation — each branch keeps its own version of this file during merges.
+# When promoting code forward (dev → beta → main), the target branch's ChannelInfo.cs
+# is always preserved unchanged. See ChannelInfo.cs for full merge workflow notes.
+src/PortPane/ChannelInfo.cs merge=ours
+
 # Binary files — no line ending conversion
 *.ico       binary
 *.png       binary

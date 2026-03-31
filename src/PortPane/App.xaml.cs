@@ -30,6 +30,41 @@ public partial class App : Application
             return;
         }
 
+        // ── Build expiry check (alpha/beta only) ──────────────────────────────
+        if (ChannelInfo.BuildExpiryDays > 0 && !string.IsNullOrEmpty(BrandingInfo.BuildDate)
+            && DateTimeOffset.TryParse(BrandingInfo.BuildDate, null,
+                System.Globalization.DateTimeStyles.RoundtripKind, out var buildDate))
+        {
+            var expiry = buildDate.AddDays(ChannelInfo.BuildExpiryDays);
+            if (DateTimeOffset.UtcNow > expiry)
+            {
+                MessageBox.Show(
+                    $"This {BrandingInfo.FullVersion} build expired on {expiry:yyyy-MM-dd}.\n\n" +
+                    $"Download the latest version at:\n{BrandingInfo.RepoURL}/releases",
+                    $"{BrandingInfo.AppName} — Build Expired",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                Shutdown();
+                return;
+            }
+        }
+
+        // ── Reset flag (wipes all user data and relaunches fresh) ─────────────
+        if (e.Args.Contains("--reset", StringComparer.OrdinalIgnoreCase))
+        {
+            bool isPortable = File.Exists(Path.Combine(AppContext.BaseDirectory, "portable.txt"));
+            string dataDir = isPortable
+                ? Path.Combine(AppContext.BaseDirectory, "PortPane-Data")
+                : Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    BrandingInfo.SuiteName, BrandingInfo.AppName);
+            if (Directory.Exists(dataDir))
+                Directory.Delete(dataDir, recursive: true);
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo(Environment.ProcessPath!) { UseShellExecute = true });
+            Shutdown();
+            return;
+        }
+
         VelopackApp.Build().Run();
 
         // ── Bootstrap logging (before DI so DI errors are captured) ──────────
@@ -40,7 +75,7 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += OnDomainException;
 
         Log.Information("{AppName} {Version} starting. Fingerprint: {FP}",
-            BrandingInfo.AppName, BrandingInfo.Version, Attribution.Fingerprint);
+            BrandingInfo.AppName, BrandingInfo.FullVersion, Attribution.Fingerprint);
 
         // ── Dependency injection ──────────────────────────────────────────────
         var services = new ServiceCollection();
@@ -171,8 +206,11 @@ public partial class App : Application
     private static void SetupSerilog(string logDir)
     {
         Directory.CreateDirectory(logDir);
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
+        var logConfig = new LoggerConfiguration();
+        logConfig = ChannelInfo.VerboseLogging
+            ? logConfig.MinimumLevel.Debug()
+            : logConfig.MinimumLevel.Information();
+        Log.Logger = logConfig
             .WriteTo.File(
                 path: Path.Combine(logDir, "portpane-.log"),
                 rollingInterval: RollingInterval.Day,

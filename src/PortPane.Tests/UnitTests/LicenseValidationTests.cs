@@ -9,15 +9,15 @@ public class LicenseValidationTests
 
     [Fact]
     public void LicenseService_DefaultTier_IsFree()
-        => Assert.Equal(LicenseTier.Free, new LicenseService().Current.Tier);
+        => Assert.Equal(LicenseTier.Free, new LicenseService(unlockForTesting: false).Current.Tier);
 
     [Fact]
     public void LicenseService_FreeTier_IsAlwaysValid()
-        => Assert.True(new LicenseService().Current.IsValid);
+        => Assert.True(new LicenseService(unlockForTesting: false).Current.IsValid);
 
     [Fact]
     public void LicenseService_FreeTier_Licensee_IsNull()
-        => Assert.Null(new LicenseService().Current.Licensee);
+        => Assert.Null(new LicenseService(unlockForTesting: false).Current.Licensee);
 
     // ── Feature availability ──────────────────────────────────────────────────
 
@@ -82,7 +82,7 @@ public class LicenseValidationTests
         // If a license file has been modified, the SHA-256 hash won't match.
         // The service should silently revert to Free.
         // This test verifies that ActivateAsync rejects and doesn't throw.
-        var svc    = new LicenseService();
+        var svc    = new LicenseService(unlockForTesting: false);
         bool result = await svc.ActivateAsync("garbage=base64==data");
         Assert.False(result);
         // Service should remain Free

@@ -86,12 +86,16 @@ public sealed class LicenseService : ILicenseService
     private static readonly string LicenseFilePath = LicensePath();
     private static readonly string HashFilePath     = LicensePath() + ".sha256";
 
+    private readonly bool _unlockForTesting;
     private LicenseInfo _current = FreeTier();
 
     public LicenseInfo Current => _current;
 
-    public LicenseService()
+    public LicenseService() : this(ChannelInfo.UnlockAllForTesting) { }
+
+    internal LicenseService(bool unlockForTesting)
     {
+        _unlockForTesting = unlockForTesting;
         _current = LoadAndValidate();
     }
 
@@ -196,6 +200,9 @@ public sealed class LicenseService : ILicenseService
 
     private LicenseInfo LoadAndValidate()
     {
+        if (_unlockForTesting)
+            return new LicenseInfo(LicenseTier.Personal, "Alpha Tester", null, "personal", null, IsValid: true);
+
         if (!File.Exists(LicenseFilePath)) return FreeTier();
 
         try

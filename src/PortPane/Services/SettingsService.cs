@@ -55,7 +55,10 @@ public sealed class SettingsService : ISettingsService
         if (!File.Exists(path))
         {
             Log.Debug("No settings file found; using defaults");
-            return new AppSettings();
+            var defaults = new AppSettings();
+            if (ChannelInfo.TelemetryOnByDefault)
+                defaults.TelemetryEnabled = true;
+            return defaults;
         }
 
         try
@@ -152,7 +155,8 @@ public sealed class SettingsService : ISettingsService
             ["_comment_39"] = "  FirstRunComplete    bool    Set to true after first-run dialog is dismissed.",
             ["_comment_40"] = "  LicenseKey          string  Commercial license key (Base64). Leave empty for GPL.",
             ["_comment_41"] = "  PortableMode        bool    Informational. Actual detection uses portable.txt.",
-            ["_comment_42"] = "════════════════════════════════════════════════════════════════════",
+            ["_comment_42"] = "  LastSeenVersion     string  App version recorded at last launch. Used for new-version prompts.",
+            ["_comment_43"] = "════════════════════════════════════════════════════════════════════",
         };
 
         // Append all settings fields after the comment block.

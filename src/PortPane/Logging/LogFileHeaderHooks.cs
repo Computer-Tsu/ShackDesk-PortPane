@@ -33,7 +33,7 @@ public sealed class LogFileHeaderHooks : FileLifecycleHooks
 {{line}}
   PortPane by ShackDesk — Application Log
   Project  : https://github.com/Computer-Tsu/shackdesk-portpane
-  Suite    : ShackDesk | App: PortPane | Version: {{BrandingInfo.Version}}
+  Suite    : ShackDesk | App: PortPane | Version: {{BrandingInfo.FullVersion}}
   Author   : {{BrandingInfo.AuthorName}} ({{BrandingInfo.AuthorCallsign}}) — {{BrandingInfo.AuthorCompany}}
   Support  : {{BrandingInfo.SupportURL}}
   Log opened: {{now}}
