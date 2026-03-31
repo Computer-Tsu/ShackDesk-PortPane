@@ -37,6 +37,25 @@ public static class BrandingInfo
             return $"{Version}-{ChannelInfo.VersionSuffix}";
         }
     }
+    /// <summary>
+    /// Whole days remaining before this build expires, or null if no expiry applies.
+    /// Returns null when: channel is Stable, BuildExpiryDays is 0, or BuildDate was not stamped by CI.
+    /// Returns 0 on the expiry day itself (not negative).
+    /// </summary>
+    public static int? DaysRemaining
+    {
+        get
+        {
+            if (ChannelInfo.BuildExpiryDays <= 0 || string.IsNullOrEmpty(BuildDate))
+                return null;
+            if (!DateTimeOffset.TryParse(BuildDate, null,
+                    System.Globalization.DateTimeStyles.RoundtripKind, out var buildDate))
+                return null;
+            int days = (int)Math.Ceiling((buildDate.AddDays(ChannelInfo.BuildExpiryDays) - DateTimeOffset.UtcNow).TotalDays);
+            return Math.Max(0, days);
+        }
+    }
+
     public const string AuthorName        = "Mark McDow";
     public const string AuthorCallsign    = "N4TEK";
     public const string AuthorCompany     = "My Computer Guru LLC";

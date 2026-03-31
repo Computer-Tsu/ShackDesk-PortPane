@@ -40,20 +40,44 @@
         <!-- ── Row 0: Always-visible drag strip ─────────────────────────── -->
         <Border Grid.Row="0" Style="{StaticResource DragStripStyle}"
                 MouseLeftButtonDown="DragStrip_MouseDown">
-            <!-- Grip dots texture -->
-            <ItemsControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                          IsHitTestVisible="False">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
-                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
-                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
-                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
-                <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
-            </ItemsControl>
+            <Grid>
+                <!-- Grip dots — always centered -->
+                <ItemsControl HorizontalAlignment="Center" VerticalAlignment="Center"
+                              IsHitTestVisible="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+                    <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+                    <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+                    <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+                    <Ellipse Width="3" Height="3" Fill="#44FFFFFF" Margin="2,0"/>
+                </ItemsControl>
+
+                <!-- Channel badge + expiry (alpha/beta only, right-aligned) -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,6,0"
+                            IsHitTestVisible="False"
+                            Visibility="{Binding IsPreRelease, Converter={StaticResource BoolToVis}}">
+                    <Border Background="#CC8B4000"
+                            CornerRadius="2"
+                            Padding="4,1"
+                            Margin="0,0,4,0">
+                        <TextBlock Text="{Binding ChannelBadgeText}"
+                                   Foreground="#FFDD88"
+                                   FontSize="9"
+                                   FontWeight="Bold"/>
+                    </Border>
+                    <TextBlock Text="{Binding BuildExpiryText}"
+                               Foreground="#88FFFFFF"
+                               FontSize="9"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
         <!-- ── Row 1: Chrome overlay (hidden by default, shown on click) ── -->
