@@ -30,7 +30,7 @@ Device Manager.
 ## Download
 
 | Channel | Link | Notes |
-|---|---|---|
+| --- | --- | --- |
 | **Alpha** | [Latest Alpha release](https://github.com/Computer-Tsu/shackdesk-portpane/releases/tag/latest-alpha) | Updated on every `dev` push. 14-day expiry. For testers. |
 | **Stable** | [Latest stable release](https://github.com/Computer-Tsu/shackdesk-portpane/releases/latest) | No stable release yet — coming soon. |
 
