@@ -61,6 +61,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Drag strip channel watermark: always-visible `ALPHA` / `BETA` badge with days-remaining
   countdown on the right side of the drag handle; hidden on stable builds
 
+### Fixed
+
+- Chrome menu bar auto-hides after 5 seconds making the menu unusable; replaced
+  5-second `DispatcherTimer` with focus/hover model: chrome appears on mouse-enter,
+  pins on click or Alt key (enabling keyboard menu navigation), and hides only when
+  the window loses focus — closes #8
+
 ### Changed
 
 - `BrandingInfo.Version` stripped of channel suffix (was `"0.5.1-beta"`); suffix now provided

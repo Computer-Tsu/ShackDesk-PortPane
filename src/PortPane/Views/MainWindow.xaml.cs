@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using PortPane.Services;
 using PortPane.ViewModels;
@@ -13,7 +12,7 @@ public partial class MainWindow : Window
 {
     private readonly MainViewModel    _vm;
     private readonly ISettingsService _settings;
-    private readonly DispatcherTimer  _chromehideTimer;
+    private bool                      _chromePinned;
 
     public MainWindow(MainViewModel viewModel, ISettingsService settings)
     {
@@ -21,16 +20,6 @@ public partial class MainWindow : Window
         DataContext = viewModel;
         _vm         = viewModel;
         _settings   = settings;
-
-        _chromehideTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromSeconds(5)
-        };
-        _chromehideTimer.Tick += (_, _) =>
-        {
-            _vm.IsChromeVisible = false;
-            _chromehideTimer.Stop();
-        };
 
         // Restore window position
         var pos = settings.Current.WindowPosition;
@@ -50,17 +39,46 @@ public partial class MainWindow : Window
     }
 
     // ── Chrome reveal/hide ────────────────────────────────────────────────────
+    // Hover  : mouse enters window → show chrome (unpinned)
+    // Click  : any left-click → pin chrome (stays until window loses focus)
+    // Alt    : Alt / Alt+letter → pin chrome so keyboard menu navigation works
+    // Blur   : window deactivated → hide chrome and clear pin
+    // Leave  : mouse exits window without a click → hide chrome if not pinned
 
-    private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    private void ShowChrome()  => _vm.IsChromeVisible = true;
+
+    private void PinChrome()
     {
-        RevealChrome();
+        _chromePinned       = true;
+        _vm.IsChromeVisible = true;
     }
 
-    private void RevealChrome()
+    private void HideChrome()
     {
-        _vm.IsChromeVisible = true;
-        _chromehideTimer.Stop();
-        _chromehideTimer.Start();
+        _chromePinned       = false;
+        _vm.IsChromeVisible = false;
+    }
+
+    private void Window_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        => ShowChrome();
+
+    private void Window_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+    {
+        if (!_chromePinned)
+            _vm.IsChromeVisible = false;
+    }
+
+    private void Window_Deactivated(object sender, EventArgs e)
+        => HideChrome();
+
+    private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        => PinChrome();
+
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        if (e.Key == Key.System)
+            PinChrome();
+        base.OnPreviewKeyDown(e);
     }
 
     // ── Window control buttons ────────────────────────────────────────────────

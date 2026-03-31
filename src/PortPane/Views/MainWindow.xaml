@@ -14,7 +14,10 @@
         MinHeight="200"
         Topmost="{Binding IsAlwaysOnTop}"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
-        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
+        MouseEnter="Window_MouseEnter"
+        MouseLeave="Window_MouseLeave"
+        Deactivated="Window_Deactivated">
 
     <!-- WindowChrome: keeps resize handles and drop shadow without system title bar -->
     <WindowChrome.WindowChrome>
