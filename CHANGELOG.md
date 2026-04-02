@@ -56,6 +56,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   every `dev` push so testers always have one bookmark to the current alpha exe
 - `build.yml` — `Stamp BuildDate` step: patches `BrandingInfo.BuildDate` at publish time so
   the compiled exe carries an accurate expiry reference
+- `BrandingInfo.DaysRemaining`: computed property returning whole days until build expiry,
+  or `null` for stable builds or unstamped local builds
+- Drag strip channel watermark: always-visible `ALPHA` / `BETA` badge with days-remaining
+  countdown on the right side of the drag handle; hidden on stable builds
+
+### Fixed
+
+- Chrome menu bar auto-hides after 5 seconds making the menu unusable; replaced
+  5-second `DispatcherTimer` with focus/hover model: chrome appears on mouse-enter,
+  pins on click or Alt key (enabling keyboard menu navigation), and hides only when
+  the window loses focus — closes #8
 
 ### Changed
 

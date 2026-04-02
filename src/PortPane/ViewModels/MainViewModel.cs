@@ -88,6 +88,25 @@ public sealed class MainViewModel : ViewModelBase
         }
     }
 
+    // ── Channel / build info (alpha/beta only) ────────────────────────────────
+
+    public bool   IsPreRelease     => ChannelInfo.Channel != ReleaseChannel.Stable;
+    public string ChannelBadgeText => ChannelInfo.Channel == ReleaseChannel.Alpha ? "ALPHA" : "BETA";
+    public string BuildExpiryText
+    {
+        get
+        {
+            int? days = BrandingInfo.DaysRemaining;
+            if (days == null) return string.Empty;
+            return days switch
+            {
+                0 => "Expires today",
+                1 => "1 day remaining",
+                _ => $"{days} days remaining"
+            };
+        }
+    }
+
     // Commands
     public ICommand RefreshAllCommand      { get; }
     public ICommand ToggleChromeCommand    { get; }
