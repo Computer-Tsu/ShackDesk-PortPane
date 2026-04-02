@@ -23,7 +23,7 @@ Device Manager.
 
 ## Screenshot
 
-<!-- Screenshot placeholder — add docs/screenshots/main.png when available -->
+![PortPane screenshot](docs/screenshots/Capture.PNG)
 
 ---
 
