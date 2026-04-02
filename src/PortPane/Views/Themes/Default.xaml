@@ -230,13 +230,25 @@
          use the app's dark palette instead of the Windows system theme.
     ══════════════════════════════════════════════════════════════════ -->
 
-    <!-- System color overrides consumed by the default MenuItem template -->
-    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}"          Color="#2C2C2E"/>
+    <!-- System color overrides — consumed by WPF's built-in MenuItem, ComboBox,
+         ListBox, TextBox, and ToolTip control templates. Overriding here forces
+         all native popup/dropdown surfaces into the dark palette without needing
+         per-control ControlTemplates. -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}"           Color="#2C2C2E"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}"        Color="#111113"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}"       Color="#EBEBF5"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.MenuHighlightBrushKey}"  Color="#0A84FF"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"      Color="#0A84FF"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"  Color="White"/>
+    <!-- ComboBox / ListBox / TextBox popup and control surface -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}"         Color="#2C2C2E"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}"     Color="#EBEBF5"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}"        Color="#2C2C2E"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}"    Color="#EBEBF5"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlDarkBrushKey}"    Color="#48484A"/>
+    <!-- ToolTip -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.InfoBrushKey}"           Color="#3A3A3C"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.InfoTextBrushKey}"       Color="#EBEBF5"/>
 
     <Style TargetType="Menu">
         <Setter Property="Background" Value="{StaticResource ChromeBackgroundBrush}"/>
@@ -245,6 +257,39 @@
     <Style TargetType="MenuItem">
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         COMBOBOX — dark surface, themed dropdown
+         Closes #13
+    ══════════════════════════════════════════════════════════════════ -->
+
+    <Style TargetType="ComboBox">
+        <Setter Property="Background"       Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="Foreground"       Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="BorderBrush"      Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="Padding"          Value="6,4"/>
+        <Setter Property="FontFamily"       Value="Segoe UI"/>
+        <Setter Property="FontSize"         Value="13"/>
+    </Style>
+
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Background"       Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="Foreground"       Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Padding"          Value="8,5"/>
+        <Setter Property="FontFamily"       Value="Segoe UI"/>
+        <Setter Property="FontSize"         Value="13"/>
+        <Style.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════════

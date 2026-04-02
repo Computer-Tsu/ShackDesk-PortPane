@@ -15,7 +15,7 @@
 
         <!-- App logo — double-click for easter egg -->
         <Border x:Name="LogoBorder"
-                Background="{StaticResource AccentBrush}"
+                Background="Transparent"
                 CornerRadius="12"
                 Width="72" Height="72"
                 HorizontalAlignment="Center"
@@ -23,10 +23,9 @@
                 Cursor="Hand"
                 MouseLeftButtonDown="Logo_MouseDown"
                 ToolTip="Double-click for a surprise">
-            <TextBlock Text="PP" FontSize="30" FontWeight="Bold"
-                       Foreground="White"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+            <Image Source="pack://application:,,,/Assets/AppLogo.png"
+                   Width="72" Height="72"
+                   RenderOptions.BitmapScalingMode="HighQuality"/>
         </Border>
 
         <!-- Easter egg canvas (hidden until triggered) -->
