@@ -53,4 +53,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="..\..\docs\assets\PP-v1.png">
+      <Link>Assets\AppLogo.png</Link>
+    </Resource>
+  </ItemGroup>
+
 </Project>
