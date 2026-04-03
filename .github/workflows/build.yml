@@ -367,10 +367,11 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'SilentlyContinue'
-          $assets = gh release view latest-alpha --json assets --jq '.assets[].name' 2>$null
+          $repo = '${{ github.repository }}'
+          $assets = gh release view latest-alpha --repo $repo --json assets --jq '.assets[].name' 2>$null
           if ($assets) {
             $assets -split "`n" | Where-Object { $_.Trim() -ne '' } | ForEach-Object {
-              gh release delete-asset latest-alpha $_.Trim() --yes 2>$null
+              gh release delete-asset latest-alpha $_.Trim() --repo $repo --yes 2>$null
             }
           }
           exit 0
