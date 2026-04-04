@@ -9,8 +9,16 @@ public interface ILicenseService
 {
     LicenseInfo Current { get; }
     Task<bool>  ActivateAsync(string licenseKey);
+    Task<LicenseInstallResult> ValidateAndInstallAsync(string filePath);
     Task        DeactivateAsync();
     bool        IsFeatureAvailable(string featureKey);
+}
+
+/// <summary>Result of ValidateAndInstallAsync. Success=true means the license was applied.</summary>
+public sealed record LicenseInstallResult(bool Success, string? ErrorMessage = null)
+{
+    public static LicenseInstallResult Ok()                   => new(true);
+    public static LicenseInstallResult Fail(string message)   => new(false, message);
 }
 
 /// <summary>
@@ -100,6 +108,47 @@ public sealed class LicenseService : ILicenseService
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
+
+    public async Task<LicenseInstallResult> ValidateAndInstallAsync(string filePath)
+    {
+        string keyData;
+        try
+        {
+            keyData = File.ReadAllText(filePath).Trim();
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "License file unreadable: {Path}", filePath);
+            return LicenseInstallResult.Fail("file_unreadable");
+        }
+
+        try
+        {
+            string json = Encoding.UTF8.GetString(Convert.FromBase64String(keyData));
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+            if (!root.TryGetProperty("app", out var appProp)
+                || !appProp.GetString()!.Equals("portpane", StringComparison.OrdinalIgnoreCase))
+                return LicenseInstallResult.Fail("wrong_app");
+        }
+        catch
+        {
+            return LicenseInstallResult.Fail("file_unreadable");
+        }
+
+        var info = TryParse(keyData);
+        if (info is null) return LicenseInstallResult.Fail("file_unreadable");
+
+        if (!VerifySignature(info)) return LicenseInstallResult.Fail("invalid_signature");
+
+        if (info.ExpiresAt.HasValue && info.ExpiresAt.Value < DateTimeOffset.UtcNow)
+            return LicenseInstallResult.Fail("expired");
+
+        if (!IsVersionAllowed(info.VersionMax)) return LicenseInstallResult.Fail("expired");
+
+        bool ok = await ActivateAsync(keyData);
+        return ok ? LicenseInstallResult.Ok() : LicenseInstallResult.Fail("invalid_signature");
+    }
 
     public async Task<bool> ActivateAsync(string licenseKey)
     {
