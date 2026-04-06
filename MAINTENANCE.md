@@ -220,7 +220,7 @@ Host a `latest.json` file at the `UpdateEndpoint` URL. Velopack's expected forma
 ```json
 {
   "version": "0.6.0-beta",
-  "url": "https://shackdesk.app/releases/PortPane-0.6.0-beta-win-x64.exe",
+  "url": "https://shackdesk.com/releases/PortPane-0.6.0-beta-win-x64.exe",
   "sha256": "abc123...",
   "releaseNotes": "See https://github.com/Computer-Tsu/shackdesk-portpane/releases"
 }
@@ -234,7 +234,7 @@ the SHA-256 hash as a step output and artifact (`PortPane.exe.sha256`).
 The endpoint is defined in `BrandingInfo.cs`:
 
 ```csharp
-public const string UpdateEndpoint = "https://shackdesk.app/update/latest.json";
+public const string UpdateEndpoint = "https://shackdesk.com/update/latest.json";
 ```
 
 Change this before the first stable release if the hosting URL differs.

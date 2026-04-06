@@ -61,12 +61,12 @@ public static class BrandingInfo
     public const string AuthorCompany     = "My Computer Guru LLC";
     public const string AuthorGitHub      = "Computer-Tsu";
     public const string RepoURL           = "https://github.com/Computer-Tsu/shackdesk-portpane";
-    public const string AppURL            = "https://shackdesk.app";
+    public const string AppURL            = "https://shackdesk.com";
     public const string SupportURL        = "https://github.com/Computer-Tsu/shackdesk-portpane/discussions";
     public const string DonationURL       = "";
     public const string LicenseType       = "GPL v3 / Commercial";
-    public const string TelemetryEndpoint = "https://telemetry.shackdesk.app/report";
-    public const string UpdateEndpoint    = "https://shackdesk.app/update/latest.json";
-    public const string PrivacyURL        = "https://shackdesk.app/privacy";
+    public const string TelemetryEndpoint = "https://telemetry.shackdesk.com/report";
+    public const string UpdateEndpoint    = "https://shackdesk.com/update/latest.json";
+    public const string PrivacyURL        = "https://shackdesk.com/privacy";
     public const string ContactEmail      = "";
 }
