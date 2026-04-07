@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:PortPane.ViewModels"
         mc:Ignorable="d"
+        Title="PortPane"
         WindowStyle="None"
         AllowsTransparency="False"
         Background="{StaticResource WindowBackgroundBrush}"
