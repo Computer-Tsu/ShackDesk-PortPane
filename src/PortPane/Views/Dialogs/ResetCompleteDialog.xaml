@@ -1,0 +1,56 @@
+<Window x:Class="PortPane.Views.Dialogs.ResetCompleteDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Settings Reset Complete"
+        Width="420"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource WindowBackgroundBrush}"
+        ShowInTaskbar="False">
+
+    <!-- Escape is intentionally inert — both choices are deliberate actions -->
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{x:Null}"/>
+    </Window.InputBindings>
+
+    <StackPanel Margin="24,20,24,16">
+
+        <TextBlock Foreground="{StaticResource TextPrimaryBrush}"
+                   FontSize="13"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,20"
+                   Text="Your settings have been reset and the settings file has been deleted.
+
+The next time PortPane launches it will start fresh with the setup wizard.
+
+Would you like to relaunch PortPane now?"/>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Content="No, I'll launch it myself"
+                    MinWidth="160" MinHeight="32"
+                    Padding="12,0"
+                    Margin="0,0,8,0"
+                    Background="{StaticResource SurfaceElevatedBrush}"
+                    Foreground="{StaticResource TextPrimaryBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    Cursor="Hand"
+                    Click="NoRelaunch_Click"/>
+
+            <Button Content="Relaunch PortPane"
+                    MinWidth="140" MinHeight="32"
+                    Padding="12,0"
+                    Background="{StaticResource AccentBrush}"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Click="Relaunch_Click"/>
+        </StackPanel>
+
+    </StackPanel>
+</Window>
