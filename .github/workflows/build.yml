@@ -180,6 +180,25 @@ jobs:
             Set-Content $file
           echo "Stamped BuildDate = $now"
 
+      - name: Stamp assembly version into PortPane.csproj
+        shell: pwsh
+        run: |
+          $base    = (Select-String 'src/PortPane/BrandingInfo.cs' `
+            -Pattern 'Version\s*=\s*"([^"]+)"').Matches[0].Groups[1].Value
+          $suffix  = (Select-String 'src/PortPane/ChannelInfo.cs' `
+            -Pattern 'VersionSuffix\s*=\s*"([^"]*)"').Matches[0].Groups[1].Value
+          $channel = (Select-String 'src/PortPane/ChannelInfo.cs' `
+            -Pattern 'Channel\s*=\s*ReleaseChannel\.(\w+)').Matches[0].Groups[1].Value
+          $version = if ($suffix) { "$base-$suffix" } else { $base }
+          $numeric = "$base.0"
+          $file    = 'src/PortPane/PortPane.csproj'
+          (Get-Content $file) `
+            -replace '<Version>[^<]+</Version>',         "<Version>$version</Version>" `
+            -replace '<FileVersion>[^<]+</FileVersion>', "<FileVersion>$numeric</FileVersion>" `
+            -replace '<AssemblyVersion>[^<]+</AssemblyVersion>', "<AssemblyVersion>$numeric</AssemblyVersion>" |
+            Set-Content $file
+          echo "Stamped csproj: Version=$version FileVersion=$numeric"
+
       - name: Publish — single self-contained exe
         run: >
           dotnet publish ${{ env.APP_PROJECT }}
