@@ -36,7 +36,7 @@ Collected telemetry is transmitted to `https://telemetry.shackdesk.com/report` a
 
 ## Update Checks
 
-On startup, PortPane checks `https://shackdesk.com/update/latest.json` for available updates. This is a standard HTTPS GET request. No user data is sent.
+On startup, PortPane checks a channel-specific URL for available updates (e.g. `https://shackdesk.com/portpane/update/stable.json`). This is a standard HTTPS GET request. No user data is sent.
 
 ## Log Files
 

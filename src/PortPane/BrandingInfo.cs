@@ -66,7 +66,18 @@ public static class BrandingInfo
     public const string DonationURL       = "";
     public const string LicenseType       = "GPL v3 / Commercial";
     public const string TelemetryEndpoint = "https://telemetry.shackdesk.com/report";
-    public const string UpdateEndpoint    = "https://shackdesk.com/update/latest.json";
+
+    /// <summary>
+    /// Per-channel update feed URL. Resolves at runtime based on ChannelInfo.Channel.
+    /// Served by ShackDesk-Site as static JSON; updated automatically after each release.
+    /// </summary>
+    public static string UpdateEndpoint => ChannelInfo.Channel switch
+    {
+        ReleaseChannel.Alpha  => "https://shackdesk.com/portpane/update/alpha.json",
+        ReleaseChannel.Beta   => "https://shackdesk.com/portpane/update/beta.json",
+        _                     => "https://shackdesk.com/portpane/update/stable.json"
+    };
+
     public const string PrivacyURL        = "https://shackdesk.com/privacy";
     public const string ContactEmail      = "";
 }
