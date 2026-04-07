@@ -32,11 +32,11 @@ Stack traces are intentionally excluded to avoid leaking file paths.
 
 ## Data Storage
 
-Collected telemetry is transmitted to `https://telemetry.shackdesk.app/report` and stored for up to 90 days for aggregate analytics. No individual records are retained longer than 90 days.
+Collected telemetry is transmitted to `https://telemetry.shackdesk.com/report` and stored for up to 90 days for aggregate analytics. No individual records are retained longer than 90 days.
 
 ## Update Checks
 
-On startup, PortPane checks `https://shackdesk.app/update/latest.json` for available updates. This is a standard HTTPS GET request. No user data is sent.
+On startup, PortPane checks a channel-specific URL for available updates (e.g. `https://shackdesk.com/portpane/update/stable.json`). This is a standard HTTPS GET request. No user data is sent.
 
 ## Log Files
 
@@ -44,4 +44,4 @@ PortPane writes log files to `%LOCALAPPDATA%\ShackDesk\PortPane\Logs\`. These fi
 
 ## Contact
 
-For privacy questions: [shackdesk.app/privacy](https://shackdesk.app/privacy)
+For privacy questions: [shackdesk.com/privacy](https://shackdesk.com/privacy)

@@ -9,7 +9,7 @@
 #define AppName        "PortPane"
 #define AppVersion     "0.5.0-beta"
 #define AppPublisher   "My Computer Guru LLC"
-#define AppURL         "https://shackdesk.app"
+#define AppURL         "https://shackdesk.com"
 #define AppExeName     "PortPane.exe"
 #define AppDescription "Takes the pain out of ports"
 #define CopyrightYear  "2024-2026"

@@ -27,7 +27,7 @@ you are granted a non-exclusive, non-transferable license to:
 
 ## To Obtain a Commercial License
 
-Contact: [shackdesk.app](https://shackdesk.app)
+Contact: [shackdesk.com](https://shackdesk.com)
 
 ## Disclaimer of Warranties
 

@@ -324,6 +324,7 @@ jobs:
             Rename-Item -NewName "PortPane-$tag-win-x64.exe.sha256"
 
       - name: Create GitHub Release
+        id: gh_release
         uses: softprops/action-gh-release@v2
         with:
           files: |
@@ -333,6 +334,35 @@ jobs:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
           generate_release_notes: false
+
+      - name: Dispatch update feed to ShackDesk-Site
+        env:
+          PAT: ${{ secrets.SITE_DISPATCH_PAT }}
+        shell: pwsh
+        run: |
+          $tag     = '${{ github.ref_name }}'
+          $version = $tag.TrimStart('v')
+          $channel = if ($tag -match '-beta')  { 'beta' }
+                     elseif ($tag -match '-alpha') { 'alpha' }
+                     else { 'stable' }
+          $sha256  = '${{ needs.publish.outputs.sha256 }}'
+          $dlUrl   = "https://github.com/${{ github.repository }}/releases/download/$tag/PortPane-$tag-win-x64.exe"
+          $body    = @{
+            event_type     = 'portpane-release'
+            client_payload = @{
+              channel      = $channel
+              version      = $version
+              sha256       = $sha256
+              download_url = $dlUrl
+            }
+          } | ConvertTo-Json -Depth 3
+          Invoke-RestMethod `
+            -Uri 'https://api.github.com/repos/Computer-Consultant/ShackDesk-Site/dispatches' `
+            -Method Post `
+            -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
+            -Body $body `
+            -ContentType 'application/json'
+          echo "Dispatched $channel update for v$version"
 
   # ─────────────────────────────────────────────────────────────────────
   rolling-alpha:
@@ -393,3 +423,28 @@ jobs:
           files: |
             ./release/PortPane-*.exe
             ./release/PortPane-*.sha256
+
+      - name: Dispatch update feed to ShackDesk-Site
+        env:
+          PAT: ${{ secrets.SITE_DISPATCH_PAT }}
+        shell: pwsh
+        run: |
+          $version = '${{ needs.publish.outputs.version }}'
+          $sha256  = '${{ needs.publish.outputs.sha256 }}'
+          $dlUrl   = "https://github.com/${{ github.repository }}/releases/download/latest-alpha/PortPane-$version-win-x64.exe"
+          $body    = @{
+            event_type     = 'portpane-release'
+            client_payload = @{
+              channel      = 'alpha'
+              version      = $version
+              sha256       = $sha256
+              download_url = $dlUrl
+            }
+          } | ConvertTo-Json -Depth 3
+          Invoke-RestMethod `
+            -Uri 'https://api.github.com/repos/Computer-Consultant/ShackDesk-Site/dispatches' `
+            -Method Post `
+            -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
+            -Body $body `
+            -ContentType 'application/json'
+          echo "Dispatched alpha update for v$version"

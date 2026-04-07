@@ -12,7 +12,8 @@ code signing, and other operational procedures. It is not intended for general c
 3. [Cutting a Release](#3-cutting-a-release)
 4. [Velopack Auto-Update Setup](#4-velopack-auto-update-setup)
 5. [Code Signing Setup](#5-code-signing-setup)
-6. [NuGet and Actions Dependency Updates](#6-nuget-and-actions-dependency-updates)
+6. [Cross-Org PAT — ShackDesk-Site Dispatch](#6-cross-org-pat--shackdesk-site-dispatch)
+7. [NuGet and Actions Dependency Updates](#7-nuget-and-actions-dependency-updates)
 
 ---
 
@@ -220,7 +221,7 @@ Host a `latest.json` file at the `UpdateEndpoint` URL. Velopack's expected forma
 ```json
 {
   "version": "0.6.0-beta",
-  "url": "https://shackdesk.app/releases/PortPane-0.6.0-beta-win-x64.exe",
+  "url": "https://shackdesk.com/releases/PortPane-0.6.0-beta-win-x64.exe",
   "sha256": "abc123...",
   "releaseNotes": "See https://github.com/Computer-Tsu/shackdesk-portpane/releases"
 }
@@ -234,7 +235,7 @@ the SHA-256 hash as a step output and artifact (`PortPane.exe.sha256`).
 The endpoint is defined in `BrandingInfo.cs`:
 
 ```csharp
-public const string UpdateEndpoint = "https://shackdesk.app/update/latest.json";
+public const string UpdateEndpoint = "https://shackdesk.com/update/latest.json";
 ```
 
 Change this before the first stable release if the hosting URL differs.
@@ -280,7 +281,31 @@ the build step to call `crconf.exe`.
 
 ---
 
-## 6. NuGet and Actions Dependency Updates
+## 6. Cross-Org PAT — ShackDesk-Site Dispatch
+
+The `SITE_DISPATCH_PAT` GitHub Actions secret authorises the PortPane release job to trigger
+the update JSON workflow in `Computer-Consultant/ShackDesk-Site` after each release.
+
+**Token scope:**
+- Resource owner: `Computer-Consultant`
+- Repository: `ShackDesk-Site` only
+- Permissions: `Contents: Read and write`, `Actions: Read and write`
+
+**Expiry:** ~1 year from creation. Renewal reminder: [issue #14](https://github.com/Computer-Tsu/ShackDesk-PortPane/issues/14)
+
+**To renew:**
+1. GitHub → Personal account → **Settings → Developer settings → Personal access tokens → Fine-grained tokens**
+2. Find the token scoped to `Computer-Consultant/ShackDesk-Site` and regenerate it
+3. `Computer-Tsu/ShackDesk-PortPane` → **Settings → Secrets → Actions** → update `SITE_DISPATCH_PAT`
+4. Verify the next release triggers the update JSON workflow successfully
+
+**If the token expires:** PortPane releases still build and ship normally — only the automatic
+update of `stable.json` / `beta.json` / `alpha.json` in ShackDesk-Site will fail silently.
+Manually update the JSON files in ShackDesk-Site to restore auto-update functionality.
+
+---
+
+## 7. NuGet and Actions Dependency Updates
 
 Dependabot opens pull requests automatically every Monday for:
 
