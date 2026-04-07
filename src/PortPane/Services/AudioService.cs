@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using NAudio.CoreAudioApi;
 using PortPane.Models;
 using Serilog;
@@ -126,21 +127,38 @@ public sealed class AudioService : IAudioService, IDisposable
 }
 
 /// <summary>
-/// Thin wrapper around the IPolicyConfig COM interface used to set default audio endpoints.
-/// NAudio does not expose this directly, so we use the underlying COM object.
+/// Direct COM interop for IPolicyConfig — the Windows undocumented interface used to set
+/// default audio endpoints. This approach is used by SoundSwitch, AudioDeviceCmdlets, and
+/// other open-source audio tools. No admin rights required; works on Windows 10/11.
 /// </summary>
+[ComImport]
+[Guid("F8679F50-850A-41CF-9C72-430F290290C8")]
+[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+file interface IPolicyConfig
+{
+    [PreserveSig] int GetMixFormat(string pszDeviceName, IntPtr ppFormat);
+    [PreserveSig] int GetDeviceFormat(string pszDeviceName, bool bDefault, IntPtr ppFormat);
+    [PreserveSig] int ResetDeviceFormat(string pszDeviceName);
+    [PreserveSig] int SetDeviceFormat(string pszDeviceName, IntPtr pEndpointFormat, IntPtr MixFormat);
+    [PreserveSig] int GetProcessingPeriod(string pszDeviceName, bool bDefault, IntPtr pmftDefaultPeriod, IntPtr pmftMinimumPeriod);
+    [PreserveSig] int SetProcessingPeriod(string pszDeviceName, IntPtr pmftPeriod);
+    [PreserveSig] int GetShareMode(string pszDeviceName, IntPtr pMode);
+    [PreserveSig] int SetShareMode(string pszDeviceName, IntPtr mode);
+    [PreserveSig] int GetPropertyValue(string pszDeviceName, bool bFxStore, IntPtr key, IntPtr pv);
+    [PreserveSig] int SetPropertyValue(string pszDeviceName, bool bFxStore, IntPtr key, IntPtr pv);
+    [PreserveSig] int SetDefaultEndpoint(string pszDeviceName, uint eRole);
+    [PreserveSig] int SetEndpointVisibility(string pszDeviceName, bool bVisible);
+}
+
+[ComImport]
+[Guid("870AF99C-171D-4F9E-AF0D-E63DF40C2BC9")]
+file class PolicyConfigComObject { }
+
 file static class PolicyConfigClient
 {
     public static void SetDefaultEndpoint(string deviceId, Role role)
     {
-        // NAudio 2.x exposes this via the internal PolicyConfig client.
-        // We call it via reflection to avoid adding a COM reference.
-        // This approach is used by popular open-source tools (EarTrumpet, SoundSwitch).
-        var type = typeof(MMDeviceEnumerator).Assembly
-            .GetType("NAudio.CoreAudioApi.Interfaces.PolicyConfigClient")
-            ?? throw new InvalidOperationException("PolicyConfigClient not found in NAudio assembly");
-
-        var instance = Activator.CreateInstance(type)!;
-        type.GetMethod("SetDefaultEndpoint")!.Invoke(instance, [deviceId, role]);
+        var config = (IPolicyConfig)new PolicyConfigComObject();
+        Marshal.ThrowExceptionForHR(config.SetDefaultEndpoint(deviceId, (uint)role));
     }
 }

@@ -287,6 +287,7 @@ The `SITE_DISPATCH_PAT` GitHub Actions secret authorises the PortPane release jo
 the update JSON workflow in `Computer-Consultant/ShackDesk-Site` after each release.
 
 **Token scope:**
+
 - Resource owner: `Computer-Consultant`
 - Repository: `ShackDesk-Site` only
 - Permissions: `Contents: Read and write`, `Actions: Read and write`
@@ -294,6 +295,7 @@ the update JSON workflow in `Computer-Consultant/ShackDesk-Site` after each rele
 **Expiry:** ~1 year from creation. Renewal reminder: [issue #14](https://github.com/Computer-Tsu/ShackDesk-PortPane/issues/14)
 
 **To renew:**
+
 1. GitHub → Personal account → **Settings → Developer settings → Personal access tokens → Fine-grained tokens**
 2. Find the token scoped to `Computer-Consultant/ShackDesk-Site` and regenerate it
 3. `Computer-Tsu/ShackDesk-PortPane` → **Settings → Secrets → Actions** → update `SITE_DISPATCH_PAT`

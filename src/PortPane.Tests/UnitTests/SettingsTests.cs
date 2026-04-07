@@ -53,15 +53,15 @@ public class SettingsTests : IDisposable
     public void AppSettings_Defaults_AreReasonable()
     {
         var s = new AppSettings();
-        Assert.Equal(1,     s.SchemaVersion);
+        Assert.Equal(2,     s.SchemaVersion);
         Assert.Equal(1.0,   s.ScaleFactor);
         Assert.True(s.AlwaysOnTop);
-        Assert.Equal("PC",  s.AudioProfile);
         Assert.Equal(9600,  s.PreferredBaudRate);
         Assert.Equal("en",  s.Language);
         Assert.False(s.TelemetryEnabled);
         Assert.False(s.FirstRunComplete);
         Assert.False(s.PortableMode);
+        Assert.Equal(2,     s.AudioProfiles.Count); // two built-in system profiles (PC Mode, Radio Mode)
     }
 
     // ── Save / load round-trip ────────────────────────────────────────────────
@@ -117,14 +117,14 @@ public class SettingsTests : IDisposable
         }
 
         Assert.NotNull(result);
-        Assert.Equal(1, result.SchemaVersion); // default
+        Assert.Equal(2, result.SchemaVersion); // default
     }
 
     // ── Schema version ────────────────────────────────────────────────────────
 
     [Fact]
-    public void AppSettings_SchemaVersion_StartsAtOne()
-        => Assert.Equal(1, new AppSettings().SchemaVersion);
+    public void AppSettings_SchemaVersion_StartsAtTwo()
+        => Assert.Equal(2, new AppSettings().SchemaVersion);
 
     // ── WindowPosition / WindowSize defaults ──────────────────────────────────
 

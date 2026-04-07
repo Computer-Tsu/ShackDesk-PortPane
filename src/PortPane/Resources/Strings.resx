@@ -103,6 +103,176 @@
   <data name="FreeTierLabel"       xml:space="preserve"><value>Free (GPL v3)</value></data>
   <data name="CommercialTierLabel" xml:space="preserve"><value>Commercial</value></data>
 
+  <!-- Settings Window Tabs -->
+  <data name="Settings_Tab_General"      xml:space="preserve"><value>General</value></data>
+  <data name="Settings_Tab_Audio"        xml:space="preserve"><value>Audio</value></data>
+  <data name="Settings_Tab_ComPorts"     xml:space="preserve"><value>COM Ports</value></data>
+  <data name="Settings_Tab_Updates"      xml:space="preserve"><value>Updates</value></data>
+  <data name="Settings_Tab_Privacy"      xml:space="preserve"><value>Privacy</value></data>
+  <data name="Settings_Tab_License"      xml:space="preserve"><value>License</value></data>
+
+  <!-- Settings Window Buttons -->
+  <data name="Settings_OK"              xml:space="preserve"><value>_OK</value></data>
+  <data name="Settings_Cancel"          xml:space="preserve"><value>_Cancel</value></data>
+  <data name="Settings_Browse"          xml:space="preserve"><value>_Browse</value></data>
+
+  <!-- General Tab — Display section -->
+  <data name="Settings_General_Display"             xml:space="preserve"><value>Display</value></data>
+  <data name="Settings_General_Scale"               xml:space="preserve"><value>UI Scale</value></data>
+  <data name="Settings_General_ScaleS"              xml:space="preserve"><value>S</value></data>
+  <data name="Settings_General_ScaleN"              xml:space="preserve"><value>N</value></data>
+  <data name="Settings_General_ScaleL"              xml:space="preserve"><value>L</value></data>
+  <data name="Settings_General_ScaleXL"             xml:space="preserve"><value>XL</value></data>
+  <data name="Settings_General_ScaleXXL"            xml:space="preserve"><value>XXL</value></data>
+  <data name="Settings_General_Language"            xml:space="preserve"><value>Language</value></data>
+  <data name="Settings_General_LanguageIncomplete"  xml:space="preserve"><value>{0} (incomplete)</value></data>
+  <data name="Settings_General_AlwaysOnTop"         xml:space="preserve"><value>Always on top</value></data>
+  <data name="Settings_General_ShowComPanel"        xml:space="preserve"><value>Show COM port panel</value></data>
+  <data name="Settings_General_ShowPuttyButton"     xml:space="preserve"><value>Show PuTTY button</value></data>
+  <data name="Settings_General_PuttyLocation"       xml:space="preserve"><value>PuTTY location</value></data>
+  <data name="Settings_General_PuttyNotFound"       xml:space="preserve"><value>File not found — Browse to locate PuTTY</value></data>
+  <data name="Settings_General_PuttyFilter"         xml:space="preserve"><value>PuTTY Executable (putty.exe)|putty.exe</value></data>
+  <data name="Settings_General_PuttyHint"           xml:space="preserve"><value>Launches with port and baud pre-filled:
+putty.exe -serial COM3 -sercfg 9600,8,n,1,N</value></data>
+  <data name="Settings_General_ShowAllAudio"        xml:space="preserve"><value>Show all audio devices</value></data>
+
+  <!-- General Tab — Startup section -->
+  <data name="Settings_General_Startup"             xml:space="preserve"><value>Startup</value></data>
+  <data name="Settings_General_LaunchAtStartup"     xml:space="preserve"><value>Launch at Windows startup</value></data>
+  <data name="Settings_General_StartMinimized"      xml:space="preserve"><value>Start minimized (coming soon)</value></data>
+  <data name="Settings_General_MinimizeToTray"      xml:space="preserve"><value>Minimize to tray (coming soon)</value></data>
+
+  <!-- General Tab — Portable Mode section -->
+  <data name="Settings_General_PortableMode"        xml:space="preserve"><value>Portable Mode</value></data>
+  <data name="Settings_General_ModeInstalled"       xml:space="preserve"><value>Installed (APPDATA)</value></data>
+  <data name="Settings_General_ModePortable"        xml:space="preserve"><value>Portable (local folder)</value></data>
+  <data name="Settings_General_PortableHint"        xml:space="preserve"><value>Place portable.txt next to PortPane.exe to enable portable mode</value></data>
+
+  <!-- Audio Tab -->
+  <data name="Settings_Audio_PCMode"                xml:space="preserve"><value>Profile A — PC Mode</value></data>
+  <data name="Settings_Audio_RadioMode"             xml:space="preserve"><value>Profile B — Radio Mode</value></data>
+  <data name="Settings_Audio_Playback"              xml:space="preserve"><value>Playback device</value></data>
+  <data name="Settings_Audio_Recording"             xml:space="preserve"><value>Recording device</value></data>
+  <data name="Settings_Audio_TestButton"            xml:space="preserve"><value>▶ Test</value></data>
+  <data name="Settings_Audio_TestPlaying"           xml:space="preserve"><value>Playing…</value></data>
+  <data name="Settings_Audio_NotConnected"          xml:space="preserve"><value>{0} (not connected)</value></data>
+  <data name="Settings_Audio_DefaultStar"           xml:space="preserve"><value>★ {0}</value></data>
+  <data name="Settings_Audio_PCModeHint"            xml:space="preserve"><value>★ = current Windows default
+PC Mode devices are saved automatically on the first switch to Radio Mode if not already configured here</value></data>
+  <data name="Settings_Audio_Behavior"              xml:space="preserve"><value>Behavior</value></data>
+  <data name="Settings_Audio_Notification"          xml:space="preserve"><value>Audio notification on switch (coming soon)</value></data>
+  <data name="Settings_Audio_AutoSwitchConnect"     xml:space="preserve"><value>Auto-switch on USB connect</value></data>
+  <data name="Settings_Audio_AutoSwitchRemove"      xml:space="preserve"><value>Auto-switch on USB remove</value></data>
+
+  <!-- COM Ports Tab -->
+  <data name="Settings_Com_Display"                 xml:space="preserve"><value>Display</value></data>
+  <data name="Settings_Com_DefaultBaud"             xml:space="preserve"><value>Default baud rate</value></data>
+  <data name="Settings_Com_ShowUnrecognized"        xml:space="preserve"><value>Show unrecognized devices</value></data>
+  <data name="Settings_Com_HighlightNew"            xml:space="preserve"><value>Highlight newly connected ports</value></data>
+  <data name="Settings_Com_LivePorts"               xml:space="preserve"><value>Currently detected ports (live)</value></data>
+  <data name="Settings_Com_Unrecognized"            xml:space="preserve"><value>(unrecognized)</value></data>
+  <data name="Settings_Com_DefaultBaudFmt"          xml:space="preserve"><value>default {0}</value></data>
+  <data name="Settings_Com_LiveHint"                xml:space="preserve"><value>Green = recognized  ·  Gray = unrecognized  ·  Read-only live view</value></data>
+  <data name="Settings_Com_DeviceDb"                xml:space="preserve"><value>Device Database</value></data>
+  <data name="Settings_Com_DbEntries"               xml:space="preserve"><value>{0} devices in database</value></data>
+  <data name="Settings_Com_OpenFolder"              xml:space="preserve"><value>Open file location</value></data>
+
+  <!-- Updates Tab -->
+  <data name="Settings_Updates_UpToDate"            xml:space="preserve"><value>PortPane is up to date — v{0}</value></data>
+  <data name="Settings_Updates_Available"           xml:space="preserve"><value>Version {0} is available — click Check Now to update</value></data>
+  <data name="Settings_Updates_Failed"              xml:space="preserve"><value>Update check failed — check your connection</value></data>
+  <data name="Settings_Updates_AutoCheck"           xml:space="preserve"><value>Check automatically</value></data>
+  <data name="Settings_Updates_Frequency"           xml:space="preserve"><value>Check frequency</value></data>
+  <data name="Settings_Updates_FreqWeekly"          xml:space="preserve"><value>Weekly</value></data>
+  <data name="Settings_Updates_FreqMonthly"         xml:space="preserve"><value>Monthly</value></data>
+  <data name="Settings_Updates_FreqNever"           xml:space="preserve"><value>Never</value></data>
+  <data name="Settings_Updates_LastChecked"         xml:space="preserve"><value>Last checked</value></data>
+  <data name="Settings_Updates_Never"               xml:space="preserve"><value>Never</value></data>
+  <data name="Settings_Updates_SilentHint"          xml:space="preserve"><value>Silent — no network required if no update is available</value></data>
+  <data name="Settings_Updates_Channel"             xml:space="preserve"><value>Release channel</value></data>
+  <data name="Settings_Updates_ChannelStable"       xml:space="preserve"><value>Stable</value></data>
+  <data name="Settings_Updates_ChannelBeta"         xml:space="preserve"><value>Beta</value></data>
+  <data name="Settings_Updates_BetaNote"            xml:space="preserve"><value>Beta builds may contain bugs. Report issues at {0}</value></data>
+  <data name="Settings_Updates_CheckNow"            xml:space="preserve"><value>Check now</value></data>
+  <data name="Settings_Updates_Checking"            xml:space="preserve"><value>Checking…</value></data>
+
+  <!-- Privacy Tab -->
+  <data name="Settings_Privacy_Telemetry"           xml:space="preserve"><value>Anonymous Telemetry</value></data>
+  <data name="Settings_Privacy_ShareReports"        xml:space="preserve"><value>Share device detection reports</value></data>
+  <data name="Settings_Privacy_AlphaNote"           xml:space="preserve"><value>Alpha builds collect telemetry by default to help identify device detection issues during testing.</value></data>
+  <data name="Settings_Privacy_Description"         xml:space="preserve"><value>Reports include: app version, Windows version, USB VID/PID, device friendly names, and profile switch count.
+Reports never include callsign, name, IP address, hostname, or audio content.</value></data>
+  <data name="Settings_Privacy_ViewData"            xml:space="preserve"><value>View collected data before sending →</value></data>
+  <data name="Settings_Privacy_SendFrequency"       xml:space="preserve"><value>Send frequency</value></data>
+  <data name="Settings_Privacy_FreqMonthly"         xml:space="preserve"><value>Monthly (if new devices)</value></data>
+  <data name="Settings_Privacy_FreqNever"           xml:space="preserve"><value>Never auto-send</value></data>
+  <data name="Settings_Privacy_PendingReports"      xml:space="preserve"><value>Pending reports</value></data>
+  <data name="Settings_Privacy_PendingFmt"          xml:space="preserve"><value>{0} queued</value></data>
+  <data name="Settings_Privacy_DataMgmt"            xml:space="preserve"><value>Data Management</value></data>
+  <data name="Settings_Privacy_LogFiles"            xml:space="preserve"><value>Log files</value></data>
+  <data name="Settings_Privacy_OpenFolder"          xml:space="preserve"><value>Open folder</value></data>
+  <data name="Settings_Privacy_LogRetention"        xml:space="preserve"><value>Log retention</value></data>
+  <data name="Settings_Privacy_LogRetentionValue"   xml:space="preserve"><value>7 days (rolling)</value></data>
+  <data name="Settings_Privacy_SettingsFile"        xml:space="preserve"><value>Settings file</value></data>
+  <data name="Settings_Privacy_ResetButton"         xml:space="preserve"><value>Reset to defaults…</value></data>
+
+  <!-- License Tab -->
+  <data name="Settings_License_AlphaNotice"         xml:space="preserve"><value>This is an alpha build. Full access is granted automatically to all testers.</value></data>
+  <data name="Settings_License_AlphaExpiry"         xml:space="preserve"><value>This build expires in {0} days.</value></data>
+  <data name="Settings_License_AlphaExpiryToday"    xml:space="preserve"><value>This build expires today.</value></data>
+  <data name="Settings_License_NoStamp"             xml:space="preserve"><value>Build expiry unavailable — this build was not stamped by CI.</value></data>
+  <data name="Settings_License_RowChannel"          xml:space="preserve"><value>Channel</value></data>
+  <data name="Settings_License_RowAccess"           xml:space="preserve"><value>Access</value></data>
+  <data name="Settings_License_RowVersion"          xml:space="preserve"><value>Version</value></data>
+  <data name="Settings_License_RowExpires"          xml:space="preserve"><value>Expires</value></data>
+  <data name="Settings_License_AlphaAccess"         xml:space="preserve"><value>Full access — alpha testing</value></data>
+  <data name="Settings_License_AlphaBadge"          xml:space="preserve"><value>Alpha</value></data>
+  <data name="Settings_License_BetaBadge"           xml:space="preserve"><value>Beta</value></data>
+  <data name="Settings_License_ExpiryDaysFmt"       xml:space="preserve"><value>In {0} days</value></data>
+  <data name="Settings_License_DropTarget"          xml:space="preserve"><value>Drop .portpane license file here or click to browse</value></data>
+  <data name="Settings_License_FileFilter"          xml:space="preserve"><value>PortPane License (*.portpane)|*.portpane</value></data>
+  <data name="Settings_License_OfflineHint"         xml:space="preserve"><value>License files are validated offline.
+No internet connection required.</value></data>
+  <data name="Settings_License_GetLicense"          xml:space="preserve"><value>Get a License</value></data>
+  <data name="Settings_License_Personal"            xml:space="preserve"><value>Personal / Commercial</value></data>
+  <data name="Settings_License_Club"                xml:space="preserve"><value>Club / EMCOMM</value></data>
+  <data name="Settings_License_Donate"              xml:space="preserve"><value>Support the project</value></data>
+  <data name="Settings_License_ErrInvalidSig"       xml:space="preserve"><value>Invalid signature — this license key was not issued by ShackDesk.</value></data>
+  <data name="Settings_License_ErrWrongApp"         xml:space="preserve"><value>Wrong application — this license is not for PortPane.</value></data>
+  <data name="Settings_License_ErrExpired"          xml:space="preserve"><value>License expired and is no longer valid.</value></data>
+  <data name="Settings_License_ErrUnreadable"       xml:space="preserve"><value>License file could not be read or is corrupt.</value></data>
+  <data name="Settings_License_TierFree"            xml:space="preserve"><value>Free (GPL v3)</value></data>
+  <data name="Settings_License_TierPersonal"        xml:space="preserve"><value>Personal</value></data>
+  <data name="Settings_License_TierClub"            xml:space="preserve"><value>Club</value></data>
+  <data name="Settings_License_TierEmComm"          xml:space="preserve"><value>EMCOMM</value></data>
+
+  <!-- Reset Confirm Dialog -->
+  <data name="Reset_Title"                          xml:space="preserve"><value>Reset All Settings</value></data>
+  <data name="Reset_BodyIntro"                      xml:space="preserve"><value>This will remove all your customizations and saved preferences. The next time PortPane starts it will be as if you are running it for the first time.</value></data>
+  <data name="Reset_BodyWillDelete"                 xml:space="preserve"><value>The following file will be permanently deleted:</value></data>
+  <data name="Reset_BodyWillNotDelete"              xml:space="preserve"><value>The following will NOT be affected:</value></data>
+  <data name="Reset_LicenseLabel"                   xml:space="preserve"><value>Your license key (useful for future reinstalls):</value></data>
+  <data name="Reset_LogsLabel"                      xml:space="preserve"><value>Your log files (useful if you need to report a problem after reset):</value></data>
+  <data name="Reset_Checkbox"                       xml:space="preserve"><value>I understand this will permanently delete my settings and restart PortPane</value></data>
+  <data name="Reset_StatusUnchecked"                xml:space="preserve"><value>Check the box above to enable Reset Settings</value></data>
+  <data name="Reset_StatusChecked"                  xml:space="preserve"><value>Ready — click Reset Settings to proceed</value></data>
+  <data name="Reset_CancelButton"                   xml:space="preserve"><value>Cancel</value></data>
+  <data name="Reset_ConfirmButton"                  xml:space="preserve"><value>Reset Settings</value></data>
+
+  <!-- Reset Complete Dialog -->
+  <data name="ResetComplete_Title"                  xml:space="preserve"><value>Settings Reset Complete</value></data>
+  <data name="ResetComplete_Body"                   xml:space="preserve"><value>Your settings have been reset and the settings file has been deleted.
+
+The next time PortPane launches it will start fresh with the setup wizard.
+
+Would you like to relaunch PortPane now?</value></data>
+  <data name="ResetComplete_NoButton"               xml:space="preserve"><value>No, I'll launch it myself</value></data>
+  <data name="ResetComplete_RelaunchButton"         xml:space="preserve"><value>Relaunch PortPane</value></data>
+
+  <!-- Footer -->
+  <data name="Settings_Footer_AlphaBuild"           xml:space="preserve"><value>Alpha Build</value></data>
+  <data name="Settings_Footer_BetaFmt"              xml:space="preserve"><value>Beta · {0}</value></data>
+
   <!-- About -->
   <data name="AboutTitle"          xml:space="preserve"><value>About PortPane</value></data>
   <data name="AboutVersion"        xml:space="preserve"><value>Version {0}</value></data>

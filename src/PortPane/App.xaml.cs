@@ -8,6 +8,7 @@ using PortPane.Models;
 using PortPane.Services;
 using PortPane.ViewModels;
 using PortPane.Views;
+using PortPane.Views.Dialogs;
 using Serilog;
 using Velopack;
 
@@ -177,6 +178,8 @@ public partial class App : Application
         services.AddTransient<AboutDialog>();
         services.AddTransient<FirstRunDialog>();
         services.AddTransient<TelemetryDataViewer>();
+        services.AddTransient<ResetConfirmDialog>();
+        services.AddTransient<ResetCompleteDialog>();
     }
 
     // ── Logging ───────────────────────────────────────────────────────────────
