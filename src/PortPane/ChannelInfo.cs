@@ -15,7 +15,7 @@ public enum ReleaseChannel { Alpha, Beta, Stable }
 public static class ChannelInfo
 {
     /// <summary>Current release channel for this branch.</summary>
-    public const ReleaseChannel Channel = ReleaseChannel.Beta;
+    public const ReleaseChannel Channel = ReleaseChannel.Stable;
 
     /// <summary>
     /// When true, LicenseService returns a Personal-tier license automatically.
@@ -41,12 +41,12 @@ public static class ChannelInfo
     /// 0 = no expiry (used on main). Alpha: 14 days. Beta: 60 days.
     /// Requires BrandingInfo.BuildDate to be stamped by CI at publish time.
     /// </summary>
-    public const int BuildExpiryDays = 60;
+    public const int BuildExpiryDays = 0;
 
     /// <summary>
     /// Version suffix appended by CI when composing the full artifact version.
     /// Alpha: "alpha" (CI also appends .yyyyMMdd-HHmm timestamp).
     /// Beta: "beta". Stable: empty string.
     /// </summary>
-    public const string VersionSuffix = "beta";
+    public const string VersionSuffix = "";
 }
