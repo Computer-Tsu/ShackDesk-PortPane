@@ -1,0 +1,142 @@
+<Window x:Class="PortPane.Views.Dialogs.ResetConfirmDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Reset All Settings"
+        Width="540"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource WindowBackgroundBrush}"
+        ShowInTaskbar="False">
+
+    <StackPanel Margin="24,20,24,16">
+
+        <!-- Intro paragraph -->
+        <TextBlock Foreground="{StaticResource TextPrimaryBrush}"
+                   FontSize="13"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,16"
+                   Text="This will remove all your customizations and saved preferences. The next time PortPane starts it will be as if you are running it for the first time."/>
+
+        <!-- What will be deleted (danger) -->
+        <TextBlock Foreground="{StaticResource DangerBrush}"
+                   FontSize="12"
+                   FontWeight="SemiBold"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,4"
+                   Text="The following file will be permanently deleted:"/>
+
+        <Border Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="3"
+                Padding="10,6"
+                Margin="0,0,0,16">
+            <TextBlock x:Name="SettingsPathBlock"
+                       FontFamily="Consolas, Courier New"
+                       FontSize="11"
+                       Foreground="{StaticResource TextPrimaryBrush}"
+                       TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- What will NOT be affected (success) -->
+        <TextBlock Foreground="{StaticResource RadioModeBrush}"
+                   FontSize="12"
+                   FontWeight="SemiBold"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8"
+                   Text="The following will NOT be affected:"/>
+
+        <!-- License file -->
+        <TextBlock Foreground="{StaticResource TextSecondaryBrush}"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,4"
+                   Text="Your license key (useful for future reinstalls):"/>
+        <Border Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="3"
+                Padding="10,6"
+                Margin="0,0,0,12">
+            <TextBlock x:Name="LicensePathBlock"
+                       FontFamily="Consolas, Courier New"
+                       FontSize="11"
+                       Foreground="{StaticResource TextPrimaryBrush}"
+                       TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Log folder -->
+        <TextBlock Foreground="{StaticResource TextSecondaryBrush}"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,4"
+                   Text="Your log files (useful if you need to report a problem after reset):"/>
+        <Border Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="3"
+                Padding="10,6"
+                Margin="0,0,0,20">
+            <TextBlock x:Name="LogPathBlock"
+                       FontFamily="Consolas, Courier New"
+                       FontSize="11"
+                       Foreground="{StaticResource TextPrimaryBrush}"
+                       TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Confirmation checkbox -->
+        <CheckBox x:Name="ConfirmCheckBox"
+                  Foreground="{StaticResource TextPrimaryBrush}"
+                  FontSize="13"
+                  Margin="0,0,0,16"
+                  Checked="ConfirmCheckBox_Changed"
+                  Unchecked="ConfirmCheckBox_Changed"
+                  Content="I understand this will permanently delete my settings and restart PortPane"/>
+
+        <!-- Footer row: status note + buttons -->
+        <DockPanel>
+            <!-- Status note (left) -->
+            <TextBlock x:Name="StatusNote"
+                       DockPanel.Dock="Left"
+                       VerticalAlignment="Center"
+                       FontSize="11"
+                       TextWrapping="Wrap"
+                       MaxWidth="260"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       Text="Check the box above to enable Reset Settings"/>
+
+            <!-- Buttons (right, Windows order: Cancel then Reset) -->
+            <StackPanel DockPanel.Dock="Right"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button x:Name="CancelBtn"
+                        Content="Cancel"
+                        IsCancel="True"
+                        MinWidth="80" MinHeight="32"
+                        Padding="12,0"
+                        Margin="0,0,8,0"
+                        Background="{StaticResource SurfaceElevatedBrush}"
+                        Foreground="{StaticResource TextPrimaryBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        Click="Cancel_Click"/>
+
+                <Button x:Name="ResetBtn"
+                        Content="Reset Settings"
+                        IsEnabled="False"
+                        MinWidth="120" MinHeight="32"
+                        Padding="12,0"
+                        Background="{StaticResource DangerBrush}"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Click="ResetSettings_Click"/>
+            </StackPanel>
+        </DockPanel>
+
+    </StackPanel>
+</Window>
