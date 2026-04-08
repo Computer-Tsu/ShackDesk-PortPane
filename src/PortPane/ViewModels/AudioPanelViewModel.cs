@@ -87,7 +87,7 @@ public sealed class AudioPanelViewModel : ViewModelBase
         SwitchProfileCommand = new RelayCommand(SwitchProfile, () => !IsSwitching);
         RefreshCommand       = new RelayCommand(Refresh);
 
-        ActiveProfile = _settings.Current.AudioProfile;
+        ActiveProfile = _settings.Current.ActiveProfileId == "radio" ? "Radio" : "PC";
         Refresh();
     }
 
@@ -117,13 +117,11 @@ public sealed class AudioPanelViewModel : ViewModelBase
             string newProfile = IsRadioMode ? "PC" : "Radio";
             Log.Information("Switching audio profile: {From} → {To}", ActiveProfile, newProfile);
 
-            string? playbackId = newProfile == "Radio"
-                ? FindDeviceId(_settings.Current.RadioModePlayback)
-                : FindDeviceId(_settings.Current.PCModePlayback);
+            var profileId = newProfile == "Radio" ? "radio" : "pc";
+            var profile   = _settings.Current.AudioProfiles.FirstOrDefault(p => p.Id == profileId);
 
-            string? captureId = newProfile == "Radio"
-                ? FindDeviceId(_settings.Current.RadioModeRecording)
-                : FindDeviceId(_settings.Current.PCModeRecording);
+            string? playbackId = FindDeviceId(profile?.Playback  ?? string.Empty);
+            string? captureId  = FindDeviceId(profile?.Recording ?? string.Empty);
 
             bool ok = true;
             if (!string.IsNullOrEmpty(playbackId)) ok &= _audio.SetDefaultDevice(playbackId);
@@ -132,7 +130,7 @@ public sealed class AudioPanelViewModel : ViewModelBase
             if (ok || (string.IsNullOrEmpty(playbackId) && string.IsNullOrEmpty(captureId)))
             {
                 ActiveProfile = newProfile;
-                _settings.Current.AudioProfile = newProfile;
+                _settings.Current.ActiveProfileId = newProfile.ToLowerInvariant();
                 _settings.Save();
                 ShowStatus($"Switched to {newProfile} mode");
             }
