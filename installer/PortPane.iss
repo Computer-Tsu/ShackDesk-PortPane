@@ -7,7 +7,7 @@
 ; See BrandingInfo.cs for all values sourced here.
 
 #define AppName        "PortPane"
-#define AppVersion     "0.5.0-beta"
+#define AppVersion     "0.5.6"
 #define AppPublisher   "My Computer Guru LLC"
 #define AppURL         "https://shackdesk.com"
 #define AppExeName     "PortPane.exe"
@@ -27,7 +27,7 @@ AppCopyright=Copyright (C) {#CopyrightYear} Mark McDow (N4TEK). All rights reser
 DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 AllowNoIcons=yes
-LicenseFile=..\LICENSE-GPL.md
+LicenseFile=..\LICENSE-MIT.md
 InfoBeforeFile=..\docs\INSTALLER_NOTE.txt
 OutputDir=Output
 OutputBaseFilename=PortPane-Setup-{#AppVersion}
@@ -63,7 +63,7 @@ Source: "..\publish\{#AppExeName}.sha256"; DestDir: "{app}"; Flags: ignoreversio
 Source: "..\data\usb_devices.json"; DestDir: "{app}\Data"; Flags: ignoreversion
 
 ; License files
-Source: "..\LICENSE-GPL.md";       DestDir: "{app}"; Flags: ignoreversion
+Source: "..\LICENSE-MIT.md";       DestDir: "{app}"; Flags: ignoreversion
 Source: "..\LICENSE-COMMERCIAL.md"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]

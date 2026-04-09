@@ -5,7 +5,7 @@
 *This summary is not legal text — the full agreement is below.*
 
 - **You keep ownership** of everything you contribute. You are not giving up your copyright.
-- **You give permission** for your contribution to be used in both the free (GPL v3) and
+- **You give permission** for your contribution to be used in both the free (MIT) and
   paid (commercial) versions of PortPane.
 - **This is standard practice** for dual-licensed open source projects. Without this
   agreement, the project could not legally offer a commercial version.
@@ -31,9 +31,9 @@ By submitting a pull request or any other contribution to PortPane by ShackDesk,
 
 3. You represent that your contributions do not violate any third-party license, patent, copyright, or other intellectual property right.
 
-## Dual Licensing
+## Distribution Models
 
-1. You acknowledge that PortPane is dual-licensed under GPL v3 and a commercial license, and that your contributions may be distributed under either license at the maintainer's discretion.
+1. You acknowledge that source code in this repository is distributed under MIT, and that official ShackDesk-distributed binaries/services may be offered under separate commercial terms. You agree your contributions may be used in both distribution models at the maintainer's discretion.
 
 ## No Obligation
 

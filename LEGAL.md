@@ -8,7 +8,8 @@ PortPane™ is a trademark of My Computer Guru LLC.
 
 ## License
 
-PortPane is dual-licensed. See [LICENSE-GPL.md](LICENSE-GPL.md) and [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md).
+- **Source code in this repository:** MIT License ([LICENSE-MIT.md](LICENSE-MIT.md)).
+- **Official ShackDesk-distributed binaries/services:** may be subject to additional commercial terms ([LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md)).
 
 ---
 

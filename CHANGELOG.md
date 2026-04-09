@@ -3,7 +3,7 @@
   PortPane by ShackDesk — Changelog
   Project  : https://github.com/Computer-Tsu/shackdesk-portpane
   Author   : Mark McDow (N4TEK) — My Computer Guru LLC
-  License  : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+  License  : MIT / Commercial (see LICENSE-MIT.md, LICENSE-COMMERCIAL.md)
   ════════════════════════════════════════════════════════════════════════════
 
   FORMAT
@@ -69,6 +69,9 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the window loses focus — closes #8
 
 ### Changed
+
+- License baseline switched from GPL v3 to MIT across app metadata, installer packaging, and user-facing strings
+- Project version bumped to `0.5.6` in branding and assembly/package metadata
 
 - `BrandingInfo.Version` stripped of channel suffix (was `"0.5.1-beta"`); suffix now provided
   exclusively by `ChannelInfo.VersionSuffix` on each branch
@@ -185,7 +188,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Dark theme with system High Contrast mode compatibility
 - Single-instance enforcement via named Mutex
 - Velopack auto-update (background, rate-limited to once per 24h, non-interrupting)
-- GPL v3 / Commercial dual license with RSA offline license validation (key placeholder)
+- MIT / Commercial dual license with RSA offline license validation (key placeholder)
 - Opt-in anonymous telemetry (off by default)
   - `Help → View Collected Data` viewer with Send/Clear/Close
   - Pending report queue (max 10, oldest discarded)

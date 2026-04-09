@@ -1,36 +1,44 @@
 # Commercial License — PortPane by ShackDesk
 
-Copyright © 2024–2026 Mark McDow (N4TEK), My Computer Guru LLC. All rights reserved.
+Copyright © 2024–2026 Mark McDow (N4TEK), My Computer Guru LLC.
+
+## Scope
+
+This license applies only to official PortPane builds distributed by ShackDesk.
+It does not apply to source-code distributions from this repository.
+
+The PortPane source code is available under the MIT License. This commercial
+license governs use of official ShackDesk binaries and related services.
 
 ## Grant
 
-Subject to the terms of a valid commercial license agreement with My Computer Guru LLC,
-you are granted a non-exclusive, non-transferable license to:
+Subject to a valid commercial license, you are granted a non-exclusive,
+non-transferable license to:
 
-- Use PortPane in commercial products or services
-- Distribute PortPane as part of a commercial offering
-- Use PortPane without the obligation to open-source your own code under GPL v3
+- Use official PortPane builds without trial limitations
+- Unlock licensed features (such as branding and personalization)
+- Receive updates or support if included with your license
 
-## Conditions
+## Restrictions
 
-1. **Attribution must be preserved.** The `Attribution.cs` fingerprint embedded
-   in the binary must remain intact in all distributions.
+1. **No redistribution of official builds.** You may not redistribute official
+   ShackDesk binaries without permission.
 
-2. **License key required.** Commercial use requires a valid license key issued
-   by My Computer Guru LLC.
+2. **License key usage.** License keys may not be shared, resold, or
+   transferred unless explicitly allowed.
 
-3. **No sublicensing.** You may not sublicense PortPane or its source code to
-   third parties.
+3. **No removal of licensing mechanisms.** You may not bypass or disable
+   license enforcement in official builds.
 
-4. **No competing product.** You may not use PortPane's source code to build
-   a product that directly competes with PortPane.
+## Open Source Notice
 
-## To Obtain a Commercial License
+PortPane source code is licensed under the MIT License.
 
-Contact: [shackdesk.com](https://shackdesk.com)
+You are free to use, modify, and distribute the source code under those terms.
 
-## Disclaimer of Warranties
+This commercial license does not restrict your rights under the MIT License for
+source code.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES,
-OR OTHER LIABILITY.
+## Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.

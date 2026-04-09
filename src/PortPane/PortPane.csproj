@@ -26,9 +26,9 @@
     <Authors>Mark McDow (N4TEK)</Authors>
     <Copyright>Copyright © 2024-2026 Mark McDow. All rights reserved.</Copyright>
     <Trademark>PortPane is a trademark of My Computer Guru LLC</Trademark>
-    <Version>0.5.4-alpha</Version>
-    <FileVersion>0.5.4.0</FileVersion>
-    <AssemblyVersion>0.5.4.0</AssemblyVersion>
+    <Version>0.5.6</Version>
+    <FileVersion>0.5.6.0</FileVersion>
+    <AssemblyVersion>0.5.6.0</AssemblyVersion>
     <Description>Takes the pain out of ports — amateur radio USB device helper</Description>
     <RepositoryUrl>https://github.com/Computer-Tsu/shackdesk-portpane</RepositoryUrl>
 

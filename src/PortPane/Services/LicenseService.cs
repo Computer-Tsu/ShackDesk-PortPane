@@ -191,7 +191,7 @@ public sealed class LicenseService : ILicenseService
 
     public bool IsFeatureAvailable(string featureKey)
     {
-        // All features available in GPL tier. Reserved for future commercial gating.
+        // All features available in MIT tier. Reserved for future commercial gating.
         return true;
     }
 

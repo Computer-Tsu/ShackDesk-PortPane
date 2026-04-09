@@ -767,11 +767,11 @@ public sealed class SettingsViewModel : ViewModelBase
 
     public string LicenseTierDisplayName => _license.Current.Tier switch
     {
-        LicenseTier.Free     => "Free (GPL v3)",
+        LicenseTier.Free     => "Free (MIT)",
         LicenseTier.Personal => "Personal",
         LicenseTier.Club     => "Club",
         LicenseTier.EmComm   => "EMCOMM",
-        _                    => "Free (GPL v3)"
+        _                    => "Free (MIT)"
     };
 
     public string LicenseeDisplay => _license.Current.Licensee ?? string.Empty;

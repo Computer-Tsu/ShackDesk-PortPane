@@ -11,9 +11,9 @@ Device Manager.
 
 [![dev](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg?branch=dev)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
 [![main](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
-[![Alpha](https://img.shields.io/badge/alpha-0.5.2-orange)](https://github.com/Computer-Tsu/shackdesk-portpane/releases)
+[![Alpha](https://img.shields.io/badge/alpha-0.5.6-orange)](https://github.com/Computer-Tsu/shackdesk-portpane/releases)
 [![Stable](https://img.shields.io/github/v/release/Computer-Tsu/shackdesk-portpane?label=stable&color=brightgreen)](https://github.com/Computer-Tsu/shackdesk-portpane/releases/latest)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE-GPL.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE-MIT.md)
 [![Last Commit](https://img.shields.io/github/last-commit/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane/commits/main)
 [![Repo Size](https://img.shields.io/github/repo-size/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
@@ -81,7 +81,7 @@ Clarity and simplicity take precedence over feature density.
 - Portable mode — run from USB drive with settings stored alongside the exe
 - Auto-update via Velopack (background, non-interrupting)
 - Optional anonymous telemetry (disabled by default)
-- GPL v3 licensed — full source available
+- MIT licensed — full source available
 
 ---
 
@@ -136,6 +136,12 @@ Ideal for EMCOMM go-kit deployment or running from a USB drive.
 
 ---
 
+## Code Signing & Provenance
+
+PortPane release artifacts are currently unsigned. A SignPath-ready code-signing policy and trust model are documented in [CODE_SIGNING_POLICY.md](CODE_SIGNING_POLICY.md).
+
+---
+
 ## Building from Source
 
 > The author builds exclusively via GitHub Actions. These instructions are for contributors.
@@ -172,6 +178,10 @@ Ships with English. German placeholder included. French, Spanish, Japanese stubs
 
 ## Trademarks
 
+PortPane and ShackDesk are trademarks of My Computer Guru LLC.
+
+Use of the name, branding, or identity in derived products is not permitted without permission.
+
 See [LEGAL.md](LEGAL.md) for trademark notices for Icom, Yaesu, Kenwood, Arduino, SignaLink, DigiRig,
 RIGblaster, and other referenced product names.
 
@@ -187,10 +197,15 @@ If PortPane saves you time, consider leaving a star on GitHub.
 
 ## License
 
-**Dual licensed:**
+**Source code license:**
 
-- **GPL v3** — free for personal and open-source use. See [LICENSE-GPL.md](LICENSE-GPL.md).
-- **Commercial** — for commercial products without GPL obligations. See [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md).
+- **MIT** — all source code in this repository is licensed under MIT. See [LICENSE-MIT.md](LICENSE-MIT.md).
+- If you compile from this repository yourself, your resulting build is governed by MIT (plus applicable third-party licenses).
+
+**Official ShackDesk build terms:**
+
+- **Commercial terms** may apply to official ShackDesk-distributed binaries, branding/licensing services, and support offerings. See [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md).
+- These official-build terms do **not** limit your MIT rights for source code from this repository.
 
 ---
 

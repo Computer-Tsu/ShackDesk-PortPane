@@ -9,7 +9,7 @@ public static class BrandingInfo
     public const string AppName           = "PortPane";
     public const string SuiteName         = "ShackDesk";
     public const string FullName          = "PortPane by ShackDesk";
-    public const string Version           = "0.5.5";
+    public const string Version           = "0.5.6";
 
     /// <summary>
     /// ISO 8601 UTC build timestamp. Empty string in source — patched by CI at
@@ -64,7 +64,7 @@ public static class BrandingInfo
     public const string AppURL            = "https://shackdesk.com";
     public const string SupportURL        = "https://github.com/Computer-Tsu/shackdesk-portpane/discussions";
     public const string DonationURL       = "";
-    public const string LicenseType       = "GPL v3 / Commercial";
+    public const string LicenseType       = "MIT / Commercial";
     public const string TelemetryEndpoint = "https://telemetry.shackdesk.com/report";
 
     /// <summary>
