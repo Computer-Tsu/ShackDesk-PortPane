@@ -2,7 +2,7 @@
 # PortPane by ShackDesk
 # Project : https://github.com/Computer-Tsu/shackdesk-portpane
 # Author  : Mark McDow (N4TEK) — My Computer Guru LLC
-# License : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+# License : MIT + official-build commercial terms (see LICENSE-MIT.md, LICENSE-COMMERCIAL.md)
 #
 # Workflow : Dependency Review
 # Purpose  : Checks NuGet package changes introduced in a pull request against
