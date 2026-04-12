@@ -13,7 +13,7 @@ Device Manager.
 [![main](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
 [![Alpha](https://img.shields.io/badge/alpha-0.5.7-orange)](https://github.com/Computer-Tsu/shackdesk-portpane/releases)
 [![Stable](https://img.shields.io/github/v/release/Computer-Tsu/shackdesk-portpane?label=stable&color=brightgreen)](https://github.com/Computer-Tsu/shackdesk-portpane/releases/latest)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE-GPL.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE-MIT.md)
 [![Last Commit](https://img.shields.io/github/last-commit/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane/commits/main)
 [![Repo Size](https://img.shields.io/github/repo-size/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
