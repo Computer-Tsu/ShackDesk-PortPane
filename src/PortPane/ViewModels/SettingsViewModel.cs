@@ -560,14 +560,23 @@ public sealed class SettingsViewModel : ViewModelBase
             try
             {
                 using var enumerator = new MMDeviceEnumerator();
-                // Find device by matching friendly name since we store FriendlyName
-                var allDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
-                foreach (var d in allDevices)
+                if (string.IsNullOrWhiteSpace(storageName))
                 {
-                    if (d.FriendlyName == storageName)
+                    if (!isPc) return;
+                    device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+                }
+
+                // Find device by matching friendly name since we store FriendlyName
+                if (device is null)
+                {
+                    var allDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+                    foreach (var d in allDevices)
                     {
-                        device = d;
-                        break;
+                        if (d.FriendlyName == storageName)
+                        {
+                            device = d;
+                            break;
+                        }
                     }
                 }
             }
