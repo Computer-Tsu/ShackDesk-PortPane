@@ -11,7 +11,7 @@ Device Manager.
 
 [![dev](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg?branch=dev)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
 [![main](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
-[![Alpha](https://img.shields.io/badge/alpha-0.5.6-orange)](https://github.com/Computer-Tsu/shackdesk-portpane/releases)
+[![Alpha](https://img.shields.io/badge/alpha-0.5.7-orange)](https://github.com/Computer-Tsu/shackdesk-portpane/releases)
 [![Stable](https://img.shields.io/github/v/release/Computer-Tsu/shackdesk-portpane?label=stable&color=brightgreen)](https://github.com/Computer-Tsu/shackdesk-portpane/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE-MIT.md)
 [![Last Commit](https://img.shields.io/github/last-commit/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane/commits/main)
