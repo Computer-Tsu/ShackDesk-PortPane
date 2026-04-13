@@ -17,10 +17,10 @@ public partial class AboutDialog : Window
         _settings  = settings;
         SupportIdText.Text = _settings.Current.InstallId;
 
-        // Show licensee name for paid tiers
+        // Show registration holder for paid tiers
         if (license.Current.Tier != LicenseTier.Free)
         {
-            LicenseeBlock.Text       = $"Licensed to: {license.Current.Licensee}";
+            LicenseeBlock.Text       = $"Registered to: {license.Current.Licensee}";
             LicenseeBlock.Visibility = Visibility.Visible;
             SupportBlock.Visibility  = Visibility.Collapsed;
         }
