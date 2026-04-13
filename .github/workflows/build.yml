@@ -277,6 +277,14 @@ jobs:
           dotnet restore ${{ env.SOLUTION }}
           dotnet publish ${{ env.APP_PROJECT }} --configuration Release --runtime ${{ env.RID }} --self-contained true -p:PublishSingleFile=true --output ./publish
 
+      - name: Compute SHA-256 for installer payload
+        shell: pwsh
+        run: |
+          # Future optimization: download and reuse the publish artifact/hash instead of recomputing here.
+          $hash = (Get-FileHash -Algorithm SHA256 './publish/${{ env.APP_EXE }}').Hash.ToLower()
+          $hash | Out-File -FilePath './publish/${{ env.APP_EXE }}.sha256' -NoNewline
+          echo "SHA256: $hash"
+
       - name: Build Inno Setup installer
         shell: pwsh
         run: |

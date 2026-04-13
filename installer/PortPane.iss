@@ -40,7 +40,8 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 ArchitecturesInstallIn64BitMode=x64compatible
-MinVersion=10.0.17763   ; Windows 10 1809
+; Windows 10 1809 minimum
+MinVersion=10.0.17763
 
 ; Code signing placeholder
 ; SignTool=standard sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 $f
@@ -69,7 +70,7 @@ Source: "..\OFFICIAL_BUILDS_AND_SERVICES.md"; DestDir: "{app}"; Flags: ignorever
 [Icons]
 Name: "{group}\{#AppName}";            Filename: "{app}\{#AppExeName}"; Comment: "{#AppDescription}"
 Name: "{group}\Uninstall {#AppName}";  Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#AppName}";    Filename: "{app}\{#AppExeName}"; Comment: "{#AppDescription}"; Tasks: desktopicon
+Name: "{autodesktop}\{#AppName}";      Filename: "{app}\{#AppExeName}"; Comment: "{#AppDescription}"; Tasks: desktopicon
 Name: "{userstartmenu}\{#AppName}";    Filename: "{app}\{#AppExeName}"; Comment: "{#AppDescription}"; Tasks: startmenuicon
 
 [Run]
@@ -90,11 +91,12 @@ begin
   begin
     ExePath  := ExpandConstant('{app}\{#AppExeName}');
     HashPath := ExpandConstant('{app}\{#AppExeName}.sha256');
-    if FileExists(HashPath) then
-    begin
-      LoadStringFromFile(HashPath, StoredHash);
-      // Note: Full SHA-256 verification requires a PowerShell call or custom DLL.
-      // Placeholder — the build pipeline verifies the hash before packaging.
-    end;
+    // Placeholder only. Full SHA-256 verification would require a PowerShell call
+    // or custom DLL. The build pipeline already verifies and packages the hash.
+    // Temporarily disabled while stabilizing CI installer creation.
+    // if FileExists(HashPath) then
+    // begin
+    //   LoadStringFromFile(HashPath, StoredHash);
+    // end;
   end;
 end;

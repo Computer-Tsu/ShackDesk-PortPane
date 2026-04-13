@@ -1,0 +1,6 @@
+PortPane Installer Notes
+
+- This installer deploys the Windows x64 build of PortPane.
+- Administrative rights are not required for the default install path selection used by this build.
+- If you are testing a pre-release build, newer builds may replace this one during future updates.
+
