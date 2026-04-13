@@ -46,7 +46,8 @@ public sealed class ComPortPanelViewModel : ViewModelBase
     }
 
     public bool IsPuttyAvailable      => _putty.IsPuttyAvailable;
-    public bool CanLaunchPutty        => IsPuttyAvailable && SelectedPort is not null && !SelectedPort.IsGhost;
+    public bool ShowPuttyControls     => _settings.Current.ShowPuttyButton && IsPuttyAvailable;
+    public bool CanLaunchPutty        => ShowPuttyControls && SelectedPort is not null && !SelectedPort.IsGhost;
 
     public string CopyConfirmation
     {
@@ -89,6 +90,13 @@ public sealed class ComPortPanelViewModel : ViewModelBase
             Ports.Add(new ComPortRowViewModel(port));
         Log.Debug("COM port panel refreshed: {Count} ports ({Ghosts} ghost)",
             Ports.Count, Ports.Count(p => p.IsGhost));
+    }
+
+    public void RefreshPuttySettings()
+    {
+        OnPropertyChanged(nameof(ShowPuttyControls));
+        OnPropertyChanged(nameof(CanLaunchPutty));
+        OpenInPuttyCommand.RaiseCanExecuteChanged();
     }
 
     private async void CopyPortName(string? portName)

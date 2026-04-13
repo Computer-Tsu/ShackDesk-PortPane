@@ -98,9 +98,6 @@ public partial class MainWindow : Window
         win?.ShowDialog();
     }
 
-    private void SaveSettings_Click(object sender, RoutedEventArgs e)
-        => _settings.Save();
-
     private void Exit_Click(object sender, RoutedEventArgs e)
         => Application.Current.Shutdown();
 
@@ -183,7 +180,6 @@ public partial class MainWindow : Window
             switch (e.Key)
             {
                 case Key.OemComma: OpenSettings_Click(sender, e); e.Handled = true; break;
-                case Key.S:        SaveSettings_Click(sender, e); e.Handled = true; break;
                 case Key.T:        _vm.IsAlwaysOnTop = !_vm.IsAlwaysOnTop; e.Handled = true; break;
                 case Key.P:        _vm.IsComPanelVisible = !_vm.IsComPanelVisible; e.Handled = true; break;
             }

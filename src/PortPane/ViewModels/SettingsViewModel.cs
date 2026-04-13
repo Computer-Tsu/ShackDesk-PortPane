@@ -902,6 +902,7 @@ public sealed class SettingsViewModel : ViewModelBase
         // Write LaunchAtStartup to registry
         WriteLaunchAtStartupToRegistry(_pendingLaunchAtStartup);
 
+        _mainVm.ComPorts.RefreshPuttySettings();
         _settings.Save();
     }
 
