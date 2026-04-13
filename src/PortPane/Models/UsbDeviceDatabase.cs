@@ -17,6 +17,7 @@ public sealed class UsbDeviceDatabase
     public int    Version     { get; private set; }
     public string LastUpdated { get; private set; } = string.Empty;
     public int    Count       => _byVidPid.Count;
+    public IReadOnlyCollection<UsbDeviceEntry> Entries => _byVidPid.Values;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
