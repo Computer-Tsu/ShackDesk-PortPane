@@ -16,6 +16,10 @@ public sealed class UpdateService : IUpdateService
 {
     private readonly Services.ISettingsService _settings;
 
+    // Cached from the last successful check — reused by ApplyUpdateAsync to
+    // avoid a redundant network round-trip between "update found" and "apply".
+    private Velopack.UpdateInfo? _lastUpdateInfo;
+
     public UpdateService(ISettingsService settings)
     {
         _settings = settings;
@@ -31,9 +35,15 @@ public sealed class UpdateService : IUpdateService
         if (!force && !_settings.Current.AutoUpdateEnabled) return null;
         if (!force && !IsCheckDue()) return null;
 
+        string channel  = _settings.Current.UpdateChannel ?? "Stable";
+        string endpoint = BrandingInfo.GetUpdateEndpoint(channel);
+
+        Log.Information("Update check started — channel: {Channel}, endpoint: {Endpoint}, forced: {Forced}",
+            channel, endpoint, force);
+
         try
         {
-            var manager = CreateManager();
+            var manager = CreateManager(endpoint);
             var info = await manager.CheckForUpdatesAsync();
 
             // Record the check time regardless of result
@@ -42,36 +52,57 @@ public sealed class UpdateService : IUpdateService
 
             if (info is null)
             {
-                Log.Debug("Update check: already up to date");
+                Log.Information("Update check complete — already up to date (channel: {Channel})", channel);
+                _lastUpdateInfo = null;
                 return null;
             }
 
+            _lastUpdateInfo = info;
             string version = info.TargetFullRelease.Version.ToString();
-            Log.Information("Update available: {Version}", version);
+            Log.Information("Update found — version: {Version}, channel: {Channel}, notes: {HasNotes}",
+                version, channel, !string.IsNullOrEmpty(info.TargetFullRelease.NotesMarkdown));
             return new UpdateAvailable(version, info.TargetFullRelease.NotesMarkdown ?? string.Empty);
         }
         catch (Exception ex)
         {
-            // Offline failures must be silent to the user — logged at Debug only.
-            Log.Debug(ex, "Update check failed (offline or server unavailable)");
+            // Offline failures must be silent to the user — logged at Information for alpha telemetry.
+            Log.Information(ex, "Update check failed — channel: {Channel}, endpoint: {Endpoint}",
+                channel, endpoint);
             return null;
         }
     }
 
     public async Task ApplyUpdateAsync(UpdateAvailable update)
     {
+        string channel  = _settings.Current.UpdateChannel ?? "Stable";
+        string endpoint = BrandingInfo.GetUpdateEndpoint(channel);
+
+        Log.Information("Update apply started — version: {Version}, channel: {Channel}",
+            update.Version, channel);
+
         try
         {
-            var manager = CreateManager();
-            var info = await manager.CheckForUpdatesAsync();
-            if (info is null) return;
+            var manager = CreateManager(endpoint);
 
+            // Reuse cached UpdateInfo from the preceding check if still valid;
+            // fall back to a fresh check if the cache is missing.
+            var info = _lastUpdateInfo ?? await manager.CheckForUpdatesAsync();
+            if (info is null)
+            {
+                Log.Information("Update apply cancelled — no update found at apply time (version: {Version})",
+                    update.Version);
+                return;
+            }
+
+            Log.Information("Update download started — version: {Version}", update.Version);
             await manager.DownloadUpdatesAsync(info);
+            Log.Information("Update download complete — triggering restart for version: {Version}", update.Version);
             manager.ApplyUpdatesAndRestart(info);
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to apply update {Version}", update.Version);
+            Log.Error(ex, "Update apply failed — version: {Version}, channel: {Channel}",
+                update.Version, channel);
             throw;
         }
     }
@@ -97,10 +128,6 @@ public sealed class UpdateService : IUpdateService
         return true;
     }
 
-    private UpdateManager CreateManager()
-    {
-        string endpoint = BrandingInfo.GetUpdateEndpoint(_settings.Current.UpdateChannel);
-        Log.Debug("Update check endpoint: {Endpoint}", endpoint);
-        return new UpdateManager(new SimpleWebSource(endpoint));
-    }
+    private static UpdateManager CreateManager(string endpoint) =>
+        new UpdateManager(new SimpleWebSource(endpoint));
 }

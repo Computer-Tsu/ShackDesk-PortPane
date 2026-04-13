@@ -15,6 +15,7 @@ public sealed class MainViewModel : ViewModelBase
     private readonly IHotplugService   _hotplug;
     private readonly ILicenseService   _license;
     private readonly IDeviceTelemetryService _deviceTelemetry;
+    private readonly IUpdateService    _updates;
 
     private bool   _isChromeVisible;
     private bool   _isAlwaysOnTop;
@@ -118,12 +119,13 @@ public sealed class MainViewModel : ViewModelBase
     public RelayCommand<double> SetScaleCommand { get; }
 
     public MainViewModel(
-        AudioPanelViewModel    audio,
-        ComPortPanelViewModel  comPorts,
-        ISettingsService       settings,
-        IHotplugService        hotplug,
-        ILicenseService        license,
-        IDeviceTelemetryService deviceTelemetry)
+        AudioPanelViewModel     audio,
+        ComPortPanelViewModel   comPorts,
+        ISettingsService        settings,
+        IHotplugService         hotplug,
+        ILicenseService         license,
+        IDeviceTelemetryService deviceTelemetry,
+        IUpdateService          updates)
     {
         Audio      = audio;
         ComPorts   = comPorts;
@@ -131,6 +133,7 @@ public sealed class MainViewModel : ViewModelBase
         _hotplug   = hotplug;
         _license   = license;
         _deviceTelemetry = deviceTelemetry;
+        _updates   = updates;
 
         _isAlwaysOnTop = settings.Current.AlwaysOnTop;
         _scaleFactor   = settings.Current.ScaleFactor;
@@ -171,15 +174,16 @@ public sealed class MainViewModel : ViewModelBase
     private async void ApplyUpdate()
     {
         if (_pendingUpdate is null) return;
+        var pending = _pendingUpdate;
         try
         {
-            object? updateSvc = App.Current.MainWindow?.DataContext is MainViewModel
-                ? null : null; // resolved via DI by caller
-            // The update service is invoked from the view (Apply button) — resolved via DI in view
+            HasUpdate = false;
+            await _updates.ApplyUpdateAsync(pending);
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Update apply failed");
+            Log.Error(ex, "Update apply failed — version: {Version}", pending.Version);
+            HasUpdate = true; // restore banner so user can retry
         }
     }
 }

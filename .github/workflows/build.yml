@@ -135,8 +135,10 @@ jobs:
        (github.event_name == 'workflow_dispatch' && inputs.publish_artifact))
 
     outputs:
-      sha256: ${{ steps.hash.outputs.sha256 }}
-      version: ${{ steps.version.outputs.version }}
+      sha256:        ${{ steps.hash.outputs.sha256 }}
+      nupkg_sha256:  ${{ steps.hash.outputs.nupkg_sha256 }}
+      version:       ${{ steps.version.outputs.version }}
+      nupkg:         ${{ steps.vpk.outputs.nupkg }}
 
     steps:
       - name: Checkout
@@ -162,7 +164,7 @@ jobs:
             -Pattern 'VersionSuffix\s*=\s*"([^"]*)"').Matches[0].Groups[1].Value
           $channel = (Select-String 'src/PortPane/ChannelInfo.cs' `
             -Pattern 'Channel\s*=\s*ReleaseChannel\.(\w+)').Matches[0].Groups[1].Value
-          $stamp   = [DateTime]::UtcNow.ToString("yyyyMMdd-HHmm")
+          $stamp   = [DateTime]::UtcNow.ToString("yyyyMMddHHmm")
           $version = switch ($channel) {
             'Alpha'  { "$base-$suffix.$stamp" }
             'Beta'   { "$base-$suffix" }
@@ -211,6 +213,23 @@ jobs:
           -p:ReadyToRun=true
           --output ./publish
 
+      - name: Package with Velopack
+        id: vpk
+        shell: pwsh
+        run: |
+          dotnet tool install -g vpk
+          $version = '${{ steps.version.outputs.version }}'
+          vpk pack `
+            --packId    "PortPane" `
+            --packVersion "$version" `
+            --packDir   "./publish" `
+            --mainExe   "${{ env.APP_EXE }}" `
+            --packTitle "PortPane by ShackDesk" `
+            --outputDir "./vpk-output"
+          $nupkg = (Get-ChildItem './vpk-output/*-full.nupkg' | Select-Object -First 1).Name
+          echo "nupkg=$nupkg" >> $env:GITHUB_OUTPUT
+          echo "Velopack package: $nupkg"
+
       - name: Apply ConfuserEx obfuscation
         # TODO: Add ConfuserEx step here when crconf.exe is available in CI.
         # Example:
@@ -246,10 +265,14 @@ jobs:
         id: hash
         shell: pwsh
         run: |
-          $hash = (Get-FileHash -Algorithm SHA256 './publish/${{ env.APP_EXE }}').Hash.ToLower()
-          $hash | Out-File -FilePath './publish/${{ env.APP_EXE }}.sha256' -NoNewline
-          echo "sha256=$hash" >> $env:GITHUB_OUTPUT
-          echo "SHA256: $hash"
+          $exeHash = (Get-FileHash -Algorithm SHA256 './publish/${{ env.APP_EXE }}').Hash.ToLower()
+          $exeHash | Out-File -FilePath './publish/${{ env.APP_EXE }}.sha256' -NoNewline
+          echo "sha256=$exeHash" >> $env:GITHUB_OUTPUT
+          $nupkgPath = (Get-ChildItem './vpk-output/*-full.nupkg' | Select-Object -First 1).FullName
+          $nupkgHash = (Get-FileHash -Algorithm SHA256 $nupkgPath).Hash.ToUpper()
+          echo "nupkg_sha256=$nupkgHash" >> $env:GITHUB_OUTPUT
+          echo "EXE SHA256:   $exeHash"
+          echo "NUPKG SHA256: $nupkgHash"
 
       - name: Upload exe artifact
         uses: actions/upload-artifact@v7
@@ -259,6 +282,8 @@ jobs:
             ./publish/${{ env.APP_EXE }}
             ./publish/${{ env.APP_EXE }}.sha256
             ./publish/Data/
+            ./vpk-output/*-full.nupkg
+            ./vpk-output/*-Setup.exe
 
   # ─────────────────────────────────────────────────────────────────────
   installer:
@@ -381,24 +406,25 @@ jobs:
           $channel = if ($tag -match '-beta')  { 'beta' }
                      elseif ($tag -match '-alpha') { 'alpha' }
                      else { 'stable' }
-          $sha256  = '${{ needs.publish.outputs.sha256 }}'
-          $dlUrl   = "https://github.com/${{ github.repository }}/releases/download/$tag/PortPane-$tag-win-x64.exe"
-          $body    = @{
+          $nupkgName  = '${{ needs.publish.outputs.nupkg }}'
+          $nupkgSha   = '${{ needs.publish.outputs.nupkg_sha256 }}'
+          $nupkgUrl   = "https://github.com/${{ github.repository }}/releases/download/$tag/$nupkgName"
+          $body       = @{
             event_type     = 'portpane-release'
             client_payload = @{
               channel      = $channel
               version      = $version
-              sha256       = $sha256
-              download_url = $dlUrl
+              nupkg_url    = $nupkgUrl
+              nupkg_sha256 = $nupkgSha
             }
           } | ConvertTo-Json -Depth 3
           Invoke-RestMethod `
-            -Uri 'https://api.github.com/repos/Computer-Consultant/ShackDesk-Site/dispatches' `
+            -Uri 'https://api.github.com/repos/Computer-Tsu/ShackDesk-Site/dispatches' `
             -Method Post `
             -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
             -Body $body `
             -ContentType 'application/json'
-          echo "Dispatched $channel update for v$version"
+          echo "Dispatched $channel update for v$version (nupkg: $nupkgName)"
 
   # ─────────────────────────────────────────────────────────────────────
   rolling-alpha:
@@ -461,31 +487,33 @@ jobs:
           files: |
             ./release/PortPane-*.exe
             ./release/PortPane-*.sha256
+            ./release/PortPane-*-full.nupkg
 
       - name: Dispatch update feed to ShackDesk-Site
         env:
           PAT: ${{ secrets.SITE_DISPATCH_PAT }}
         shell: pwsh
         run: |
-          $version = '${{ needs.publish.outputs.version }}'
-          $sha256  = '${{ needs.publish.outputs.sha256 }}'
-          $dlUrl   = "https://github.com/${{ github.repository }}/releases/download/latest-alpha/PortPane-$version-win-x64.exe"
-          $body    = @{
+          $version    = '${{ needs.publish.outputs.version }}'
+          $nupkgName  = '${{ needs.publish.outputs.nupkg }}'
+          $nupkgSha   = '${{ needs.publish.outputs.nupkg_sha256 }}'
+          $nupkgUrl   = "https://github.com/${{ github.repository }}/releases/download/latest-alpha/$nupkgName"
+          $body       = @{
             event_type     = 'portpane-release'
             client_payload = @{
               channel      = 'alpha'
               version      = $version
-              sha256       = $sha256
-              download_url = $dlUrl
+              nupkg_url    = $nupkgUrl
+              nupkg_sha256 = $nupkgSha
             }
           } | ConvertTo-Json -Depth 3
           Invoke-RestMethod `
-            -Uri 'https://api.github.com/repos/Computer-Consultant/ShackDesk-Site/dispatches' `
+            -Uri 'https://api.github.com/repos/Computer-Tsu/ShackDesk-Site/dispatches' `
             -Method Post `
             -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
             -Body $body `
             -ContentType 'application/json'
-          echo "Dispatched alpha update for v$version"
+          echo "Dispatched alpha update for v$version (nupkg: $nupkgName)"
 
   # ─────────────────────────────────────────────────────────────────────
   # SignPath code signing
