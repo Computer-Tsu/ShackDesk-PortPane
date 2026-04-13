@@ -274,16 +274,27 @@ jobs:
           echo "EXE SHA256:   $exeHash"
           echo "NUPKG SHA256: $nupkgHash"
 
+      - name: Stage artifacts for upload
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ./artifact | Out-Null
+          Copy-Item './publish/${{ env.APP_EXE }}'        ./artifact/
+          Copy-Item './publish/${{ env.APP_EXE }}.sha256' ./artifact/
+          if (Test-Path './publish/Data') {
+            Copy-Item './publish/Data' ./artifact/Data -Recurse
+          }
+          $nupkg = Get-ChildItem './vpk-output/*-full.nupkg' | Select-Object -First 1
+          if ($nupkg) { Copy-Item $nupkg.FullName ./artifact/ }
+          $setup = Get-ChildItem './vpk-output/*-Setup.exe' | Select-Object -First 1
+          if ($setup) { Copy-Item $setup.FullName ./artifact/ }
+          Write-Host "Staged artifacts:"
+          Get-ChildItem ./artifact -Recurse | Select-Object FullName, Length
+
       - name: Upload exe artifact
         uses: actions/upload-artifact@v7
         with:
           name: PortPane-${{ steps.version.outputs.version }}-${{ github.sha }}
-          path: |
-            ./publish/${{ env.APP_EXE }}
-            ./publish/${{ env.APP_EXE }}.sha256
-            ./publish/Data/
-            ./vpk-output/*-full.nupkg
-            ./vpk-output/*-Setup.exe
+          path: ./artifact/
 
   # ─────────────────────────────────────────────────────────────────────
   installer:
