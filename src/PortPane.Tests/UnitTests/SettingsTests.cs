@@ -37,6 +37,14 @@ public class SettingsTests : IDisposable
         Assert.Contains(BrandingInfo.SuiteName, BrandingInfo.FullName);
     }
 
+    [Theory]
+    [InlineData("Alpha",  "alpha.json")]
+    [InlineData("Beta",   "beta.json")]
+    [InlineData("Stable", "stable.json")]
+    [InlineData("",       "stable.json")]
+    public void BrandingInfo_GetUpdateEndpoint_ResolvesChannel(string channel, string expectedSuffix)
+        => Assert.EndsWith(expectedSuffix, BrandingInfo.GetUpdateEndpoint(channel));
+
     // ── Attribution fingerprint ───────────────────────────────────────────────
 
     [Fact]

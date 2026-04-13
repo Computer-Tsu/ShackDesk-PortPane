@@ -77,15 +77,25 @@ public static class BrandingInfo
     public static string SourceLicenseURL => $"{RepoURL}/blob/{RepoDocBranch}/LICENSE-MIT.md";
 
     /// <summary>
-    /// Per-channel update feed URL. Resolves at runtime based on ChannelInfo.Channel.
+    /// Per-channel update feed base URL. Resolves at runtime based on ChannelInfo.Channel.
+    /// Velopack's SimpleWebSource appends "releases.win.json" to this base URL, so it must
+    /// be a directory path (trailing slash), not a direct file path.
     /// Served by ShackDesk-Site as static JSON; updated automatically after each release.
     /// </summary>
     public static string UpdateEndpoint => ChannelInfo.Channel switch
     {
-        ReleaseChannel.Alpha  => "https://shackdesk.com/portpane/update/alpha.json",
-        ReleaseChannel.Beta   => "https://shackdesk.com/portpane/update/beta.json",
-        _                     => "https://shackdesk.com/portpane/update/stable.json"
+        ReleaseChannel.Alpha  => "https://shackdesk.com/portpane/update/alpha/",
+        ReleaseChannel.Beta   => "https://shackdesk.com/portpane/update/beta/",
+        _                     => "https://shackdesk.com/portpane/update/stable/"
     };
+
+    public static string GetUpdateEndpoint(string? channel) =>
+        channel?.Trim().ToLowerInvariant() switch
+        {
+            "alpha" => "https://shackdesk.com/portpane/update/alpha/",
+            "beta"  => "https://shackdesk.com/portpane/update/beta/",
+            _       => "https://shackdesk.com/portpane/update/stable/"
+        };
 
     public const string PrivacyURL        = "https://shackdesk.com/privacy";
     public const string ContactEmail      = "";

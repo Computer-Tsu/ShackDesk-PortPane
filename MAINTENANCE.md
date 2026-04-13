@@ -212,11 +212,13 @@ Examples:
 
 ## 4. Velopack Auto-Update Setup
 
-The app checks `BrandingInfo.UpdateEndpoint` for updates at most once every 24 hours.
+The app checks the selected channel's update endpoint on the user's configured schedule.
 
 ### Update manifest
 
-Host a `latest.json` file at the `UpdateEndpoint` URL. Velopack's expected format:
+Host a channel manifest at the selected update endpoint. Current endpoints are
+`/portpane/update/alpha.json`, `/portpane/update/beta.json`, and
+`/portpane/update/stable.json`. Velopack's expected format:
 
 ```json
 {
@@ -235,7 +237,12 @@ the SHA-256 hash as a step output and artifact (`PortPane.exe.sha256`).
 The endpoint is defined in `BrandingInfo.cs`:
 
 ```csharp
-public const string UpdateEndpoint = "https://shackdesk.com/update/latest.json";
+public static string UpdateEndpoint => ChannelInfo.Channel switch
+{
+    ReleaseChannel.Alpha  => "https://shackdesk.com/portpane/update/alpha.json",
+    ReleaseChannel.Beta   => "https://shackdesk.com/portpane/update/beta.json",
+    _                     => "https://shackdesk.com/portpane/update/stable.json"
+};
 ```
 
 Change this before the first stable release if the hosting URL differs.
