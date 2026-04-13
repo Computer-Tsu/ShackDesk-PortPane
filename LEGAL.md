@@ -8,7 +8,8 @@ PortPane™ is a trademark of My Computer Guru LLC.
 
 ## License
 
-PortPane is dual-licensed. See [LICENSE-GPL.md](LICENSE-GPL.md) and [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md).
+- **Source code in this repository:** MIT License ([LICENSE-MIT.md](LICENSE-MIT.md)).
+- **Official ShackDesk builds and services:** see [OFFICIAL_BUILDS_AND_SERVICES.md](OFFICIAL_BUILDS_AND_SERVICES.md).
 
 ---
 
@@ -60,10 +61,9 @@ USB device identification data sourced in part from the
 
 ---
 
-## Attribution Requirement
+## Official Build Provenance
 
-All distributions of PortPane, including builds under the commercial license,
-must retain the `Attribution.cs` copyright fingerprint embedded in the binary.
+ShackDesk retains the `Attribution.cs` fingerprint in official builds for
+provenance and support purposes.
+
 Fingerprint: `PortPane-ShackDesk-MCG-f8a2c4e6-3b1d-4f9a-8e7c-5d2b0a6c1e4f`
-
-Removal constitutes a license violation.

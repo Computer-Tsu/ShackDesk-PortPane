@@ -2,7 +2,8 @@
 # PortPane by ShackDesk
 # Project : https://github.com/Computer-Tsu/shackdesk-portpane
 # Author  : Mark McDow (N4TEK) — My Computer Guru LLC
-# License : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+# License : MIT source code + official builds/services
+#           (see LICENSE-MIT.md, OFFICIAL_BUILDS_AND_SERVICES.md)
 #
 # Workflow : Build · Test · Publish · Release
 # Purpose  : Main CI/CD pipeline. Builds and tests on every push and PR to main.
@@ -330,7 +331,11 @@ jobs:
           $pattern = "(?s)## \[$version\].*?(?=## \[|\z)"
           $match   = [regex]::Match($content, $pattern)
           $notes   = if ($match.Success) { $match.Value.Trim() } else { "See CHANGELOG.md for details." }
-          $notes | Out-File -FilePath ./release_notes.md -Encoding utf8
+          @"
+$notes
+
+Code signing policy: https://shackdesk.com/portpane/code-signing-policy/
+"@ | Out-File -FilePath ./release_notes.md -Encoding utf8
           echo "notes_file=./release_notes.md" >> $env:GITHUB_OUTPUT
 
       - name: Rename artifacts with version
@@ -438,6 +443,8 @@ jobs:
 
             This build has a 14-day expiry. Always download the current version from this page.
             Not recommended for general use — for testing purposes only.
+
+            Code signing policy: https://shackdesk.com/portpane/code-signing-policy/
           prerelease: true
           files: |
             ./release/PortPane-*.exe

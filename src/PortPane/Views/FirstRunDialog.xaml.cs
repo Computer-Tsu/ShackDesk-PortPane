@@ -27,7 +27,7 @@ public partial class FirstRunDialog : Window
     }
 
     private void License_Click(object sender, RoutedEventArgs e)
-        => Process.Start(new ProcessStartInfo(BrandingInfo.RepoURL + "/blob/main/LICENSE-GPL.md")
+        => Process.Start(new ProcessStartInfo(BrandingInfo.SourceLicenseURL)
                { UseShellExecute = true });
 
     private void Privacy_Click(object sender, RoutedEventArgs e)

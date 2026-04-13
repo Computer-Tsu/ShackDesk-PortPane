@@ -9,7 +9,7 @@ public static class BrandingInfo
     public const string AppName           = "PortPane";
     public const string SuiteName         = "ShackDesk";
     public const string FullName          = "PortPane by ShackDesk";
-    public const string Version           = "0.5.5";
+    public const string Version           = "0.5.6";
 
     /// <summary>
     /// ISO 8601 UTC build timestamp. Empty string in source — patched by CI at
@@ -64,8 +64,17 @@ public static class BrandingInfo
     public const string AppURL            = "https://shackdesk.com";
     public const string SupportURL        = "https://github.com/Computer-Tsu/shackdesk-portpane/discussions";
     public const string DonationURL       = "";
-    public const string LicenseType       = "GPL v3 / Commercial";
+    public const string LicenseType       = "MIT source code + optional paid services";
     public const string TelemetryEndpoint = "https://telemetry.shackdesk.com/report";
+
+    public static string RepoDocBranch => ChannelInfo.Channel switch
+    {
+        ReleaseChannel.Alpha  => "dev",
+        ReleaseChannel.Beta   => "beta",
+        _                     => "main"
+    };
+
+    public static string SourceLicenseURL => $"{RepoURL}/blob/{RepoDocBranch}/LICENSE-MIT.md";
 
     /// <summary>
     /// Per-channel update feed URL. Resolves at runtime based on ChannelInfo.Channel.

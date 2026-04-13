@@ -2,7 +2,8 @@
 # PortPane by ShackDesk
 # Project : https://github.com/Computer-Tsu/shackdesk-portpane
 # Author  : Mark McDow (N4TEK) — My Computer Guru LLC
-# License : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+# License : MIT source code + official builds/services
+#           (see LICENSE-MIT.md, OFFICIAL_BUILDS_AND_SERVICES.md)
 #
 # Workflow : .NET Format Check
 # Purpose  : Enforces consistent C# code formatting on every pull request.

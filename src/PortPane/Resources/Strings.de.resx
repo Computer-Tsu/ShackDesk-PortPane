@@ -4,7 +4,7 @@
   PortPane by ShackDesk — UI String Resources
   Project  : https://github.com/Computer-Tsu/shackdesk-portpane
   Author   : Mark McDow (N4TEK) — My Computer Guru LLC
-  License  : GPL v3 / Commercial (see LICENSE-GPL.md, LICENSE-COMMERCIAL.md)
+  License  : MIT source code + official builds/services
   ════════════════════════════════════════════════════════════════════════════
 
   LANGUAGE       : German (Deutsch)
@@ -93,14 +93,14 @@
   <data name="TelemetryOptIn"      xml:space="preserve"><value>Anonyme Nutzungsdaten senden, um PortPane zu verbessern</value></data>
   <data name="TelemetryLearnMore"  xml:space="preserve"><value>Mehr erfahren, was gesammelt wird</value></data>
   <data name="LicenseLabel"        xml:space="preserve"><value>Lizenz</value></data>
-  <data name="FreeTierLabel"       xml:space="preserve"><value>Kostenlos (GPL v3)</value></data>
+  <data name="FreeTierLabel"       xml:space="preserve"><value>Kostenlos (MIT)</value></data>
   <data name="CommercialTierLabel" xml:space="preserve"><value>Kommerziell</value></data>
 
   <!-- About — TODO: translate remaining strings below -->
   <data name="AboutTitle"          xml:space="preserve"><value>Über PortPane</value></data>
   <data name="AboutVersion"        xml:space="preserve"><value>Version {0}</value></data>
   <data name="AboutAuthor"         xml:space="preserve"><value>Von {0} ({1})</value></data>
-  <data name="AboutLicense"        xml:space="preserve"><value>Lizenziert unter GPL v3 / Kommerziell</value></data>
+  <data name="AboutLicense"        xml:space="preserve"><value>MIT-Quellcode + optionale kostenpflichtige Dienste</value></data>
   <data name="GitHubLink"          xml:space="preserve"><value>Auf GitHub ansehen</value></data>
   <data name="SupportLink"         xml:space="preserve"><value>Support erhalten</value></data>
 </root>

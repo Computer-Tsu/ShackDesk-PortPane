@@ -47,7 +47,7 @@
             <StackPanel>
                 <TextBlock Foreground="{StaticResource TextPrimaryBrush}"
                            FontSize="13" TextWrapping="Wrap"
-                           Text="Free for personal and non-commercial use under GPL v3. Please do not rebrand or resell."/>
+                           Text="PortPane source code is licensed under MIT. Paid registration, personalization, and support are optional."/>
                 <TextBlock Margin="0,6,0,0">
                     <Hyperlink Click="License_Click"
                                Foreground="{StaticResource AccentBrush}">

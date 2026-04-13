@@ -767,11 +767,11 @@ public sealed class SettingsViewModel : ViewModelBase
 
     public string LicenseTierDisplayName => _license.Current.Tier switch
     {
-        LicenseTier.Free     => "Free (GPL v3)",
+        LicenseTier.Free     => "Standard",
         LicenseTier.Personal => "Personal",
         LicenseTier.Club     => "Club",
         LicenseTier.EmComm   => "EMCOMM",
-        _                    => "Free (GPL v3)"
+        _                    => "Standard"
     };
 
     public string LicenseeDisplay => _license.Current.Licensee ?? string.Empty;
@@ -798,8 +798,8 @@ public sealed class SettingsViewModel : ViewModelBase
     {
         var dlg = new OpenFileDialog
         {
-            Title            = "Select License File",
-            Filter           = "PortPane License|*.portpane",
+            Title            = "Select Registration File",
+            Filter           = "PortPane Registration|*.portpane",
             CheckFileExists  = true,
         };
 
@@ -829,11 +829,11 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             LicenseInstallErrorText = result.ErrorMessage switch
             {
-                "file_unreadable"    => "Could not read the license file.",
-                "wrong_app"          => "This license is not for PortPane.",
-                "invalid_signature"  => "License signature is invalid.",
-                "expired"            => "This license has expired.",
-                _                    => $"License error: {result.ErrorMessage}"
+                "file_unreadable"    => "Could not read the registration file.",
+                "wrong_app"          => "This registration file is not for PortPane.",
+                "invalid_signature"  => "Registration signature is invalid.",
+                "expired"            => "This registration has expired.",
+                _                    => $"Registration error: {result.ErrorMessage}"
             };
         }
     }

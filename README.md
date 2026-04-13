@@ -81,7 +81,7 @@ Clarity and simplicity take precedence over feature density.
 - Portable mode — run from USB drive with settings stored alongside the exe
 - Auto-update via Velopack (background, non-interrupting)
 - Optional anonymous telemetry (disabled by default)
-- GPL v3 licensed — full source available
+- MIT licensed — full source available
 
 ---
 
@@ -136,6 +136,12 @@ Ideal for EMCOMM go-kit deployment or running from a USB drive.
 
 ---
 
+## Code Signing & Provenance
+
+PortPane release artifacts are currently unsigned. A SignPath-ready code-signing policy and trust model are documented in [CODE_SIGNING_POLICY.md](CODE_SIGNING_POLICY.md).
+
+---
+
 ## Building from Source
 
 > The author builds exclusively via GitHub Actions. These instructions are for contributors.
@@ -172,6 +178,10 @@ Ships with English. German placeholder included. French, Spanish, Japanese stubs
 
 ## Trademarks
 
+PortPane and ShackDesk are trademarks of My Computer Guru LLC.
+
+Use of the name, branding, or identity in derived products is not permitted without permission.
+
 See [LEGAL.md](LEGAL.md) for trademark notices for Icom, Yaesu, Kenwood, Arduino, SignaLink, DigiRig,
 RIGblaster, and other referenced product names.
 
@@ -187,10 +197,14 @@ If PortPane saves you time, consider leaving a star on GitHub.
 
 ## License
 
-**Dual licensed:**
+PortPane source code is licensed under MIT. Official ShackDesk builds, optional
+registration/personalization, and support are offered under separate
+commercial terms.
 
-- **GPL v3** — free for personal and open-source use. See [LICENSE-GPL.md](LICENSE-GPL.md).
-- **Commercial** — for commercial products without GPL obligations. See [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md).
+- **Source code:** MIT. See [LICENSE-MIT.md](LICENSE-MIT.md).
+- **Official ShackDesk builds and services:** see [OFFICIAL_BUILDS_AND_SERVICES.md](OFFICIAL_BUILDS_AND_SERVICES.md).
+- If you compile PortPane yourself from this repository, your resulting build is
+  governed by MIT (plus applicable third-party licenses).
 
 ---
 
