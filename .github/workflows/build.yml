@@ -419,7 +419,7 @@ jobs:
             }
           } | ConvertTo-Json -Depth 3
           Invoke-RestMethod `
-            -Uri 'https://api.github.com/repos/Computer-Tsu/ShackDesk-Site/dispatches' `
+            -Uri 'https://api.github.com/repos/Computer-Consultant/ShackDesk-Site/dispatches' `
             -Method Post `
             -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
             -Body $body `
@@ -508,7 +508,7 @@ jobs:
             }
           } | ConvertTo-Json -Depth 3
           Invoke-RestMethod `
-            -Uri 'https://api.github.com/repos/Computer-Tsu/ShackDesk-Site/dispatches' `
+            -Uri 'https://api.github.com/repos/Computer-Consultant/ShackDesk-Site/dispatches' `
             -Method Post `
             -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
             -Body $body `
