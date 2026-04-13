@@ -38,10 +38,10 @@ public class SettingsTests : IDisposable
     }
 
     [Theory]
-    [InlineData("Alpha",  "alpha.json")]
-    [InlineData("Beta",   "beta.json")]
-    [InlineData("Stable", "stable.json")]
-    [InlineData("",       "stable.json")]
+    [InlineData("Alpha",  "alpha/")]
+    [InlineData("Beta",   "beta/")]
+    [InlineData("Stable", "stable/")]
+    [InlineData("",       "stable/")]
     public void BrandingInfo_GetUpdateEndpoint_ResolvesChannel(string channel, string expectedSuffix)
         => Assert.EndsWith(expectedSuffix, BrandingInfo.GetUpdateEndpoint(channel));
 
