@@ -63,27 +63,38 @@ public static class BrandingInfo
     public const string RepoURL           = "https://github.com/Computer-Tsu/shackdesk-portpane";
     public const string AppURL            = "https://shackdesk.com";
     public const string SupportURL        = "https://github.com/Computer-Tsu/shackdesk-portpane/discussions";
-    public const string DonationURL       = "https://shackdesk.com/donate";
-    public const string LicenseType       = "MIT / Commercial";
+    public const string DonationURL       = "";
+    public const string LicenseType       = "MIT source code + optional paid services";
     public const string TelemetryEndpoint = "https://telemetry.shackdesk.com/report";
 
+    public static string RepoDocBranch => ChannelInfo.Channel switch
+    {
+        ReleaseChannel.Alpha  => "dev",
+        ReleaseChannel.Beta   => "beta",
+        _                     => "main"
+    };
+
+    public static string SourceLicenseURL => $"{RepoURL}/blob/{RepoDocBranch}/LICENSE-MIT.md";
+
     /// <summary>
-    /// Per-channel update feed URL. Resolves at runtime based on ChannelInfo.Channel.
+    /// Per-channel update feed base URL. Resolves at runtime based on ChannelInfo.Channel.
+    /// Velopack's SimpleWebSource appends "releases.win.json" to this base URL, so it must
+    /// be a directory path (trailing slash), not a direct file path.
     /// Served by ShackDesk-Site as static JSON; updated automatically after each release.
     /// </summary>
     public static string UpdateEndpoint => ChannelInfo.Channel switch
     {
-        ReleaseChannel.Alpha  => "https://shackdesk.com/portpane/update/alpha.json",
-        ReleaseChannel.Beta   => "https://shackdesk.com/portpane/update/beta.json",
-        _                     => "https://shackdesk.com/portpane/update/stable.json"
+        ReleaseChannel.Alpha  => "https://shackdesk.com/portpane/update/alpha/",
+        ReleaseChannel.Beta   => "https://shackdesk.com/portpane/update/beta/",
+        _                     => "https://shackdesk.com/portpane/update/stable/"
     };
 
     public static string GetUpdateEndpoint(string? channel) =>
         channel?.Trim().ToLowerInvariant() switch
         {
-            "alpha" => "https://shackdesk.com/portpane/update/alpha.json",
-            "beta"  => "https://shackdesk.com/portpane/update/beta.json",
-            _       => "https://shackdesk.com/portpane/update/stable.json"
+            "alpha" => "https://shackdesk.com/portpane/update/alpha/",
+            "beta"  => "https://shackdesk.com/portpane/update/beta/",
+            _       => "https://shackdesk.com/portpane/update/stable/"
         };
 
     public const string PrivacyURL        = "https://shackdesk.com/privacy";

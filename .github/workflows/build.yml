@@ -2,7 +2,8 @@
 # PortPane by ShackDesk
 # Project : https://github.com/Computer-Tsu/shackdesk-portpane
 # Author  : Mark McDow (N4TEK) — My Computer Guru LLC
-# License : MIT + official-build commercial terms (see LICENSE-MIT.md, LICENSE-COMMERCIAL.md)
+# License : MIT source code + official builds/services
+#           (see LICENSE-MIT.md, OFFICIAL_BUILDS_AND_SERVICES.md)
 #
 # Workflow : Build · Test · Publish · Release
 # Purpose  : Main CI/CD pipeline. Builds and tests on every push and PR to main.
@@ -222,17 +223,24 @@ jobs:
           # Obfuscation will be added before v1.0 stable release.
           Write-Host "Obfuscation step placeholder — skipping"
 
-      # Code signing placeholder:
-      # When an EV or OV certificate is obtained, add the following step here:
-      #   - name: Sign executable
-      #     run: >
-      #       signtool.exe sign
-      #         /fd sha256
-      #         /tr http://timestamp.digicert.com
-      #         /td sha256
-      #         /f certificate.pfx
-      #         /p ${{ secrets.SIGNING_PASSWORD }}
-      #         ./publish/${{ env.APP_EXE }}
+      # ── SignPath code signing ────────────────────────────────────────────
+      # PortPane uses SignPath (https://signpath.io) for code signing under the
+      # SignPath OSS program. Signing is submitted via the
+      # signpath/github-action-submit-signing-request action after publish.
+      #
+      # STATUS: Pending SignPath OSS program approval.
+      #         The signing job below is scaffolded but DISABLED until approval
+      #         is received and the required values are filled in.
+      #
+      # WHEN APPROVED — fill in and enable the signing job further below:
+      #   SIGNPATH_ORG_ID      — from SignPath dashboard → Organization settings
+      #   SIGNPATH_PROJECT     — SignPath project slug for PortPane
+      #   SIGNPATH_POLICY      — signing policy slug (e.g. "release-signing")
+      #   SIGNPATH_ARTIFACT    — artifact configuration slug
+      #   SIGNPATH_API_TOKEN   — add as a GitHub Actions secret in repo settings
+      #
+      # See: https://github.com/SignPath/github-action-submit-signing-request
+      # See: CODE_SIGNING_POLICY.md for the full SignPath rollout plan.
 
       - name: Compute SHA-256
         id: hash
@@ -338,7 +346,8 @@ jobs:
           $pattern = "(?s)## \[$version\].*?(?=## \[|\z)"
           $match   = [regex]::Match($content, $pattern)
           $notes   = if ($match.Success) { $match.Value.Trim() } else { "See CHANGELOG.md for details." }
-          $notes | Out-File -FilePath ./release_notes.md -Encoding utf8
+          "$notes`n`nCode signing policy: https://shackdesk.com/portpane/code-signing-policy/" |
+            Out-File -FilePath ./release_notes.md -Encoding utf8
           echo "notes_file=./release_notes.md" >> $env:GITHUB_OUTPUT
 
       - name: Rename artifacts with version
@@ -446,6 +455,8 @@ jobs:
 
             This build has a 14-day expiry. Always download the current version from this page.
             Not recommended for general use — for testing purposes only.
+
+            Code signing policy: https://shackdesk.com/portpane/code-signing-policy/
           prerelease: true
           files: |
             ./release/PortPane-*.exe
@@ -475,3 +486,46 @@ jobs:
             -Body $body `
             -ContentType 'application/json'
           echo "Dispatched alpha update for v$version"
+
+  # ─────────────────────────────────────────────────────────────────────
+  # SignPath code signing
+  # ─────────────────────────────────────────────────────────────────────
+  # STATUS: DISABLED — pending SignPath OSS program approval.
+  #
+  # This job is scaffolded with the correct structure required by SignPath
+  # so the workflow is compliant when the cert is issued.
+  #
+  # TO ENABLE when SignPath OSS approval is received:
+  #   1. Replace all TODO placeholders below with real values from
+  #      the SignPath dashboard.
+  #   2. Add SIGNPATH_API_TOKEN as a secret in GitHub repo settings
+  #      (Settings → Secrets and variables → Actions → New repository secret).
+  #   3. Change the `if: false` condition to the appropriate trigger
+  #      (e.g. startsWith(github.ref, 'refs/tags/v')).
+  #   4. Test on alpha first (see CODE_SIGNING_POLICY.md).
+  #
+  # SignPath OSS program: https://signpath.io/product/open-source
+  # Action docs: https://github.com/SignPath/github-action-submit-signing-request
+  # ─────────────────────────────────────────────────────────────────────
+  sign:
+    name: Sign with SignPath
+    runs-on: ubuntu-latest
+    needs: publish
+    if: false  # TODO: change to trigger condition when SignPath OSS is approved
+
+    permissions:
+      id-token: write    # required by SignPath action for OIDC authentication
+
+    steps:
+      - name: Submit signing request to SignPath
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          # TODO: fill in from SignPath dashboard after OSS approval
+          api-token:                   ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id:             'TODO-signpath-org-id'
+          project-slug:                'TODO-portpane'
+          signing-policy-slug:         'TODO-release-signing'
+          artifact-configuration-slug: 'TODO-initial'
+          github-artifact-id:          ${{ needs.publish.outputs.sha256 }}
+          wait-for-completion:         true
+          output-artifact-directory:   './signed'

@@ -3,7 +3,7 @@
   PortPane by ShackDesk — Changelog
   Project  : https://github.com/Computer-Tsu/shackdesk-portpane
   Author   : Mark McDow (N4TEK) — My Computer Guru LLC
-  License  : MIT / Commercial (see LICENSE-MIT.md, LICENSE-COMMERCIAL.md)
+  License  : MIT source code + official builds/services (see LICENSE-MIT.md, OFFICIAL_BUILDS_AND_SERVICES.md)
   ════════════════════════════════════════════════════════════════════════════
 
   FORMAT
@@ -205,7 +205,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Dark theme with system High Contrast mode compatibility
 - Single-instance enforcement via named Mutex
 - Velopack auto-update (background, rate-limited to once per 24h, non-interrupting)
-- MIT / Commercial dual license with RSA offline license validation (key placeholder)
+- MIT source-code licensing with official-build registration validation
+  infrastructure (key placeholder)
 - Opt-in anonymous telemetry (off by default)
   - `Help → View Collected Data` viewer with Send/Clear/Close
   - Pending report queue (max 10, oldest discarded)
