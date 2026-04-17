@@ -91,11 +91,12 @@ begin
   begin
     ExePath  := ExpandConstant('{app}\{#AppExeName}');
     HashPath := ExpandConstant('{app}\{#AppExeName}.sha256');
-    if FileExists(HashPath) then
-    begin
-      LoadStringFromFile(HashPath, StoredHash);
-      // Note: Full SHA-256 verification requires a PowerShell call or custom DLL.
-      // Placeholder — the build pipeline verifies the hash before packaging.
-    end;
+    // Placeholder only. Full SHA-256 verification would require a PowerShell call
+    // or custom DLL. The build pipeline already verifies and packages the hash.
+    // Temporarily disabled while stabilizing CI installer creation.
+    // if FileExists(HashPath) then
+    // begin
+    //   LoadStringFromFile(HashPath, StoredHash);
+    // end;
   end;
 end;
