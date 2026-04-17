@@ -12,6 +12,7 @@
 #
 # Triggers :
 #   - push to dev                    — build, test, publish; updates rolling latest-alpha release
+#   - push to beta                   — build, test, publish; updates rolling latest-beta release
 #   - push to main                   — build, run tests, publish exe artifact
 #   - push of v* tag                 — publish + build installer + create GitHub Release
 #   - pull_request to main           — build and run tests only (no publish)
@@ -33,6 +34,7 @@
 #   - PortPane-{version}-{sha}        : PortPane.exe + SHA-256 hash (main/dev/tags)
 #   - PortPane-Installer-{tag}        : Inno Setup installer .exe (tags only)
 #   - GitHub Release (latest-alpha)   : Rolling alpha exe updated on every dev push
+#   - GitHub Release (latest-beta)    : Rolling beta exe updated on every beta push
 #   - GitHub Release (versioned)      : All artifacts + CHANGELOG notes (tags only)
 #
 # Manual trigger : Go to Actions tab → "Build · Test · Publish · Release" →
@@ -42,7 +44,7 @@ name: Build · Test · Publish · Release
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, dev, beta ]
     tags:     [ 'v*' ]
     paths-ignore:
       - '**/*.md'
@@ -467,3 +469,88 @@ jobs:
             -Body $body `
             -ContentType 'application/json'
           echo "Dispatched alpha update for v$version"
+
+  # ─────────────────────────────────────────────────────────────────────
+  rolling-beta:
+    name: Update Rolling Beta Release
+    runs-on: windows-latest
+    needs: publish
+    if: github.ref == 'refs/heads/beta'
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download exe artifact
+        uses: actions/download-artifact@v8
+        with:
+          pattern: PortPane-*-${{ github.sha }}
+          path: ./release
+          merge-multiple: true
+
+      - name: Rename artifact with composed version
+        shell: pwsh
+        run: |
+          $version = '${{ needs.publish.outputs.version }}'
+          Get-ChildItem './release/${{ env.APP_EXE }}' -ErrorAction SilentlyContinue |
+            Rename-Item -NewName "PortPane-$version-win-x64.exe"
+          Get-ChildItem './release/${{ env.APP_EXE }}.sha256' -ErrorAction SilentlyContinue |
+            Rename-Item -NewName "PortPane-$version-win-x64.exe.sha256"
+
+      - name: Delete existing latest-beta assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'SilentlyContinue'
+          $repo = '${{ github.repository }}'
+          $assets = gh release view latest-beta --repo $repo --json assets --jq '.assets[].name' 2>$null
+          if ($assets) {
+            $assets -split "`n" | Where-Object { $_.Trim() -ne '' } | ForEach-Object {
+              gh release delete-asset latest-beta $_.Trim() --repo $repo --yes 2>$null
+            }
+          }
+          exit 0
+
+      - name: Update rolling latest-beta release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-beta
+          name: "Latest Beta — ${{ needs.publish.outputs.version }}"
+          body: |
+            Automated beta build from the `beta` branch.
+
+            **Version:** `${{ needs.publish.outputs.version }}`
+            **Commit:** `${{ github.sha }}`
+
+            This build has a 60-day expiry. Always download the current version from this page.
+            Recommended for wider testing before stable release.
+          prerelease: true
+          files: |
+            ./release/PortPane-*.exe
+            ./release/PortPane-*.sha256
+
+      - name: Dispatch update feed to ShackDesk-Site
+        env:
+          PAT: ${{ secrets.SITE_DISPATCH_PAT }}
+        shell: pwsh
+        run: |
+          $version = '${{ needs.publish.outputs.version }}'
+          $sha256  = '${{ needs.publish.outputs.sha256 }}'
+          $dlUrl   = "https://github.com/${{ github.repository }}/releases/download/latest-beta/PortPane-$version-win-x64.exe"
+          $body    = @{
+            event_type     = 'portpane-release'
+            client_payload = @{
+              channel      = 'beta'
+              version      = $version
+              sha256       = $sha256
+              download_url = $dlUrl
+            }
+          } | ConvertTo-Json -Depth 3
+          Invoke-RestMethod `
+            -Uri 'https://api.github.com/repos/Computer-Consultant/ShackDesk-Site/dispatches' `
+            -Method Post `
+            -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
+            -Body $body `
+            -ContentType 'application/json'
+          echo "Dispatched beta update for v$version"
