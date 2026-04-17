@@ -40,7 +40,8 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 ArchitecturesInstallIn64BitMode=x64compatible
-MinVersion=10.0.17763   ; Windows 10 1809
+; Windows 10 1809 minimum
+MinVersion=10.0.17763
 
 ; Code signing placeholder
 ; SignTool=standard sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 $f
