@@ -10,7 +10,7 @@ namespace PortPane.Models;
 /// </summary>
 public sealed class AppSettings
 {
-    public int    SchemaVersion       { get; set; } = 2;
+    public int    SchemaVersion       { get; set; } = 3;
     public double ScaleFactor         { get; set; } = 1.0;
     public bool   AlwaysOnTop         { get; set; } = true;
 

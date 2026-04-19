@@ -183,6 +183,23 @@ public sealed class SettingsService : ISettingsService
             s.SchemaVersion = 2;
             Log.Information("Settings migrated from schema v1 to v2");
         }
+
+        if (s.SchemaVersion < 3)
+        {
+            // Correct UpdateChannel for builds where it was incorrectly saved as
+            // "Stable" due to the hardcoded default. On alpha/beta builds the
+            // channel should always match the build's own release channel.
+            string buildChannel = ChannelInfo.Channel.ToString();
+            if (ChannelInfo.Channel != ReleaseChannel.Stable &&
+                string.Equals(s.UpdateChannel, "Stable", StringComparison.OrdinalIgnoreCase))
+            {
+                s.UpdateChannel = buildChannel;
+                Log.Information("Settings migrated: UpdateChannel corrected from Stable to {Channel}", buildChannel);
+            }
+
+            s.SchemaVersion = 3;
+            Log.Information("Settings migrated from schema v2 to v3");
+        }
     }
 
     public void Save()
