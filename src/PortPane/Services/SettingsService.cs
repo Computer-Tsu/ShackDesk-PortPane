@@ -70,27 +70,56 @@ public sealed class SettingsService : ISettingsService
         if (!File.Exists(path))
         {
             Log.Debug("No settings file found; using defaults");
-            var defaults = new AppSettings();
-            if (ChannelInfo.TelemetryOnByDefault)
-                defaults.TelemetryEnabled = true;
-            return defaults;
+            return CreateDefaultSettings();
         }
 
         try
         {
             string json   = File.ReadAllText(path);
             var    loaded = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions);
-            if (loaded is null) return new AppSettings();
+            if (loaded is null) return CreateDefaultSettings();
 
             Migrate(loaded);
+            Normalize(loaded);
             Log.Debug("Settings loaded (schema v{Version})", loaded.SchemaVersion);
             return loaded;
         }
         catch (Exception ex)
         {
             Log.Warning(ex, "Settings file unreadable; applying defaults");
-            return new AppSettings();
+            return CreateDefaultSettings();
         }
+    }
+
+    private static AppSettings CreateDefaultSettings()
+    {
+        var defaults = new AppSettings
+        {
+            UpdateChannel = ChannelInfo.Channel.ToString()
+        };
+        if (ChannelInfo.TelemetryOnByDefault)
+            defaults.TelemetryEnabled = true;
+        return defaults;
+    }
+
+    private static void Normalize(AppSettings s)
+    {
+        s.UpdateChannel = (s.UpdateChannel ?? string.Empty).Trim().ToLowerInvariant() switch
+        {
+            "stable" => "Stable",
+            "beta"   => "Beta",
+            "alpha"  => "Alpha",
+            _        => ChannelInfo.Channel.ToString()
+        };
+
+        s.UpdateCheckFrequency = (s.UpdateCheckFrequency ?? string.Empty).Trim().ToLowerInvariant() switch
+        {
+            "daily"   => "Daily",
+            "weekly"  => "Weekly",
+            "monthly" => "Monthly",
+            "never"   => "Never",
+            _         => "Monthly"
+        };
     }
 
     /// <summary>
@@ -168,7 +197,7 @@ public sealed class SettingsService : ISettingsService
                 File.Delete(path);
                 Log.Information("Settings file deleted: {Path}", path);
             }
-            Current = new AppSettings();
+            Current = CreateDefaultSettings();
         }
         catch (Exception ex)
         {
@@ -225,8 +254,8 @@ public sealed class SettingsService : ISettingsService
             ["_comment_35"] = "  TelemetryFrequency     string  'Monthly (if new devices)' or 'Never auto-send'.",
             ["_comment_36"] = "  UpdateCheckLastRun     string  ISO 8601 UTC timestamp of last update check.",
             ["_comment_37"] = "  AutoUpdateEnabled      bool    Automatically check for updates.",
-            ["_comment_38"] = "  UpdateCheckFrequency   string  'Weekly', 'Monthly', or 'Never'.",
-            ["_comment_39"] = "  UpdateChannel          string  'Stable' or 'Beta'.",
+            ["_comment_38"] = "  UpdateCheckFrequency   string  'Daily', 'Weekly', 'Monthly', or 'Never'.",
+            ["_comment_39"] = "  UpdateChannel          string  'Stable', 'Beta', or 'Alpha'.",
             ["_comment_40"] = "  FirstRunComplete       bool    Set to true after first-run dialog.",
             ["_comment_41"] = "  LicenseKey             string  Commercial license key (Base64).",
             ["_comment_42"] = "  PortableMode           bool    Informational. Detection uses portable.txt.",

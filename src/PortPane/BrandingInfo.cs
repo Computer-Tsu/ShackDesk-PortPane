@@ -78,6 +78,14 @@ public static class BrandingInfo
         _                     => "https://shackdesk.com/portpane/update/stable.json"
     };
 
+    public static string GetUpdateEndpoint(string? channel) =>
+        channel?.Trim().ToLowerInvariant() switch
+        {
+            "alpha" => "https://shackdesk.com/portpane/update/alpha.json",
+            "beta"  => "https://shackdesk.com/portpane/update/beta.json",
+            _       => "https://shackdesk.com/portpane/update/stable.json"
+        };
+
     public const string PrivacyURL        = "https://shackdesk.com/privacy";
     public const string ContactEmail      = "";
 }
