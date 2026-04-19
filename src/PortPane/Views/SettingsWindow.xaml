@@ -364,7 +364,7 @@
                     <TextBlock TextWrapping="Wrap"
                                Foreground="{StaticResource TextSecondaryBrush}"
                                FontSize="11" Margin="20,0,0,8"
-                               Text="No personal information is collected. Reports contain only device VID/PID and whether the device was recognized."/>
+                               Text="No personal information is collected. Reports include a random Support ID shown in About so repeated reports from this installation can be grouped."/>
 
                     <DockPanel Margin="0,0,0,4">
                         <TextBlock Text="Frequency:" Width="130" VerticalAlignment="Center"

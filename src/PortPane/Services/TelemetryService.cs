@@ -114,9 +114,15 @@ public sealed class TelemetryService : ITelemetryService
 
     // ── Internals ─────────────────────────────────────────────────────────────
 
-    private static object BuildPayload(string eventName,
+    private object BuildPayload(string eventName,
         IReadOnlyDictionary<string, object>? properties)
-        => new
+    {
+        var props = properties is null
+            ? new Dictionary<string, object>()
+            : new Dictionary<string, object>(properties);
+        props["install_id"] = _settings.Current.InstallId;
+
+        return new
         {
             report_id = Guid.NewGuid().ToString(),
             app       = BrandingInfo.AppName,
@@ -124,8 +130,9 @@ public sealed class TelemetryService : ITelemetryService
             @event    = eventName,
             os        = Environment.OSVersion.VersionString,
             timestamp = DateTimeOffset.UtcNow,
-            props     = properties ?? (IReadOnlyDictionary<string, object>)new Dictionary<string, object>()
+            props
         };
+    }
 
     private async Task SendOrQueueAsync(object payload)
     {
