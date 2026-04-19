@@ -14,6 +14,7 @@ public partial class FirstRunDialog : Window
         InitializeComponent();
         _settings  = settings;
         _telemetry = telemetry;
+        TelemetryCheckBox.IsChecked = _settings.Current.TelemetryEnabled;
     }
 
     private void GetStarted_Click(object sender, RoutedEventArgs e)

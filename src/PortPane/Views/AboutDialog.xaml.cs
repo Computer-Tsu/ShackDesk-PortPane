@@ -8,11 +8,14 @@ namespace PortPane.Views;
 public partial class AboutDialog : Window
 {
     private readonly ILicenseService _license;
+    private readonly ISettingsService _settings;
 
-    public AboutDialog(ILicenseService license)
+    public AboutDialog(ILicenseService license, ISettingsService settings)
     {
         InitializeComponent();
-        _license = license;
+        _license   = license;
+        _settings  = settings;
+        SupportIdText.Text = _settings.Current.InstallId;
 
         // Show licensee name for paid tiers
         if (license.Current.Tier != LicenseTier.Free)
@@ -38,6 +41,9 @@ public partial class AboutDialog : Window
 
     private void Support_Click(object sender, RoutedEventArgs e)
         => Process.Start(new ProcessStartInfo(BrandingInfo.SupportURL) { UseShellExecute = true });
+
+    private void CopySupportId_Click(object sender, RoutedEventArgs e)
+        => Clipboard.SetText(_settings.Current.InstallId);
 
     private void Close_Click(object sender, RoutedEventArgs e) => Close();
 }
