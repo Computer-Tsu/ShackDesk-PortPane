@@ -117,8 +117,6 @@
                         <MenuItem Header="_File">
                             <MenuItem Header="Open _Settings" InputGestureText="Ctrl+,"
                                       Click="OpenSettings_Click"/>
-                            <MenuItem Header="_Save Settings" InputGestureText="Ctrl+S"
-                                      Click="SaveSettings_Click"/>
                             <Separator/>
                             <MenuItem Header="E_xit" InputGestureText="Alt+F4"
                                       Click="Exit_Click"/>
@@ -345,15 +343,14 @@
                                     Content="Open in PuTTY"
                                     Style="{StaticResource PuttyButtonStyle}"
                                     Command="{Binding ComPorts.OpenInPuttyCommand}"
-                                    Visibility="{Binding ComPorts.IsPuttyAvailable, Converter={StaticResource BoolToVis}}"
+                                    Visibility="{Binding ComPorts.ShowPuttyControls, Converter={StaticResource BoolToVis}}"
                                     Margin="6,0,0,0"/>
                             <ComboBox ItemsSource="{Binding ComPorts.BaudRates}"
                                       SelectedItem="{Binding ComPorts.SelectedBaudRate}"
                                       MinHeight="44"
                                       MinWidth="110"
                                       ToolTip="Baud rate for PuTTY launch and heuristic suggestions"
-                                      Background="{StaticResource SurfaceBrush}"
-                                      Foreground="{StaticResource TextPrimaryBrush}"/>
+                                      Visibility="{Binding ComPorts.ShowPuttyControls, Converter={StaticResource BoolToVis}}"/>
                         </DockPanel>
 
                         <!-- Copy confirmation (non-modal) -->
