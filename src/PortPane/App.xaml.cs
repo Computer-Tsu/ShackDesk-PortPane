@@ -116,6 +116,9 @@ public partial class App : Application
                 ["is_portable"]  = settingsSvc.IsPortableMode,
                 ["is_first_run"] = wasFirstRun
             });
+
+            var deviceTelemetry = _serviceProvider.GetRequiredService<IDeviceTelemetryService>();
+            await deviceTelemetry.ReportDeviceSnapshotAsync("app_start");
         });
 
         // ── Background: update check ──────────────────────────────────────────
@@ -175,6 +178,7 @@ public partial class App : Application
         services.AddSingleton<IComPortService, ComPortService>();
         services.AddSingleton<IHotplugService, HotplugService>();
         services.AddSingleton<ITelemetryService, TelemetryService>();
+        services.AddSingleton<IDeviceTelemetryService, DeviceTelemetryService>();
         services.AddSingleton<IUpdateService, UpdateService>();
         services.AddSingleton<ILicenseService, LicenseService>();
         services.AddSingleton<IPuttyService, PuttyService>();

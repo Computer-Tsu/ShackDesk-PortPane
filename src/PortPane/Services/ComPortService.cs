@@ -20,7 +20,9 @@ public sealed record ComPortInfo(
     string? Description,
     bool    IsRadioInterface,
     bool    IsGhost,
-    int     SuggestedBaudRate);
+    int     SuggestedBaudRate,
+    bool    UsbDatabaseMatched = false,
+    string  DetectionMethod = "unknown");
 
 public sealed class ComPortService : IComPortService
 {
@@ -78,8 +80,12 @@ public sealed class ComPortService : IComPortService
             ExtractVidPid(deviceId, out string? vid, out string? pid);
 
             var dbEntry    = _usbDb.Lookup(vid, pid);
-            bool isRadio   = dbEntry?.RadioInterface == true || IsRadioByKeyword(caption + " " + manufacturer);
+            bool heuristicRadio = IsRadioByKeyword(caption + " " + manufacturer);
+            bool isRadio   = dbEntry?.RadioInterface == true || heuristicRadio;
             int  baudHint  = dbEntry?.BaudHint ?? SuggestBaudRate(caption, manufacturer, vid, pid);
+            string detectionMethod = dbEntry is not null
+                ? "usb_devices_json"
+                : heuristicRadio ? "keyword_heuristic" : "unknown";
 
             Log.Debug("COM port {Port}: {Name} VID={Vid} PID={Pid} radio={Radio} baud={Baud}",
                 portName, dbEntry?.Name ?? caption, vid, pid, isRadio, baudHint);
@@ -93,7 +99,9 @@ public sealed class ComPortService : IComPortService
                 Description:     description,
                 IsRadioInterface: isRadio,
                 IsGhost:         false,
-                SuggestedBaudRate: baudHint));
+                SuggestedBaudRate: baudHint,
+                UsbDatabaseMatched: dbEntry is not null,
+                DetectionMethod:  detectionMethod));
         }
         return results;
     }
