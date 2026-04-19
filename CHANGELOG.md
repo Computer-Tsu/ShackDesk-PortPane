@@ -38,6 +38,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Telemetry startup reporting for alpha builds, including app version, channel, portable mode,
+  first-run state, and a per-install Support ID for support lookups.
+- USB radio-interface telemetry snapshots for known/unknown COM and audio endpoint detection,
+  limited to VID/PID and database match status rather than raw device names or serial numbers.
+- Settings/About display for the telemetry Support ID, formatted with UUID dashes for readability.
+- Inno Setup alpha installer test artifacts for early installer and update testing.
 - `ChannelInfo.cs`: multi-channel release system — `ReleaseChannel` enum (`Alpha`, `Beta`, `Stable`)
   with per-branch constants controlling build expiry, feature unlock, telemetry default,
   logging verbosity, and version suffix; protected from forward merges via `.gitattributes` `merge=ours`
@@ -63,6 +69,14 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Settings ComboBox styling now uses a shared dark template for both expanded dropdown items
+  and collapsed selections, fixing low-contrast text and object-record display text.
+- Settings License tab Donate button now opens `https://shackdesk.com/donate`.
+- Settings Audio tab PC test button now treats `(none)` as the current Windows default
+  playback endpoint instead of silently doing nothing.
+- Main window `File > Save Settings` command and hidden `Ctrl+S` save shortcut removed;
+  Settings OK remains the settings save action.
+- Main window drag strip made easier to grab with the mouse.
 - Chrome menu bar auto-hides after 5 seconds making the menu unusable; replaced
   5-second `DispatcherTimer` with focus/hover model: chrome appears on mouse-enter,
   pins on click or Alt key (enabling keyboard menu navigation), and hides only when
@@ -70,8 +84,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Project version bumped to `0.5.7` in branding, assembly/package metadata, and the
+  Inno Setup installer definition.
+- COM baud selector now appears with the PuTTY launch controls only when the PuTTY
+  button setting is enabled and PuTTY is available.
 - License baseline switched from GPL v3 to MIT across app metadata, installer packaging, and user-facing strings
-- Project version bumped to `0.5.6` in branding and assembly/package metadata
 
 - `BrandingInfo.Version` stripped of channel suffix (was `"0.5.1-beta"`); suffix now provided
   exclusively by `ChannelInfo.VersionSuffix` on each branch
