@@ -31,24 +31,26 @@ Device Manager.
 
 | Channel | Link | Notes |
 | --- | --- | --- |
-| **Alpha** | [Latest Alpha release](https://github.com/Computer-Tsu/shackdesk-portpane/releases/tag/latest-alpha) | Updated on every `dev` push. 14-day expiry. For testers. |
+| **Alpha** | [Direct installer download](https://github.com/Computer-Tsu/ShackDesk-PortPane/releases/download/latest-alpha/PortPane-win-Setup.exe) | Updated on every `dev` push. 14-day expiry. For testers. |
+| **Alpha (release page)** | [Latest Alpha release](https://github.com/Computer-Tsu/shackdesk-portpane/releases/tag/latest-alpha) | Includes SHA-256 hash and portable exe. |
 | **Stable** | [Latest stable release](https://github.com/Computer-Tsu/shackdesk-portpane/releases/latest) | No stable release yet — coming soon. |
 
-Alpha builds may include a portable `PortPane.exe`, a `.zip`, and an installer test build.
-The portable exe can run directly without installation; the installer is available for
-early update/install testing.
+**Alpha installer** (`PortPane-win-Setup.exe`) installs per-user with no admin rights required.
+In-app updates are delivered automatically — no need to reinstall for new alpha builds.
 
-> **Windows SmartScreen note:** PortPane is currently unsigned (code signing certificate pending).
-> If SmartScreen blocks it, click "More info" → "Run anyway." This is expected for unsigned utilities.
-> Verify the SHA-256 hash posted with each release.
+> **Windows SmartScreen / browser warning:** PortPane is currently unsigned (code signing
+> certificate pending). Browsers and Windows will show a warning before the file can run.
+> See the **[download guide](https://shackdesk.com/portpane/download/)** for step-by-step
+> instructions for Chrome, Edge, Windows 10, and Windows 11.
 
 ---
 
 ## Quick Start
 
-1. Download `PortPane.exe` from Releases
-2. Run it (no install, no admin rights needed)
-3. Plug in your USB radio interface — PortPane updates instantly
+1. Download `PortPane-win-Setup.exe` from the [alpha release](https://github.com/Computer-Tsu/ShackDesk-PortPane/releases/download/latest-alpha/PortPane-win-Setup.exe)
+2. Run the installer — no admin rights needed, installs per-user
+3. If Windows or your browser warns you, see the [download guide](https://shackdesk.com/portpane/download/)
+4. Plug in your USB radio interface — PortPane updates instantly
 
 ---
 
