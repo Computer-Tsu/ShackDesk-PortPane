@@ -11,7 +11,7 @@ Device Manager.
 
 [![dev](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg?branch=dev)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
 [![main](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Computer-Tsu/shackdesk-portpane/actions/workflows/build.yml)
-[![Alpha](https://img.shields.io/badge/alpha-0.5.6-orange)](https://github.com/Computer-Tsu/shackdesk-portpane/releases)
+[![Alpha](https://img.shields.io/badge/alpha-0.5.7-orange)](https://github.com/Computer-Tsu/shackdesk-portpane/releases)
 [![Stable](https://img.shields.io/github/v/release/Computer-Tsu/shackdesk-portpane?label=stable&color=brightgreen)](https://github.com/Computer-Tsu/shackdesk-portpane/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE-MIT.md)
 [![Last Commit](https://img.shields.io/github/last-commit/Computer-Tsu/shackdesk-portpane)](https://github.com/Computer-Tsu/shackdesk-portpane/commits/main)
@@ -34,7 +34,9 @@ Device Manager.
 | **Alpha** | [Latest Alpha release](https://github.com/Computer-Tsu/shackdesk-portpane/releases/tag/latest-alpha) | Updated on every `dev` push. 14-day expiry. For testers. |
 | **Stable** | [Latest stable release](https://github.com/Computer-Tsu/shackdesk-portpane/releases/latest) | No stable release yet — coming soon. |
 
-Download `PortPane.exe`. Run it directly. No installation required.
+Alpha builds may include a portable `PortPane.exe`, a `.zip`, and an installer test build.
+The portable exe can run directly without installation; the installer is available for
+early update/install testing.
 
 > **Windows SmartScreen note:** PortPane is currently unsigned (code signing certificate pending).
 > If SmartScreen blocks it, click "More info" → "Run anyway." This is expected for unsigned utilities.
@@ -67,6 +69,7 @@ Clarity and simplicity take precedence over feature density.
 - Instantly shows COM port name and friendly device name when USB device connects
 - Lists audio playback and capture devices, grouped as USB/External vs Built-in
 - **One-click audio profile switching** — toggle between PC audio and radio CODEC with one button
+- Settings audio test buttons for checking the selected PC/radio playback endpoints
 - Identifies known radio interfaces by VID/PID (SignaLink, DigiRig, RIGblaster, IC-7300, etc.)
 - Radio interfaces are badged and highlighted
 - USB hotplug detection — updates the device list within 2 seconds of plug/unplug
@@ -80,7 +83,7 @@ Clarity and simplicity take precedence over feature density.
 - Persistent window position and settings
 - Portable mode — run from USB drive with settings stored alongside the exe
 - Auto-update via Velopack (background, non-interrupting)
-- Optional anonymous telemetry (disabled by default)
+- Optional anonymous telemetry with local Support ID and USB radio-interface hit/miss reporting
 - MIT licensed — full source available
 
 ---
@@ -189,9 +192,8 @@ RIGblaster, and other referenced product names.
 
 ## Support the Author
 
-<!-- GitHub Sponsors / Ko-fi links — to be added when accounts are created -->
-
-If PortPane saves you time, consider leaving a star on GitHub.
+If PortPane saves you time, consider leaving a star on GitHub or visiting
+[shackdesk.com/donate](https://shackdesk.com/donate).
 
 ---
 

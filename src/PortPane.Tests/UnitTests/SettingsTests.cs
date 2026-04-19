@@ -66,6 +66,9 @@ public class SettingsTests : IDisposable
         Assert.True(s.AlwaysOnTop);
         Assert.Equal(9600,  s.PreferredBaudRate);
         Assert.Equal("en",  s.Language);
+        Assert.False(string.IsNullOrWhiteSpace(s.InstallId));
+        Assert.Contains("-", s.InstallId);
+        Assert.True(Guid.TryParse(s.InstallId, out _));
         Assert.False(s.TelemetryEnabled);
         Assert.False(s.FirstRunComplete);
         Assert.False(s.PortableMode);
@@ -102,6 +105,9 @@ public class SettingsTests : IDisposable
         Assert.Equal(1.35, loaded.ScaleFactor);
         Assert.Equal("Radio", loaded.AudioProfile);
         Assert.Equal(115200, loaded.PreferredBaudRate);
+        Assert.False(string.IsNullOrWhiteSpace(loaded.InstallId));
+        Assert.Contains("-", loaded.InstallId);
+        Assert.True(Guid.TryParse(loaded.InstallId, out _));
         Assert.True(loaded.FirstRunComplete);
         Assert.True(loaded.TelemetryEnabled);
     }

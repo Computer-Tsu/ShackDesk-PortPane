@@ -57,14 +57,13 @@
             </StackPanel>
         </Border>
 
-        <!-- Data sharing opt-in (OFF by default) -->
+        <!-- Data sharing opt-in (uses the channel default) -->
         <Border Background="{StaticResource SurfaceBrush}"
                 CornerRadius="6" Padding="14,10" Margin="0,0,0,20">
             <StackPanel>
                 <CheckBox x:Name="TelemetryCheckBox"
                           Foreground="{StaticResource TextPrimaryBrush}"
                           FontSize="13"
-                          IsChecked="False"
                           Margin="0,0,0,6"
                           ToolTip="Help improve PortPane by sharing anonymous device detection data. No personal information is collected.">
                     <TextBlock TextWrapping="Wrap"

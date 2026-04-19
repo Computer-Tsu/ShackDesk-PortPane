@@ -81,6 +81,7 @@ public sealed class SettingsService : ISettingsService
 
             Migrate(loaded);
             Normalize(loaded);
+            EnsureInstallId(loaded);
             Log.Debug("Settings loaded (schema v{Version})", loaded.SchemaVersion);
             return loaded;
         }
@@ -120,6 +121,17 @@ public sealed class SettingsService : ISettingsService
             "never"   => "Never",
             _         => "Monthly"
         };
+    }
+
+    private static void EnsureInstallId(AppSettings s)
+    {
+        if (Guid.TryParse(s.InstallId, out var id))
+        {
+            s.InstallId = id.ToString("D");
+            return;
+        }
+
+        s.InstallId = Guid.NewGuid().ToString("D");
     }
 
     /// <summary>
@@ -250,16 +262,17 @@ public sealed class SettingsService : ISettingsService
             ["_comment_31"] = "  PuttyExePath           string  Full path to putty.exe.",
             ["_comment_32"] = "  Language               string  UI language code (IETF, e.g. 'en', 'de').",
             ["_comment_33"] = "  LaunchAtStartup        bool    Register in Windows startup. Default: false.",
-            ["_comment_34"] = "  TelemetryEnabled       bool    Anonymous usage reporting opt-in.",
-            ["_comment_35"] = "  TelemetryFrequency     string  'Monthly (if new devices)' or 'Never auto-send'.",
-            ["_comment_36"] = "  UpdateCheckLastRun     string  ISO 8601 UTC timestamp of last update check.",
-            ["_comment_37"] = "  AutoUpdateEnabled      bool    Automatically check for updates.",
-            ["_comment_38"] = "  UpdateCheckFrequency   string  'Daily', 'Weekly', 'Monthly', or 'Never'.",
-            ["_comment_39"] = "  UpdateChannel          string  'Stable', 'Beta', or 'Alpha'.",
-            ["_comment_40"] = "  FirstRunComplete       bool    Set to true after first-run dialog.",
-            ["_comment_41"] = "  LicenseKey             string  Commercial license key (Base64).",
-            ["_comment_42"] = "  PortableMode           bool    Informational. Detection uses portable.txt.",
-            ["_comment_43"] = "════════════════════════════════════════════════════════════════════",
+            ["_comment_34"] = "  InstallId              string  Random Support ID for anonymous telemetry grouping.",
+            ["_comment_35"] = "  TelemetryEnabled       bool    Anonymous usage reporting opt-in.",
+            ["_comment_36"] = "  TelemetryFrequency     string  'Monthly (if new devices)' or 'Never auto-send'.",
+            ["_comment_37"] = "  UpdateCheckLastRun     string  ISO 8601 UTC timestamp of last update check.",
+            ["_comment_38"] = "  AutoUpdateEnabled      bool    Automatically check for updates.",
+            ["_comment_39"] = "  UpdateCheckFrequency   string  'Daily', 'Weekly', 'Monthly', or 'Never'.",
+            ["_comment_40"] = "  UpdateChannel          string  'Stable', 'Beta', or 'Alpha'.",
+            ["_comment_41"] = "  FirstRunComplete       bool    Set to true after first-run dialog.",
+            ["_comment_42"] = "  LicenseKey             string  Commercial license key (Base64).",
+            ["_comment_43"] = "  PortableMode           bool    Informational. Detection uses portable.txt.",
+            ["_comment_44"] = "════════════════════════════════════════════════════════════════════",
         };
 
         foreach (var (key, value) in settingsNode)

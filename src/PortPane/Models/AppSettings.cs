@@ -58,6 +58,7 @@ public sealed class AppSettings
     public bool   LaunchAtStartup      { get; set; } = false;
 
     // Telemetry
+    public string InstallId            { get; set; } = Guid.NewGuid().ToString("D");
     public bool   TelemetryEnabled     { get; set; } = false;
     public string TelemetryLastSent    { get; set; } = string.Empty;
     public string TelemetryFrequency   { get; set; } = "Monthly";

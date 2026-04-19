@@ -95,7 +95,8 @@ public partial class App : Application
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
         var settingsSvc = _serviceProvider.GetRequiredService<ISettingsService>();
-        if (!settingsSvc.Current.FirstRunComplete)
+        bool wasFirstRun = !settingsSvc.Current.FirstRunComplete;
+        if (wasFirstRun)
         {
             _serviceProvider.GetRequiredService<FirstRunDialog>().ShowDialog();
         }
@@ -104,6 +105,21 @@ public partial class App : Application
         MainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         MainWindow.Show();
         ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+        // ── Background: telemetry — app launch ───────────────────────────────
+        _ = Task.Run(async () =>
+        {
+            var telemetry = _serviceProvider.GetRequiredService<ITelemetryService>();
+            await telemetry.ReportEventAsync("app_start", new Dictionary<string, object>
+            {
+                ["channel"]      = ChannelInfo.Channel.ToString(),
+                ["is_portable"]  = settingsSvc.IsPortableMode,
+                ["is_first_run"] = wasFirstRun
+            });
+
+            var deviceTelemetry = _serviceProvider.GetRequiredService<IDeviceTelemetryService>();
+            await deviceTelemetry.ReportDeviceSnapshotAsync("app_start");
+        });
 
         // ── Background: update check ──────────────────────────────────────────
         _ = Task.Run(async () =>
@@ -162,6 +178,7 @@ public partial class App : Application
         services.AddSingleton<IComPortService, ComPortService>();
         services.AddSingleton<IHotplugService, HotplugService>();
         services.AddSingleton<ITelemetryService, TelemetryService>();
+        services.AddSingleton<IDeviceTelemetryService, DeviceTelemetryService>();
         services.AddSingleton<IUpdateService, UpdateService>();
         services.AddSingleton<ILicenseService, LicenseService>();
         services.AddSingleton<IPuttyService, PuttyService>();

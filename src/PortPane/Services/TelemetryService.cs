@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Serilog;
 
 namespace PortPane.Services;
@@ -10,18 +11,26 @@ public interface ITelemetryService
     bool IsEnabled { get; set; }
     Task ReportEventAsync(string eventName, IReadOnlyDictionary<string, object>? properties = null);
     Task ReportCrashAsync(Exception ex);
-    Task ReportDeviceDetectionAsync(IReadOnlyList<DeviceTelemetryEntry> devices);
+    Task ReportDeviceSnapshotAsync(DeviceTelemetrySnapshot snapshot);
     IReadOnlyList<PendingReport> GetPendingReports();
     void ClearPendingReports();
 }
 
 public sealed record DeviceTelemetryEntry(
-    string  Type,
-    string? Vid,
-    string? Pid,
-    string  FriendlyName,
-    string  ClassificationResult,
-    string  DetectionMethod);
+    [property: JsonPropertyName("type")] string  Type,
+    [property: JsonPropertyName("vid")] string? Vid,
+    [property: JsonPropertyName("pid")] string? Pid,
+    [property: JsonPropertyName("usb_database_matched")] bool UsbDatabaseMatched,
+    [property: JsonPropertyName("is_radio_interface")] bool IsRadioInterface,
+    [property: JsonPropertyName("detection_method")] string DetectionMethod);
+
+public sealed record DeviceTelemetrySnapshot(
+    string Trigger,
+    int ComPortCount,
+    int UsbAudioEndpointCount,
+    int KnownDeviceCount,
+    int UnknownDeviceCount,
+    IReadOnlyList<DeviceTelemetryEntry> Devices);
 
 public sealed record PendingReport(string Id, string EventName, DateTimeOffset Timestamp, string JsonPayload);
 
@@ -72,13 +81,17 @@ public sealed class TelemetryService : ITelemetryService
         await SendOrQueueAsync(payload);
     }
 
-    public async Task ReportDeviceDetectionAsync(IReadOnlyList<DeviceTelemetryEntry> devices)
+    public async Task ReportDeviceSnapshotAsync(DeviceTelemetrySnapshot snapshot)
     {
         if (!IsEnabled) return;
-        var payload = BuildPayload("device_detection", new Dictionary<string, object>
+        var payload = BuildPayload("device_snapshot", new Dictionary<string, object>
         {
-            ["device_count"] = devices.Count,
-            ["devices"]      = devices
+            ["trigger"]                  = snapshot.Trigger,
+            ["com_port_count"]           = snapshot.ComPortCount,
+            ["usb_audio_endpoint_count"] = snapshot.UsbAudioEndpointCount,
+            ["known_device_count"]       = snapshot.KnownDeviceCount,
+            ["unknown_device_count"]     = snapshot.UnknownDeviceCount,
+            ["devices"]                  = snapshot.Devices
         });
         await SendOrQueueAsync(payload);
     }
@@ -114,9 +127,15 @@ public sealed class TelemetryService : ITelemetryService
 
     // ── Internals ─────────────────────────────────────────────────────────────
 
-    private static object BuildPayload(string eventName,
+    private object BuildPayload(string eventName,
         IReadOnlyDictionary<string, object>? properties)
-        => new
+    {
+        var props = properties is null
+            ? new Dictionary<string, object>()
+            : new Dictionary<string, object>(properties);
+        props["install_id"] = _settings.Current.InstallId;
+
+        return new
         {
             report_id = Guid.NewGuid().ToString(),
             app       = BrandingInfo.AppName,
@@ -124,8 +143,9 @@ public sealed class TelemetryService : ITelemetryService
             @event    = eventName,
             os        = Environment.OSVersion.VersionString,
             timestamp = DateTimeOffset.UtcNow,
-            props     = properties ?? (IReadOnlyDictionary<string, object>)new Dictionary<string, object>()
+            props
         };
+    }
 
     private async Task SendOrQueueAsync(object payload)
     {

@@ -44,7 +44,7 @@
                    HorizontalAlignment="Center"
                    Margin="0,2,0,16">
             <Run Text="Version "/>
-            <Run Text="{x:Static local:BrandingInfo.Version}"/>
+            <Run Text="{x:Static local:BrandingInfo.FullVersion}"/>
         </TextBlock>
 
         <!-- Author -->
@@ -92,6 +92,36 @@
                 </Hyperlink>
             </TextBlock>
         </StackPanel>
+
+        <!-- Support ID -->
+        <Border Background="{StaticResource SurfaceBrush}" CornerRadius="6"
+                Padding="12,8" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="Support ID"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="12"
+                           FontWeight="SemiBold"/>
+                <TextBlock x:Name="SupportIdText"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,2,0,6"/>
+                <TextBlock Text="This random ID helps match your support request to anonymous app reports if telemetry is enabled."
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,8"/>
+                <Button Content="Copy Support ID"
+                        Click="CopySupportId_Click"
+                        Height="28"
+                        Padding="12,0"
+                        Background="{StaticResource SurfaceElevatedBrush}"
+                        Foreground="{StaticResource TextPrimaryBrush}"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        HorizontalAlignment="Left"/>
+            </StackPanel>
+        </Border>
 
         <TextBlock Text="{x:Static local:BrandingInfo.LicenseType}"
                    Foreground="{StaticResource TextSecondaryBrush}"
