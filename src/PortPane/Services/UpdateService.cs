@@ -37,7 +37,12 @@ public sealed class UpdateService : IUpdateService
         if (!force && !_settings.Current.AutoUpdateEnabled) return null;
         if (!force && !IsCheckDue()) return null;
 
-        string channel  = _settings.Current.UpdateChannel ?? "Stable";
+        // Use the build's own channel by default; the settings value allows
+        // a user to opt into a different channel (e.g. stable → beta) but
+        // an alpha or beta build always checks at least its own feed.
+        string channel  = string.IsNullOrWhiteSpace(_settings.Current.UpdateChannel)
+            ? ChannelInfo.Channel.ToString()
+            : _settings.Current.UpdateChannel;
         string endpoint = BrandingInfo.GetUpdateEndpoint(channel);
 
         Log.Information("Update check started — channel: {Channel}, endpoint: {Endpoint}, forced: {Forced}",
@@ -87,7 +92,9 @@ public sealed class UpdateService : IUpdateService
 
     public async Task ApplyUpdateAsync(UpdateAvailable update)
     {
-        string channel  = _settings.Current.UpdateChannel ?? "Stable";
+        string channel  = string.IsNullOrWhiteSpace(_settings.Current.UpdateChannel)
+            ? ChannelInfo.Channel.ToString()
+            : _settings.Current.UpdateChannel;
         string endpoint = BrandingInfo.GetUpdateEndpoint(channel);
 
         Log.Information("Update apply started — version: {Version}, channel: {Channel}",
