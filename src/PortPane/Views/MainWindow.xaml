@@ -145,7 +145,7 @@
                             </MenuItem>
                         </MenuItem>
                         <MenuItem Header="_Help">
-                            <MenuItem Header="_Contents"          InputGestureText="F1"
+                            <MenuItem Header="_Contents ↗"        InputGestureText="F1"
                                       Click="HelpContents_Click"/>
                             <MenuItem Header="Check for _Updates" Click="CheckUpdates_Click"/>
                             <MenuItem Header="View Collected _Data" Click="ViewTelemetry_Click"/>
