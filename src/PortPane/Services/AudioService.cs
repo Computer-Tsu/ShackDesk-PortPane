@@ -21,7 +21,11 @@ public sealed record AudioDeviceInfo(
     DataFlow Flow,
     bool     IsDefault,
     bool     IsUsb,
-    bool     IsRadioInterface);
+    bool     IsRadioInterface,
+    string?  Vid = null,
+    string?  Pid = null,
+    bool     UsbDatabaseMatched = false,
+    string   DetectionMethod = "unknown");
 
 public sealed class AudioService : IAudioService, IDisposable
 {
@@ -58,18 +62,22 @@ public sealed class AudioService : IAudioService, IDisposable
                 .Select(d =>
                 {
                     bool isDefault = d.ID == defaultPlaybackId || d.ID == defaultCaptureId;
-                    bool isUsb     = ClassifyAsUsb(d.FriendlyName, d.Properties);
-                    bool isRadio   = isUsb && IsRadioInterface(d.FriendlyName);
+                    var classification = Classify(d);
 
-                    Log.Debug("Audio device: {Name} usb={Usb} radio={Radio}", d.FriendlyName, isUsb, isRadio);
+                    Log.Debug("Audio device: {Name} usb={Usb} radio={Radio}", d.FriendlyName,
+                        classification.IsUsb, classification.IsRadio);
 
                     return new AudioDeviceInfo(
                         Id:              d.ID,
                         FriendlyName:    d.FriendlyName,
                         Flow:            d.DataFlow,
                         IsDefault:       isDefault,
-                        IsUsb:           isUsb,
-                        IsRadioInterface: isRadio);
+                        IsUsb:           classification.IsUsb,
+                        IsRadioInterface: classification.IsRadio,
+                        Vid:             classification.Vid,
+                        Pid:             classification.Pid,
+                        UsbDatabaseMatched: classification.DbEntry is not null,
+                        DetectionMethod: classification.DetectionMethod);
                 })
                 .ToList();
         }
@@ -106,15 +114,32 @@ public sealed class AudioService : IAudioService, IDisposable
         catch { return null; }
     }
 
-    private static bool ClassifyAsUsb(string name, PropertyStore properties)
+    private AudioClassification Classify(MMDevice device)
     {
-        string lower = name.ToLowerInvariant();
+        string propertyText = CollectPropertyText(device.Properties);
+        string all = $"{device.FriendlyName} {device.ID} {propertyText}";
+        ExtractVidPid(all, out string? vid, out string? pid);
+
+        var dbEntry = _usbDb.Lookup(vid, pid) ?? MatchAudioEntryByName(device.FriendlyName);
+        bool isUsb = dbEntry is not null || ClassifyAsUsb(all);
+        bool heuristicRadio = IsRadioInterfaceByName(all);
+        bool isRadio = dbEntry?.RadioInterface == true || (isUsb && heuristicRadio);
+        string detectionMethod = dbEntry is not null
+            ? "usb_devices_json"
+            : heuristicRadio ? "audio_heuristic" : isUsb ? "usb_audio_heuristic" : "unknown";
+
+        return new AudioClassification(isUsb, isRadio, dbEntry, vid ?? dbEntry?.Vid, pid ?? dbEntry?.Pid, detectionMethod);
+    }
+
+    private static bool ClassifyAsUsb(string text)
+    {
+        string lower = text.ToLowerInvariant();
         return UsbKeywords.Any(k => lower.Contains(k));
     }
 
-    private bool IsRadioInterface(string name)
+    private bool IsRadioInterfaceByName(string text)
     {
-        string lower = name.ToLowerInvariant();
+        string lower = text.ToLowerInvariant();
         return lower.Contains("signalink")
             || lower.Contains("rigblaster")
             || lower.Contains("digirig")
@@ -123,7 +148,76 @@ public sealed class AudioService : IAudioService, IDisposable
             || lower.Contains("cm119");
     }
 
+    private UsbDeviceEntry? MatchAudioEntryByName(string name)
+    {
+        string lower = name.ToLowerInvariant();
+        if (!ClassifyAsUsb(lower)) return null;
+
+        return _usbDb.Entries
+            .Where(e => e.IsAudio)
+            .FirstOrDefault(e =>
+            {
+                string entryName = e.Name.ToLowerInvariant();
+                return lower.Contains(entryName)
+                    || (lower.Contains("signalink") && entryName.Contains("signalink"))
+                    || (lower.Contains("cm108") && entryName.Contains("cm108"))
+                    || (lower.Contains("cm119") && entryName.Contains("cm119"))
+                    || (lower.Contains("codec") && entryName.Contains("codec"));
+            });
+    }
+
+    private static string CollectPropertyText(PropertyStore properties)
+    {
+        try
+        {
+            var chunks = new List<string>();
+            var type = properties.GetType();
+            int count = type.GetProperty("Count")?.GetValue(properties) is int c ? c : 0;
+            var indexer = type.GetProperties()
+                .FirstOrDefault(p => p.GetIndexParameters().Length == 1
+                    && p.GetIndexParameters()[0].ParameterType == typeof(int));
+
+            if (indexer is null) return string.Empty;
+
+            for (int i = 0; i < count; i++)
+            {
+                object? item = indexer.GetValue(properties, new object[] { i });
+                if (item is null) continue;
+                chunks.Add(item.ToString() ?? string.Empty);
+
+                foreach (var prop in item.GetType().GetProperties())
+                {
+                    if (prop.GetIndexParameters().Length > 0) continue;
+                    object? value = prop.GetValue(item);
+                    if (value is not null) chunks.Add(value.ToString() ?? string.Empty);
+                }
+            }
+            return string.Join(" ", chunks);
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
+
+    private static void ExtractVidPid(string text, out string? vid, out string? pid)
+    {
+        vid = pid = null;
+        var vidM = System.Text.RegularExpressions.Regex.Match(text, @"VID_([0-9A-Fa-f]{4})");
+        var pidM = System.Text.RegularExpressions.Regex.Match(text, @"PID_([0-9A-Fa-f]{4})");
+        if (vidM.Success) vid = vidM.Groups[1].Value.ToUpperInvariant();
+        if (pidM.Success) pid = pidM.Groups[1].Value.ToUpperInvariant();
+    }
+
     public void Dispose() => _enumerator.Dispose();
+
+    private sealed record AudioClassification(
+        bool IsUsb,
+        bool IsRadio,
+        UsbDeviceEntry? DbEntry,
+        string? Vid,
+        string? Pid,
+        string DetectionMethod);
 }
 
 /// <summary>

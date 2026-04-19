@@ -14,6 +14,7 @@ public sealed class MainViewModel : ViewModelBase
     private readonly ISettingsService  _settings;
     private readonly IHotplugService   _hotplug;
     private readonly ILicenseService   _license;
+    private readonly IDeviceTelemetryService _deviceTelemetry;
 
     private bool   _isChromeVisible;
     private bool   _isAlwaysOnTop;
@@ -121,13 +122,15 @@ public sealed class MainViewModel : ViewModelBase
         ComPortPanelViewModel  comPorts,
         ISettingsService       settings,
         IHotplugService        hotplug,
-        ILicenseService        license)
+        ILicenseService        license,
+        IDeviceTelemetryService deviceTelemetry)
     {
         Audio      = audio;
         ComPorts   = comPorts;
         _settings  = settings;
         _hotplug   = hotplug;
         _license   = license;
+        _deviceTelemetry = deviceTelemetry;
 
         _isAlwaysOnTop = settings.Current.AlwaysOnTop;
         _scaleFactor   = settings.Current.ScaleFactor;
@@ -141,8 +144,8 @@ public sealed class MainViewModel : ViewModelBase
         SetScaleCommand          = new RelayCommand<double>(s => ScaleFactor = s);
 
         // Wire hotplug → refresh
-        _hotplug.DeviceArrived += (_, _) => App.Current.Dispatcher.Invoke(RefreshAll);
-        _hotplug.DeviceRemoved += (_, _) => App.Current.Dispatcher.Invoke(RefreshAll);
+        _hotplug.DeviceArrived += (_, _) => RefreshAfterHotplug("hotplug_arrived");
+        _hotplug.DeviceRemoved += (_, _) => RefreshAfterHotplug("hotplug_removed");
         _hotplug.Start();
     }
 
@@ -157,6 +160,12 @@ public sealed class MainViewModel : ViewModelBase
     {
         Audio.Refresh();
         ComPorts.Refresh();
+    }
+
+    private void RefreshAfterHotplug(string trigger)
+    {
+        App.Current.Dispatcher.Invoke(RefreshAll);
+        _ = Task.Run(() => _deviceTelemetry.ReportDeviceSnapshotAsync(trigger));
     }
 
     private async void ApplyUpdate()
