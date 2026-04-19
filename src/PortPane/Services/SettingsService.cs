@@ -96,8 +96,13 @@ public sealed class SettingsService : ISettingsService
 
     private static void EnsureInstallId(AppSettings s)
     {
-        if (string.IsNullOrWhiteSpace(s.InstallId))
-            s.InstallId = Guid.NewGuid().ToString("N");
+        if (Guid.TryParse(s.InstallId, out var id))
+        {
+            s.InstallId = id.ToString("D");
+            return;
+        }
+
+        s.InstallId = Guid.NewGuid().ToString("D");
     }
 
     /// <summary>
