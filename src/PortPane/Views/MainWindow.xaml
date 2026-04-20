@@ -115,9 +115,6 @@
                     <!-- Menu bar -->
                     <Menu WindowChrome.IsHitTestVisibleInChrome="True">
                         <MenuItem Header="_File">
-                            <MenuItem Header="Open _Settings" InputGestureText="Ctrl+,"
-                                      Click="OpenSettings_Click"/>
-                            <Separator/>
                             <MenuItem Header="E_xit" InputGestureText="Alt+F4"
                                       Click="Exit_Click"/>
                         </MenuItem>
@@ -127,6 +124,9 @@
                                       CommandParameter="{Binding ComPorts.SelectedPort.PortName}"/>
                             <MenuItem Header="Copy _All Info" InputGestureText="Ctrl+Shift+C"
                                       Click="CopyAll_Click"/>
+                            <Separator/>
+                            <MenuItem Header="Open _Settings" InputGestureText="Ctrl+,"
+                                      Click="OpenSettings_Click"/>
                         </MenuItem>
                         <MenuItem Header="_View">
                             <MenuItem Header="Stay on _Top" InputGestureText="Ctrl+T"
