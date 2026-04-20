@@ -142,6 +142,7 @@ jobs:
     outputs:
       sha256:        ${{ steps.hash.outputs.sha256 }}
       nupkg_sha256:  ${{ steps.hash.outputs.nupkg_sha256 }}
+      nupkg_size:    ${{ steps.hash.outputs.nupkg_size }}
       version:       ${{ steps.version.outputs.version }}
       nupkg:         ${{ steps.vpk.outputs.nupkg }}
 
@@ -275,9 +276,12 @@ jobs:
           echo "sha256=$exeHash" >> $env:GITHUB_OUTPUT
           $nupkgPath = (Get-ChildItem './vpk-output/*-full.nupkg' | Select-Object -First 1).FullName
           $nupkgHash = (Get-FileHash -Algorithm SHA256 $nupkgPath).Hash.ToUpper()
+          $nupkgSize = (Get-Item $nupkgPath).Length
           echo "nupkg_sha256=$nupkgHash" >> $env:GITHUB_OUTPUT
+          echo "nupkg_size=$nupkgSize"   >> $env:GITHUB_OUTPUT
           echo "EXE SHA256:   $exeHash"
           echo "NUPKG SHA256: $nupkgHash"
+          echo "NUPKG SIZE:   $nupkgSize bytes"
 
       - name: Stage artifacts for upload
         shell: pwsh
@@ -424,20 +428,26 @@ jobs:
           $channel = if ($tag -match '-beta')  { 'beta' }
                      elseif ($tag -match '-alpha') { 'alpha' }
                      else { 'stable' }
+          $exeSha     = '${{ needs.publish.outputs.sha256 }}'
           $nupkgName  = '${{ needs.publish.outputs.nupkg }}'
           $nupkgSha   = '${{ needs.publish.outputs.nupkg_sha256 }}'
+          $nupkgSize  = [long]'${{ needs.publish.outputs.nupkg_size }}'
+          $exeUrl     = "https://github.com/${{ github.repository }}/releases/download/$tag/PortPane-$tag-win-x64.exe"
           $nupkgUrl   = "https://github.com/${{ github.repository }}/releases/download/$tag/$nupkgName"
           $body       = @{
             event_type     = 'portpane-release'
             client_payload = @{
               channel      = $channel
               version      = $version
+              download_url = $exeUrl
+              sha256       = $exeSha
               nupkg_url    = $nupkgUrl
               nupkg_sha256 = $nupkgSha
+              nupkg_size   = $nupkgSize
             }
           } | ConvertTo-Json -Depth 3
           Invoke-RestMethod `
-            -Uri 'https://api.github.com/repos/Computer-Consultant/ShackDesk-Site/dispatches' `
+            -Uri 'https://api.github.com/repos/Computer-Tsu/ShackDesk-Site/dispatches' `
             -Method Post `
             -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
             -Body $body `
@@ -513,16 +523,22 @@ jobs:
         shell: pwsh
         run: |
           $version    = '${{ needs.publish.outputs.version }}'
+          $exeSha     = '${{ needs.publish.outputs.sha256 }}'
           $nupkgName  = '${{ needs.publish.outputs.nupkg }}'
           $nupkgSha   = '${{ needs.publish.outputs.nupkg_sha256 }}'
+          $nupkgSize  = [long]'${{ needs.publish.outputs.nupkg_size }}'
+          $exeUrl     = "https://github.com/${{ github.repository }}/releases/download/latest-alpha/PortPane-$version-win-x64.exe"
           $nupkgUrl   = "https://github.com/${{ github.repository }}/releases/download/latest-alpha/$nupkgName"
           $body       = @{
             event_type     = 'portpane-release'
             client_payload = @{
               channel      = 'alpha'
               version      = $version
+              download_url = $exeUrl
+              sha256       = $exeSha
               nupkg_url    = $nupkgUrl
               nupkg_sha256 = $nupkgSha
+              nupkg_size   = $nupkgSize
             }
           } | ConvertTo-Json -Depth 3
           Invoke-RestMethod `
