@@ -62,9 +62,9 @@ Source: "..\publish\{#AppExeName}.sha256"; DestDir: "{app}"; Flags: ignoreversio
 ; USB device database (bundled — also shipped as separate artifact for updates)
 Source: "..\data\usb_devices.json"; DestDir: "{app}\Data"; Flags: ignoreversion
 
-; License files
-Source: "..\LICENSE-MIT.md";       DestDir: "{app}"; Flags: ignoreversion
-Source: "..\LICENSE-COMMERCIAL.md"; DestDir: "{app}"; Flags: ignoreversion
+; Legal and service files
+Source: "..\LICENSE-MIT.md";                    DestDir: "{app}"; Flags: ignoreversion
+Source: "..\OFFICIAL_BUILDS_AND_SERVICES.md"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#AppName}";            Filename: "{app}\{#AppExeName}"; Comment: "{#AppDescription}"

@@ -14,11 +14,11 @@ All source code in this repository is licensed under the MIT License
 
 - **Source builds**: Any binaries you build yourself from this repository are
   governed by MIT terms.
-- **Official ShackDesk builds**: Binaries published by ShackDesk may include
-  additional branding/support/licensing terms described in
-  [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md).
+- **Official ShackDesk builds and services**: See
+  [OFFICIAL_BUILDS_AND_SERVICES.md](OFFICIAL_BUILDS_AND_SERVICES.md).
 
-Commercial terms do not reduce or override MIT rights for source code.
+Official ShackDesk services do not reduce or override MIT rights for source
+code.
 
 ## Trusted Build Intent
 
@@ -34,6 +34,8 @@ The CI workflow is structured to support a trusted signing flow:
 - CI currently builds and publishes **unsigned** artifacts.
 - Signing is intentionally a placeholder in `.github/workflows/build.yml`.
 - SignPath integration is planned but not yet enabled in this repository.
+- Initial SignPath rollout is intended for **alpha** releases first, then
+  **beta**. Stable may later use SignPath or a separate signing process.
 
 ## Future SignPath Notes
 

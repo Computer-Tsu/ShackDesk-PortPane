@@ -197,15 +197,14 @@ If PortPane saves you time, consider leaving a star on GitHub.
 
 ## License
 
-**Source code license:**
+PortPane source code is licensed under MIT. Official ShackDesk builds, optional
+registration/personalization, and support are offered under separate
+commercial terms.
 
-- **MIT** — all source code in this repository is licensed under MIT. See [LICENSE-MIT.md](LICENSE-MIT.md).
-- If you compile from this repository yourself, your resulting build is governed by MIT (plus applicable third-party licenses).
-
-**Official ShackDesk build terms:**
-
-- **Commercial terms** may apply to official ShackDesk-distributed binaries, branding/licensing services, and support offerings. See [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md).
-- These official-build terms do **not** limit your MIT rights for source code from this repository.
+- **Source code:** MIT. See [LICENSE-MIT.md](LICENSE-MIT.md).
+- **Official ShackDesk builds and services:** see [OFFICIAL_BUILDS_AND_SERVICES.md](OFFICIAL_BUILDS_AND_SERVICES.md).
+- If you compile PortPane yourself from this repository, your resulting build is
+  governed by MIT (plus applicable third-party licenses).
 
 ---
 
