@@ -50,12 +50,12 @@
                    Margin="0,0,0,8"
                    Text="The following will NOT be affected:"/>
 
-        <!-- License file -->
+        <!-- Registration file -->
         <TextBlock Foreground="{StaticResource TextSecondaryBrush}"
                    FontSize="12"
                    TextWrapping="Wrap"
                    Margin="0,0,0,4"
-                   Text="Your license key (useful for future reinstalls):"/>
+                   Text="Your registration file (useful for future reinstalls):"/>
         <Border Background="{StaticResource SurfaceBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
