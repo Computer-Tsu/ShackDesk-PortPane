@@ -296,6 +296,8 @@ jobs:
           if ($nupkg) { Copy-Item $nupkg.FullName ./artifact/ }
           $setup = Get-ChildItem './vpk-output/*-Setup.exe' | Select-Object -First 1
           if ($setup) { Copy-Item $setup.FullName ./artifact/ }
+          $feed = Get-ChildItem './vpk-output/releases.win.json' -ErrorAction SilentlyContinue
+          if ($feed) { Copy-Item $feed.FullName ./artifact/ }
           Write-Host "Staged artifacts:"
           Get-ChildItem ./artifact -Recurse | Select-Object FullName, Length
 
@@ -516,6 +518,7 @@ jobs:
             ./release/PortPane-*.exe
             ./release/PortPane-*.sha256
             ./release/PortPane-*-full.nupkg
+            ./release/releases.win.json
 
       - name: Dispatch update feed to ShackDesk-Site
         env:
