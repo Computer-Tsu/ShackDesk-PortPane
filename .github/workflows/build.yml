@@ -342,11 +342,8 @@ jobs:
           $pattern = "(?s)## \[$version\].*?(?=## \[|\z)"
           $match   = [regex]::Match($content, $pattern)
           $notes   = if ($match.Success) { $match.Value.Trim() } else { "See CHANGELOG.md for details." }
-          @"
-$notes
-
-Code signing policy: https://shackdesk.com/portpane/code-signing-policy/
-"@ | Out-File -FilePath ./release_notes.md -Encoding utf8
+          "$notes`n`nCode signing policy: https://shackdesk.com/portpane/code-signing-policy/" |
+            Out-File -FilePath ./release_notes.md -Encoding utf8
           echo "notes_file=./release_notes.md" >> $env:GITHUB_OUTPUT
 
       - name: Rename artifacts with version
