@@ -70,7 +70,7 @@ Source: "..\OFFICIAL_BUILDS_AND_SERVICES.md"; DestDir: "{app}"; Flags: ignorever
 [Icons]
 Name: "{group}\{#AppName}";            Filename: "{app}\{#AppExeName}"; Comment: "{#AppDescription}"
 Name: "{group}\Uninstall {#AppName}";  Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#AppName}";    Filename: "{app}\{#AppExeName}"; Comment: "{#AppDescription}"; Tasks: desktopicon
+Name: "{autodesktop}\{#AppName}";      Filename: "{app}\{#AppExeName}"; Comment: "{#AppDescription}"; Tasks: desktopicon
 Name: "{userstartmenu}\{#AppName}";    Filename: "{app}\{#AppExeName}"; Comment: "{#AppDescription}"; Tasks: startmenuicon
 
 [Run]
