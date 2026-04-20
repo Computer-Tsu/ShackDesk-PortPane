@@ -14,10 +14,10 @@ public partial class AboutDialog : Window
         InitializeComponent();
         _license = license;
 
-        // Show licensee name for paid tiers
+        // Show registration holder for paid tiers
         if (license.Current.Tier != LicenseTier.Free)
         {
-            LicenseeBlock.Text       = $"Licensed to: {license.Current.Licensee}";
+            LicenseeBlock.Text       = $"Registered to: {license.Current.Licensee}";
             LicenseeBlock.Visibility = Visibility.Visible;
             SupportBlock.Visibility  = Visibility.Collapsed;
         }

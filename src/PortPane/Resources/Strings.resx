@@ -4,7 +4,7 @@
   PortPane by ShackDesk — UI String Resources (English — Source File)
   Project  : https://github.com/Computer-Tsu/shackdesk-portpane
   Author   : Mark McDow (N4TEK) — My Computer Guru LLC
-  License  : MIT / Commercial (see LICENSE-MIT.md, LICENSE-COMMERCIAL.md)
+  License  : MIT source code + official builds/services
   ════════════════════════════════════════════════════════════════════════════
 
   LANGUAGE       : English (United States)
@@ -99,9 +99,9 @@
   <data name="SettingsTitle"       xml:space="preserve"><value>Settings — PortPane</value></data>
   <data name="TelemetryOptIn"      xml:space="preserve"><value>Send anonymous usage data to help improve PortPane</value></data>
   <data name="TelemetryLearnMore"  xml:space="preserve"><value>Learn more about what is collected</value></data>
-  <data name="LicenseLabel"        xml:space="preserve"><value>License</value></data>
-  <data name="FreeTierLabel"       xml:space="preserve"><value>Free (MIT)</value></data>
-  <data name="CommercialTierLabel" xml:space="preserve"><value>Commercial</value></data>
+  <data name="LicenseLabel"        xml:space="preserve"><value>Registration</value></data>
+  <data name="FreeTierLabel"       xml:space="preserve"><value>Standard</value></data>
+  <data name="CommercialTierLabel" xml:space="preserve"><value>Registered</value></data>
 
   <!-- Settings Window Tabs -->
   <data name="Settings_Tab_General"      xml:space="preserve"><value>General</value></data>
@@ -109,7 +109,7 @@
   <data name="Settings_Tab_ComPorts"     xml:space="preserve"><value>COM Ports</value></data>
   <data name="Settings_Tab_Updates"      xml:space="preserve"><value>Updates</value></data>
   <data name="Settings_Tab_Privacy"      xml:space="preserve"><value>Privacy</value></data>
-  <data name="Settings_Tab_License"      xml:space="preserve"><value>License</value></data>
+  <data name="Settings_Tab_License"      xml:space="preserve"><value>Registration</value></data>
 
   <!-- Settings Window Buttons -->
   <data name="Settings_OK"              xml:space="preserve"><value>_OK</value></data>
@@ -229,19 +229,19 @@ Reports never include callsign, name, IP address, hostname, or audio content.</v
   <data name="Settings_License_AlphaBadge"          xml:space="preserve"><value>Alpha</value></data>
   <data name="Settings_License_BetaBadge"           xml:space="preserve"><value>Beta</value></data>
   <data name="Settings_License_ExpiryDaysFmt"       xml:space="preserve"><value>In {0} days</value></data>
-  <data name="Settings_License_DropTarget"          xml:space="preserve"><value>Drop .portpane license file here or click to browse</value></data>
-  <data name="Settings_License_FileFilter"          xml:space="preserve"><value>PortPane License (*.portpane)|*.portpane</value></data>
-  <data name="Settings_License_OfflineHint"         xml:space="preserve"><value>License files are validated offline.
+  <data name="Settings_License_DropTarget"          xml:space="preserve"><value>Drop a .portpane registration file here or click to browse</value></data>
+  <data name="Settings_License_FileFilter"          xml:space="preserve"><value>PortPane Registration (*.portpane)|*.portpane</value></data>
+  <data name="Settings_License_OfflineHint"         xml:space="preserve"><value>Registration files are validated offline.
 No internet connection required.</value></data>
-  <data name="Settings_License_GetLicense"          xml:space="preserve"><value>Get a License</value></data>
-  <data name="Settings_License_Personal"            xml:space="preserve"><value>Personal / Commercial</value></data>
-  <data name="Settings_License_Club"                xml:space="preserve"><value>Club / EMCOMM</value></data>
+  <data name="Settings_License_GetLicense"          xml:space="preserve"><value>Registration &amp; Support</value></data>
+  <data name="Settings_License_Personal"            xml:space="preserve"><value>Personal registration</value></data>
+  <data name="Settings_License_Club"                xml:space="preserve"><value>Club / EMCOMM registration</value></data>
   <data name="Settings_License_Donate"              xml:space="preserve"><value>Support the project</value></data>
-  <data name="Settings_License_ErrInvalidSig"       xml:space="preserve"><value>Invalid signature — this license key was not issued by ShackDesk.</value></data>
-  <data name="Settings_License_ErrWrongApp"         xml:space="preserve"><value>Wrong application — this license is not for PortPane.</value></data>
-  <data name="Settings_License_ErrExpired"          xml:space="preserve"><value>License expired and is no longer valid.</value></data>
-  <data name="Settings_License_ErrUnreadable"       xml:space="preserve"><value>License file could not be read or is corrupt.</value></data>
-  <data name="Settings_License_TierFree"            xml:space="preserve"><value>Free (MIT)</value></data>
+  <data name="Settings_License_ErrInvalidSig"       xml:space="preserve"><value>Invalid signature — this registration file was not issued by ShackDesk.</value></data>
+  <data name="Settings_License_ErrWrongApp"         xml:space="preserve"><value>Wrong application — this registration file is not for PortPane.</value></data>
+  <data name="Settings_License_ErrExpired"          xml:space="preserve"><value>Registration expired and is no longer valid.</value></data>
+  <data name="Settings_License_ErrUnreadable"       xml:space="preserve"><value>Registration file could not be read or is corrupt.</value></data>
+  <data name="Settings_License_TierFree"            xml:space="preserve"><value>Standard</value></data>
   <data name="Settings_License_TierPersonal"        xml:space="preserve"><value>Personal</value></data>
   <data name="Settings_License_TierClub"            xml:space="preserve"><value>Club</value></data>
   <data name="Settings_License_TierEmComm"          xml:space="preserve"><value>EMCOMM</value></data>
@@ -251,7 +251,7 @@ No internet connection required.</value></data>
   <data name="Reset_BodyIntro"                      xml:space="preserve"><value>This will remove all your customizations and saved preferences. The next time PortPane starts it will be as if you are running it for the first time.</value></data>
   <data name="Reset_BodyWillDelete"                 xml:space="preserve"><value>The following file will be permanently deleted:</value></data>
   <data name="Reset_BodyWillNotDelete"              xml:space="preserve"><value>The following will NOT be affected:</value></data>
-  <data name="Reset_LicenseLabel"                   xml:space="preserve"><value>Your license key (useful for future reinstalls):</value></data>
+  <data name="Reset_LicenseLabel"                   xml:space="preserve"><value>Your registration file (useful for future reinstalls):</value></data>
   <data name="Reset_LogsLabel"                      xml:space="preserve"><value>Your log files (useful if you need to report a problem after reset):</value></data>
   <data name="Reset_Checkbox"                       xml:space="preserve"><value>I understand this will permanently delete my settings and restart PortPane</value></data>
   <data name="Reset_StatusUnchecked"                xml:space="preserve"><value>Check the box above to enable Reset Settings</value></data>
@@ -277,7 +277,7 @@ Would you like to relaunch PortPane now?</value></data>
   <data name="AboutTitle"          xml:space="preserve"><value>About PortPane</value></data>
   <data name="AboutVersion"        xml:space="preserve"><value>Version {0}</value></data>
   <data name="AboutAuthor"         xml:space="preserve"><value>By {0} ({1})</value></data>
-  <data name="AboutLicense"        xml:space="preserve"><value>Licensed under MIT / Commercial</value></data>
+  <data name="AboutLicense"        xml:space="preserve"><value>MIT source code + optional paid services</value></data>
   <data name="GitHubLink"          xml:space="preserve"><value>View on GitHub</value></data>
   <data name="SupportLink"         xml:space="preserve"><value>Get Support</value></data>
 </root>
