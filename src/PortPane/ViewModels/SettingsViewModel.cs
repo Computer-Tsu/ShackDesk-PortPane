@@ -114,7 +114,9 @@ public sealed class SettingsViewModel : ViewModelBase
         _pendingTelemetryFrequency   = s.TelemetryFrequency ?? "Monthly";
         _pendingAutoUpdateEnabled    = s.AutoUpdateEnabled;
         _pendingUpdateCheckFrequency = s.UpdateCheckFrequency ?? "Monthly";
-        _pendingUpdateChannel        = s.UpdateChannel ?? "Stable";
+        _pendingUpdateChannel        = string.IsNullOrWhiteSpace(s.UpdateChannel)
+            ? ChannelInfo.Channel.ToString()
+            : s.UpdateChannel;
 
         // Launch at startup: read from registry
         _pendingLaunchAtStartup = ReadLaunchAtStartupFromRegistry();
@@ -321,7 +323,7 @@ public sealed class SettingsViewModel : ViewModelBase
     // ── Computed enablement helpers ───────────────────────────────────────────
     public bool IsComSubSectionEnabled => _pendingComPanelVisible;
     public bool IsPuttyPathEnabled     => _pendingComPanelVisible && _pendingShowPuttyButton;
-    public bool ShowBetaChannelNote    => _pendingUpdateChannel == "Beta";
+    public bool ShowBetaChannelNote    => _pendingUpdateChannel is "Alpha" or "Beta";
     public bool LicenseInstallHasError => !string.IsNullOrEmpty(_licenseInstallErrorText);
 
     // ── Portable mode text ────────────────────────────────────────────────────
@@ -331,10 +333,10 @@ public sealed class SettingsViewModel : ViewModelBase
 
     // ── Dropdown option lists ─────────────────────────────────────────────────
     public IReadOnlyList<string> UpdateFrequencyOptions  { get; } =
-        new[] { "Daily", "Weekly", "Monthly" };
+        new[] { "Daily", "Weekly", "Monthly", "Never" };
 
     public IReadOnlyList<string> UpdateChannelOptions    { get; } =
-        new[] { "Stable", "Beta" };
+        new[] { "Stable", "Beta", "Alpha" };
 
     public IReadOnlyList<string> TelemetryFrequencyOptions { get; } =
         new[] { "Always", "Monthly", "Never" };
@@ -560,14 +562,23 @@ public sealed class SettingsViewModel : ViewModelBase
             try
             {
                 using var enumerator = new MMDeviceEnumerator();
-                // Find device by matching friendly name since we store FriendlyName
-                var allDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
-                foreach (var d in allDevices)
+                if (string.IsNullOrWhiteSpace(storageName))
                 {
-                    if (d.FriendlyName == storageName)
+                    if (!isPc) return;
+                    device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+                }
+
+                // Find device by matching friendly name since we store FriendlyName
+                if (device is null)
+                {
+                    var allDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+                    foreach (var d in allDevices)
                     {
-                        device = d;
-                        break;
+                        if (d.FriendlyName == storageName)
+                        {
+                            device = d;
+                            break;
+                        }
                     }
                 }
             }

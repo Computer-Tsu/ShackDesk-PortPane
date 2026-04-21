@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using PortPane;
 
 namespace PortPane.Models;
 
@@ -9,7 +10,7 @@ namespace PortPane.Models;
 /// </summary>
 public sealed class AppSettings
 {
-    public int    SchemaVersion       { get; set; } = 2;
+    public int    SchemaVersion       { get; set; } = 3;
     public double ScaleFactor         { get; set; } = 1.0;
     public bool   AlwaysOnTop         { get; set; } = true;
 
@@ -67,7 +68,7 @@ public sealed class AppSettings
     public string UpdateCheckLastRun   { get; set; } = string.Empty;
     public bool   AutoUpdateEnabled    { get; set; } = true;
     public string UpdateCheckFrequency { get; set; } = "Monthly";
-    public string UpdateChannel        { get; set; } = "Stable";
+    public string UpdateChannel        { get; set; } = ChannelInfo.Channel.ToString();
 
     // Lifecycle
     public bool   FirstRunComplete     { get; set; } = false;

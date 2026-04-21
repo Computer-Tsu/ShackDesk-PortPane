@@ -342,7 +342,7 @@
                                   Foreground="{StaticResource TextPrimaryBrush}"/>
                     </DockPanel>
 
-                    <TextBlock Text="Beta: You may receive pre-release builds that are less stable."
+                    <TextBlock Text="Pre-release: you may receive builds that are less stable."
                                Foreground="{StaticResource RadioBadgeBrush}"
                                FontSize="11"
                                Margin="130,0,0,4"

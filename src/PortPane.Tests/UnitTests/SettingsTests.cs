@@ -37,6 +37,14 @@ public class SettingsTests : IDisposable
         Assert.Contains(BrandingInfo.SuiteName, BrandingInfo.FullName);
     }
 
+    [Theory]
+    [InlineData("Alpha",  "alpha/")]
+    [InlineData("Beta",   "beta/")]
+    [InlineData("Stable", "stable/")]
+    [InlineData("",       "stable/")]
+    public void BrandingInfo_GetUpdateEndpoint_ResolvesChannel(string channel, string expectedSuffix)
+        => Assert.EndsWith(expectedSuffix, BrandingInfo.GetUpdateEndpoint(channel));
+
     // ── Attribution fingerprint ───────────────────────────────────────────────
 
     [Fact]
@@ -53,7 +61,7 @@ public class SettingsTests : IDisposable
     public void AppSettings_Defaults_AreReasonable()
     {
         var s = new AppSettings();
-        Assert.Equal(2,     s.SchemaVersion);
+        Assert.Equal(3,     s.SchemaVersion);
         Assert.Equal(1.0,   s.ScaleFactor);
         Assert.True(s.AlwaysOnTop);
         Assert.Equal(9600,  s.PreferredBaudRate);
@@ -123,14 +131,14 @@ public class SettingsTests : IDisposable
         }
 
         Assert.NotNull(result);
-        Assert.Equal(2, result.SchemaVersion); // default
+        Assert.Equal(3, result.SchemaVersion); // default
     }
 
     // ── Schema version ────────────────────────────────────────────────────────
 
     [Fact]
-    public void AppSettings_SchemaVersion_StartsAtTwo()
-        => Assert.Equal(2, new AppSettings().SchemaVersion);
+    public void AppSettings_SchemaVersion_StartsAtThree()
+        => Assert.Equal(3, new AppSettings().SchemaVersion);
 
     // ── WindowPosition / WindowSize defaults ──────────────────────────────────
 

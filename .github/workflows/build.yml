@@ -75,6 +75,11 @@ on:
         required: false
         default: false
         type: boolean
+      build_installer:
+        description: 'Build Inno Setup installer (implies publish_artifact)'
+        required: false
+        default: false
+        type: boolean
 
 env:
   DOTNET_VERSION:   '8.0.x'
@@ -135,11 +140,14 @@ jobs:
        github.ref == 'refs/heads/dev' ||
        github.ref == 'refs/heads/beta' ||
        startsWith(github.ref, 'refs/tags/v') ||
-       (github.event_name == 'workflow_dispatch' && inputs.publish_artifact))
+       (github.event_name == 'workflow_dispatch' && (inputs.publish_artifact || inputs.build_installer)))
 
     outputs:
-      sha256: ${{ steps.hash.outputs.sha256 }}
-      version: ${{ steps.version.outputs.version }}
+      sha256:        ${{ steps.hash.outputs.sha256 }}
+      nupkg_sha256:  ${{ steps.hash.outputs.nupkg_sha256 }}
+      nupkg_size:    ${{ steps.hash.outputs.nupkg_size }}
+      version:       ${{ steps.version.outputs.version }}
+      nupkg:         ${{ steps.vpk.outputs.nupkg }}
 
     steps:
       - name: Checkout
@@ -165,7 +173,7 @@ jobs:
             -Pattern 'VersionSuffix\s*=\s*"([^"]*)"').Matches[0].Groups[1].Value
           $channel = (Select-String 'src/PortPane/ChannelInfo.cs' `
             -Pattern 'Channel\s*=\s*ReleaseChannel\.(\w+)').Matches[0].Groups[1].Value
-          $stamp   = [DateTime]::UtcNow.ToString("yyyyMMdd-HHmm")
+          $stamp   = [DateTime]::UtcNow.ToString("yyyyMMddHHmm")
           $version = switch ($channel) {
             'Alpha'  { "$base-$suffix.$stamp" }
             'Beta'   { "$base-$suffix" }
@@ -214,6 +222,23 @@ jobs:
           -p:ReadyToRun=true
           --output ./publish
 
+      - name: Package with Velopack
+        id: vpk
+        shell: pwsh
+        run: |
+          dotnet tool install -g vpk
+          $version = '${{ steps.version.outputs.version }}'
+          vpk pack `
+            --packId    "PortPane" `
+            --packVersion "$version" `
+            --packDir   "./publish" `
+            --mainExe   "${{ env.APP_EXE }}" `
+            --packTitle "PortPane by ShackDesk" `
+            --outputDir "./vpk-output"
+          $nupkg = (Get-ChildItem './vpk-output/*-full.nupkg' | Select-Object -First 1).Name
+          echo "nupkg=$nupkg" >> $env:GITHUB_OUTPUT
+          echo "Velopack package: $nupkg"
+
       - name: Apply ConfuserEx obfuscation
         # TODO: Add ConfuserEx step here when crconf.exe is available in CI.
         # Example:
@@ -226,42 +251,73 @@ jobs:
           # Obfuscation will be added before v1.0 stable release.
           Write-Host "Obfuscation step placeholder — skipping"
 
-      # Code signing placeholder:
-      # When an EV or OV certificate is obtained, add the following step here:
-      #   - name: Sign executable
-      #     run: >
-      #       signtool.exe sign
-      #         /fd sha256
-      #         /tr http://timestamp.digicert.com
-      #         /td sha256
-      #         /f certificate.pfx
-      #         /p ${{ secrets.SIGNING_PASSWORD }}
-      #         ./publish/${{ env.APP_EXE }}
+      # ── SignPath code signing ────────────────────────────────────────────
+      # PortPane uses SignPath (https://signpath.io) for code signing under the
+      # SignPath OSS program. Signing is submitted via the
+      # signpath/github-action-submit-signing-request action after publish.
+      #
+      # STATUS: Pending SignPath OSS program approval.
+      #         The signing job below is scaffolded but DISABLED until approval
+      #         is received and the required values are filled in.
+      #
+      # WHEN APPROVED — fill in and enable the signing job further below:
+      #   SIGNPATH_ORG_ID      — from SignPath dashboard → Organization settings
+      #   SIGNPATH_PROJECT     — SignPath project slug for PortPane
+      #   SIGNPATH_POLICY      — signing policy slug (e.g. "release-signing")
+      #   SIGNPATH_ARTIFACT    — artifact configuration slug
+      #   SIGNPATH_API_TOKEN   — add as a GitHub Actions secret in repo settings
+      #
+      # See: https://github.com/SignPath/github-action-submit-signing-request
+      # See: CODE_SIGNING_POLICY.md for the full SignPath rollout plan.
 
       - name: Compute SHA-256
         id: hash
         shell: pwsh
         run: |
-          $hash = (Get-FileHash -Algorithm SHA256 './publish/${{ env.APP_EXE }}').Hash.ToLower()
-          $hash | Out-File -FilePath './publish/${{ env.APP_EXE }}.sha256' -NoNewline
-          echo "sha256=$hash" >> $env:GITHUB_OUTPUT
-          echo "SHA256: $hash"
+          $exeHash = (Get-FileHash -Algorithm SHA256 './publish/${{ env.APP_EXE }}').Hash.ToLower()
+          $exeHash | Out-File -FilePath './publish/${{ env.APP_EXE }}.sha256' -NoNewline
+          echo "sha256=$exeHash" >> $env:GITHUB_OUTPUT
+          $nupkgPath = (Get-ChildItem './vpk-output/*-full.nupkg' | Select-Object -First 1).FullName
+          $nupkgHash = (Get-FileHash -Algorithm SHA256 $nupkgPath).Hash.ToUpper()
+          $nupkgSize = (Get-Item $nupkgPath).Length
+          echo "nupkg_sha256=$nupkgHash" >> $env:GITHUB_OUTPUT
+          echo "nupkg_size=$nupkgSize"   >> $env:GITHUB_OUTPUT
+          echo "EXE SHA256:   $exeHash"
+          echo "NUPKG SHA256: $nupkgHash"
+          echo "NUPKG SIZE:   $nupkgSize bytes"
+
+      - name: Stage artifacts for upload
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ./artifact | Out-Null
+          Copy-Item './publish/${{ env.APP_EXE }}'        ./artifact/
+          Copy-Item './publish/${{ env.APP_EXE }}.sha256' ./artifact/
+          if (Test-Path './publish/Data') {
+            Copy-Item './publish/Data' ./artifact/Data -Recurse
+          }
+          $nupkg = Get-ChildItem './vpk-output/*-full.nupkg' | Select-Object -First 1
+          if ($nupkg) { Copy-Item $nupkg.FullName ./artifact/ }
+          $setup = Get-ChildItem './vpk-output/*-Setup.exe' | Select-Object -First 1
+          if ($setup) { Copy-Item $setup.FullName ./artifact/ }
+          $feed = Get-ChildItem './vpk-output/releases.win.json' -ErrorAction SilentlyContinue
+          if ($feed) { Copy-Item $feed.FullName ./artifact/ }
+          Write-Host "Staged artifacts:"
+          Get-ChildItem ./artifact -Recurse | Select-Object FullName, Length
 
       - name: Upload exe artifact
         uses: actions/upload-artifact@v7
         with:
           name: PortPane-${{ steps.version.outputs.version }}-${{ github.sha }}
-          path: |
-            ./publish/${{ env.APP_EXE }}
-            ./publish/${{ env.APP_EXE }}.sha256
-            ./publish/Data/
+          path: ./artifact/
 
   # ─────────────────────────────────────────────────────────────────────
   installer:
     name: Build Inno Setup Installer
     runs-on: windows-latest
     needs: publish
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: >
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'workflow_dispatch' && inputs.build_installer)
 
     steps:
       - name: Checkout
@@ -377,24 +433,31 @@ jobs:
           $channel = if ($tag -match '-beta')  { 'beta' }
                      elseif ($tag -match '-alpha') { 'alpha' }
                      else { 'stable' }
-          $sha256  = '${{ needs.publish.outputs.sha256 }}'
-          $dlUrl   = "https://github.com/${{ github.repository }}/releases/download/$tag/PortPane-$tag-win-x64.exe"
-          $body    = @{
+          $exeSha     = '${{ needs.publish.outputs.sha256 }}'
+          $nupkgName  = '${{ needs.publish.outputs.nupkg }}'
+          $nupkgSha   = '${{ needs.publish.outputs.nupkg_sha256 }}'
+          $nupkgSize  = [long]'${{ needs.publish.outputs.nupkg_size }}'
+          $exeUrl     = "https://github.com/${{ github.repository }}/releases/download/$tag/PortPane-$tag-win-x64.exe"
+          $nupkgUrl   = "https://github.com/${{ github.repository }}/releases/download/$tag/$nupkgName"
+          $body       = @{
             event_type     = 'portpane-release'
             client_payload = @{
               channel      = $channel
               version      = $version
-              sha256       = $sha256
-              download_url = $dlUrl
+              download_url = $exeUrl
+              sha256       = $exeSha
+              nupkg_url    = $nupkgUrl
+              nupkg_sha256 = $nupkgSha
+              nupkg_size   = $nupkgSize
             }
           } | ConvertTo-Json -Depth 3
           Invoke-RestMethod `
-            -Uri 'https://api.github.com/repos/Computer-Consultant/ShackDesk-Site/dispatches' `
+            -Uri 'https://api.github.com/repos/Computer-Tsu/ShackDesk-Site/dispatches' `
             -Method Post `
             -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
             -Body $body `
             -ContentType 'application/json'
-          echo "Dispatched $channel update for v$version"
+          echo "Dispatched $channel update for v$version (nupkg: $nupkgName)"
 
   # ─────────────────────────────────────────────────────────────────────
   rolling-alpha:
@@ -457,22 +520,31 @@ jobs:
           files: |
             ./release/PortPane-*.exe
             ./release/PortPane-*.sha256
+            ./release/PortPane-*-full.nupkg
+            ./release/releases.win.json
 
       - name: Dispatch update feed to ShackDesk-Site
         env:
           PAT: ${{ secrets.SITE_DISPATCH_PAT }}
         shell: pwsh
         run: |
-          $version = '${{ needs.publish.outputs.version }}'
-          $sha256  = '${{ needs.publish.outputs.sha256 }}'
-          $dlUrl   = "https://github.com/${{ github.repository }}/releases/download/latest-alpha/PortPane-$version-win-x64.exe"
-          $body    = @{
+          $version    = '${{ needs.publish.outputs.version }}'
+          $exeSha     = '${{ needs.publish.outputs.sha256 }}'
+          $nupkgName  = '${{ needs.publish.outputs.nupkg }}'
+          $nupkgSha   = '${{ needs.publish.outputs.nupkg_sha256 }}'
+          $nupkgSize  = [long]'${{ needs.publish.outputs.nupkg_size }}'
+          $exeUrl     = "https://github.com/${{ github.repository }}/releases/download/latest-alpha/PortPane-$version-win-x64.exe"
+          $nupkgUrl   = "https://github.com/${{ github.repository }}/releases/download/latest-alpha/$nupkgName"
+          $body       = @{
             event_type     = 'portpane-release'
             client_payload = @{
               channel      = 'alpha'
               version      = $version
-              sha256       = $sha256
-              download_url = $dlUrl
+              download_url = $exeUrl
+              sha256       = $exeSha
+              nupkg_url    = $nupkgUrl
+              nupkg_sha256 = $nupkgSha
+              nupkg_size   = $nupkgSize
             }
           } | ConvertTo-Json -Depth 3
           Invoke-RestMethod `
@@ -481,7 +553,7 @@ jobs:
             -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
             -Body $body `
             -ContentType 'application/json'
-          echo "Dispatched alpha update for v$version"
+          echo "Dispatched alpha update for v$version (nupkg: $nupkgName)"
 
   # ─────────────────────────────────────────────────────────────────────
   rolling-beta:
@@ -542,22 +614,31 @@ jobs:
           files: |
             ./release/PortPane-*.exe
             ./release/PortPane-*.sha256
+            ./release/PortPane-*-full.nupkg
+            ./release/releases.win.json
 
       - name: Dispatch update feed to ShackDesk-Site
         env:
           PAT: ${{ secrets.SITE_DISPATCH_PAT }}
         shell: pwsh
         run: |
-          $version = '${{ needs.publish.outputs.version }}'
-          $sha256  = '${{ needs.publish.outputs.sha256 }}'
-          $dlUrl   = "https://github.com/${{ github.repository }}/releases/download/latest-beta/PortPane-$version-win-x64.exe"
-          $body    = @{
+          $version    = '${{ needs.publish.outputs.version }}'
+          $exeSha     = '${{ needs.publish.outputs.sha256 }}'
+          $nupkgName  = '${{ needs.publish.outputs.nupkg }}'
+          $nupkgSha   = '${{ needs.publish.outputs.nupkg_sha256 }}'
+          $nupkgSize  = [long]'${{ needs.publish.outputs.nupkg_size }}'
+          $exeUrl     = "https://github.com/${{ github.repository }}/releases/download/latest-beta/PortPane-$version-win-x64.exe"
+          $nupkgUrl   = "https://github.com/${{ github.repository }}/releases/download/latest-beta/$nupkgName"
+          $body       = @{
             event_type     = 'portpane-release'
             client_payload = @{
-              channel      = 'beta'
-              version      = $version
-              sha256       = $sha256
-              download_url = $dlUrl
+              channel        = 'beta'
+              version        = $version
+              exe_sha256     = $exeSha
+              exe_url        = $exeUrl
+              nupkg_url      = $nupkgUrl
+              nupkg_sha256   = $nupkgSha
+              nupkg_size     = $nupkgSize
             }
           } | ConvertTo-Json -Depth 3
           Invoke-RestMethod `
@@ -566,4 +647,47 @@ jobs:
             -Headers @{ Authorization = "Bearer $env:PAT"; Accept = 'application/vnd.github+json' } `
             -Body $body `
             -ContentType 'application/json'
-          echo "Dispatched beta update for v$version"
+          echo "Dispatched beta update for v$version (nupkg: $nupkgName)"
+
+  # ─────────────────────────────────────────────────────────────────────
+  # SignPath code signing
+  # ─────────────────────────────────────────────────────────────────────
+  # STATUS: DISABLED — pending SignPath OSS program approval.
+  #
+  # This job is scaffolded with the correct structure required by SignPath
+  # so the workflow is compliant when the cert is issued.
+  #
+  # TO ENABLE when SignPath OSS approval is received:
+  #   1. Replace all TODO placeholders below with real values from
+  #      the SignPath dashboard.
+  #   2. Add SIGNPATH_API_TOKEN as a secret in GitHub repo settings
+  #      (Settings → Secrets and variables → Actions → New repository secret).
+  #   3. Change the `if: false` condition to the appropriate trigger
+  #      (e.g. startsWith(github.ref, 'refs/tags/v')).
+  #   4. Test on alpha first (see CODE_SIGNING_POLICY.md).
+  #
+  # SignPath OSS program: https://signpath.io/product/open-source
+  # Action docs: https://github.com/SignPath/github-action-submit-signing-request
+  # ─────────────────────────────────────────────────────────────────────
+  sign:
+    name: Sign with SignPath
+    runs-on: ubuntu-latest
+    needs: publish
+    if: false  # TODO: change to trigger condition when SignPath OSS is approved
+
+    permissions:
+      id-token: write    # required by SignPath action for OIDC authentication
+
+    steps:
+      - name: Submit signing request to SignPath
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          # TODO: fill in from SignPath dashboard after OSS approval
+          api-token:                   ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id:             'TODO-signpath-org-id'
+          project-slug:                'TODO-portpane'
+          signing-policy-slug:         'TODO-release-signing'
+          artifact-configuration-slug: 'TODO-initial'
+          github-artifact-id:          ${{ needs.publish.outputs.sha256 }}
+          wait-for-completion:         true
+          output-artifact-directory:   './signed'
