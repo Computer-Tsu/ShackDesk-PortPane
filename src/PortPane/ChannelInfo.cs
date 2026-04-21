@@ -49,4 +49,14 @@ public static class ChannelInfo
     /// Beta: "beta". Stable: empty string.
     /// </summary>
     public const string VersionSuffix = "";
+
+    /// <summary>
+    /// Default update check frequency for new installs on this channel.
+    /// Matches the strings shown in Settings → Updates → Check Frequency.
+    /// Alpha: "Daily"  — builds ship on every dev push.
+    /// Beta:  "Weekly" — builds ship less often.
+    /// Stable:"Weekly" — releases are infrequent.
+    /// Manual "Check for Updates" always bypasses this interval (force = true).
+    /// </summary>
+    public const string UpdateCheckFrequencyDefault = "Weekly";
 }
