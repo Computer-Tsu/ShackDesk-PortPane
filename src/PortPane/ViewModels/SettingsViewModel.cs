@@ -113,8 +113,10 @@ public sealed class SettingsViewModel : ViewModelBase
         _pendingTelemetryEnabled     = s.TelemetryEnabled;
         _pendingTelemetryFrequency   = s.TelemetryFrequency ?? "Monthly";
         _pendingAutoUpdateEnabled    = s.AutoUpdateEnabled;
-        _pendingUpdateCheckFrequency = s.UpdateCheckFrequency ?? "Monthly";
-        _pendingUpdateChannel        = s.UpdateChannel ?? "Stable";
+        _pendingUpdateCheckFrequency = s.UpdateCheckFrequency ?? ChannelInfo.UpdateCheckFrequencyDefault;
+        _pendingUpdateChannel        = string.IsNullOrWhiteSpace(s.UpdateChannel)
+            ? ChannelInfo.Channel.ToString()
+            : s.UpdateChannel;
 
         // Launch at startup: read from registry
         _pendingLaunchAtStartup = ReadLaunchAtStartupFromRegistry();

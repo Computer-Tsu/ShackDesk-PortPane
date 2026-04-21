@@ -65,8 +65,8 @@ public sealed class AppSettings
     // Updates
     public string UpdateCheckLastRun   { get; set; } = string.Empty;
     public bool   AutoUpdateEnabled    { get; set; } = true;
-    public string UpdateCheckFrequency { get; set; } = "Monthly";
-    public string UpdateChannel        { get; set; } = "Stable";
+    public string UpdateCheckFrequency { get; set; } = ChannelInfo.UpdateCheckFrequencyDefault;
+    public string UpdateChannel        { get; set; } = ChannelInfo.Channel.ToString();
 
     // Lifecycle
     public bool   FirstRunComplete     { get; set; } = false;
