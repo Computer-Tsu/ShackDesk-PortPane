@@ -169,6 +169,56 @@ public sealed class MainViewModel : ViewModelBase
     {
         App.Current.Dispatcher.Invoke(RefreshAll);
         _ = Task.Run(() => _deviceTelemetry.ReportDeviceSnapshotAsync(trigger));
+
+        // Auto-switch audio profile on USB radio device arrival / removal.
+        // Only acts when the user has enabled the corresponding setting.
+        if (trigger == "hotplug_arrived" && _settings.Current.AutoSwitchOnConnect)
+            App.Current.Dispatcher.Invoke(TryAutoSwitchToRadio);
+        else if (trigger == "hotplug_removed" && _settings.Current.AutoSwitchOnRemove)
+            App.Current.Dispatcher.Invoke(TryAutoSwitchToPc);
+    }
+
+    /// <summary>
+    /// Switches to Radio profile when a USB radio interface arrives.
+    /// Only runs when the user has enabled "auto-switch on connect" in Settings.
+    /// Requires a radio device to be present and a Radio profile to be configured.
+    /// </summary>
+    private void TryAutoSwitchToRadio()
+    {
+        if (!_settings.Current.AutoSwitchOnConnect) return;
+        if (Audio.IsRadioMode) return;
+
+        bool radioProfileConfigured = _settings.Current.AudioProfiles
+            .FirstOrDefault(p => p.Id == "radio") is { } rp
+            && (!string.IsNullOrEmpty(rp.Playback) || !string.IsNullOrEmpty(rp.Recording));
+
+        bool radioDevicePresent = Audio.UsbPlayback.Any(d => d.IsRadioInterface)
+                               || Audio.UsbCapture.Any(d => d.IsRadioInterface);
+
+        if (radioDevicePresent && radioProfileConfigured)
+        {
+            Log.Information("Auto-switching to Radio profile — radio USB device arrived");
+            _ = Audio.SwitchToProfileAsync("radio");
+        }
+    }
+
+    /// <summary>
+    /// Switches back to PC profile when the last radio USB device is removed.
+    /// Only runs when the user has enabled "auto-switch on remove" in Settings.
+    /// </summary>
+    private void TryAutoSwitchToPc()
+    {
+        if (!_settings.Current.AutoSwitchOnRemove) return;
+        if (!Audio.IsRadioMode) return;
+
+        bool radioDeviceStillPresent = Audio.UsbPlayback.Any(d => d.IsRadioInterface)
+                                    || Audio.UsbCapture.Any(d => d.IsRadioInterface);
+
+        if (!radioDeviceStillPresent)
+        {
+            Log.Information("Auto-switching to PC profile — radio USB device removed");
+            _ = Audio.SwitchToProfileAsync("pc");
+        }
     }
 
     private async void ApplyUpdate()

@@ -564,46 +564,48 @@ public sealed class SettingsViewModel : ViewModelBase
                 using var enumerator = new MMDeviceEnumerator();
                 if (string.IsNullOrWhiteSpace(storageName))
                 {
+                    // No device explicitly selected — use system default for PC, skip for Radio.
                     if (!isPc) return;
                     device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
                 }
-
-                // Find device by matching friendly name since we store FriendlyName
-                if (device is null)
+                else
                 {
                     var allDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
-                    foreach (var d in allDevices)
-                    {
-                        if (d.FriendlyName == storageName)
-                        {
-                            device = d;
-                            break;
-                        }
-                    }
+                    device = allDevices.FirstOrDefault(d => d.FriendlyName == storageName);
                 }
             }
-            catch { /* fall through — device unavailable */ }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Test tone: could not enumerate audio device '{Name}'", storageName);
+            }
 
-            if (device is null) return;
+            if (device is null)
+            {
+                Log.Warning("Test tone: device '{Name}' not found or not active", storageName);
+                return;
+            }
 
             await Task.Run(async () =>
             {
-                const int sampleRate    = 44100;
-                const int durationMs    = 1000;
-                const int fadeMs        = 100;
+                const int   sampleRate  = 44100;
+                const int   durationMs  = 1000;
+                const int   fadeMs      = 100;
                 const float frequency   = 1000f;
 
+                // WASAPI shared mode requires stereo — mono providers cause Init() to throw.
                 var sineProvider = new SineToneProvider(frequency, sampleRate, durationMs, fadeMs);
                 using var wasapi = new WasapiOut(device, AudioClientShareMode.Shared, true, 200);
                 wasapi.Init(sineProvider);
                 wasapi.Play();
 
                 await Task.Delay(durationMs + 50);
-
                 wasapi.Stop();
             });
         }
-        catch { /* audio errors are silent */ }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Test tone playback failed for {Profile} profile", isPc ? "PC" : "Radio");
+        }
         finally
         {
             if (isPc)  IsPcTestPlaying    = false;

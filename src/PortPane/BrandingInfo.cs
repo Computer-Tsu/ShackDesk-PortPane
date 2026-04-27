@@ -9,7 +9,7 @@ public static class BrandingInfo
     public const string AppName           = "PortPane";
     public const string SuiteName         = "ShackDesk";
     public const string FullName          = "PortPane by ShackDesk";
-    public const string Version           = "0.5.7";
+    public const string Version           = "0.5.8";
 
     /// <summary>
     /// ISO 8601 UTC build timestamp. Empty string in source — patched by CI at

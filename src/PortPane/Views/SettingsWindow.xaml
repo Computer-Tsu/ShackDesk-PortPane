@@ -163,12 +163,18 @@
                     <DockPanel Margin="0,0,0,12">
                         <TextBlock Width="90"/>
                         <Button Content="▶  Test radio audio"
-                                Command="{Binding PlayRadioTestCommand}"
+                                IsEnabled="False"
                                 MinHeight="28" Padding="10,0"
                                 Background="{StaticResource SurfaceElevatedBrush}"
-                                Foreground="{StaticResource TextPrimaryBrush}"
-                                BorderThickness="0" Cursor="Hand"
+                                Foreground="{StaticResource TextSecondaryBrush}"
+                                BorderThickness="0"
                                 HorizontalAlignment="Left"/>
+                        <TextBlock Text="— coming soon"
+                                   VerticalAlignment="Center"
+                                   Margin="10,0,0,0"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   FontStyle="Italic"
+                                   FontSize="12"/>
                     </DockPanel>
 
                     <!-- Auto-switch -->

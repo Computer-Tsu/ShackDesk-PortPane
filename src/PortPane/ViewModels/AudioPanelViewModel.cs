@@ -11,7 +11,7 @@ namespace PortPane.ViewModels;
 /// </summary>
 public sealed class AudioPanelViewModel : ViewModelBase
 {
-    private readonly IAudioService   _audio;
+    private readonly IAudioService    _audio;
     private readonly ISettingsService _settings;
 
     private string _defaultPlaybackName  = "None";
@@ -52,8 +52,8 @@ public sealed class AudioPanelViewModel : ViewModelBase
         }
     }
 
-    public bool   IsRadioMode         => ActiveProfile == "Radio";
-    public string ProfileButtonLabel  => IsRadioMode ? "Radio Mode  ✦" : "PC Mode";
+    public bool   IsRadioMode          => ActiveProfile == "Radio";
+    public string ProfileButtonLabel   => IsRadioMode ? "Radio Mode  ✦" : "PC Mode";
     public string ProfileButtonTooltip => IsRadioMode
         ? "Currently in Radio Mode — click to switch to PC Mode"
         : "Currently in PC Mode — click to switch to Radio Mode";
@@ -106,22 +106,86 @@ public sealed class AudioPanelViewModel : ViewModelBase
 
         DefaultPlaybackName = playback.FirstOrDefault(d => d.IsDefault)?.FriendlyName ?? "None";
         DefaultCaptureName  = capture.FirstOrDefault(d => d.IsDefault)?.FriendlyName  ?? "None";
+
+        SyncProfileStateFromWindows();
     }
 
-    private async void SwitchProfile()
+    /// <summary>
+    /// Compares the current Windows default audio devices against the saved
+    /// PC and Radio profiles. If Windows has drifted to a different profile
+    /// (e.g. because the OS auto-switched on USB arrival), updates ActiveProfile
+    /// to reflect reality so the button label and switch logic stay accurate.
+    /// </summary>
+    private void SyncProfileStateFromWindows()
     {
+        string? defaultPlayId = _audio.GetDefaultPlaybackId();
+        string? defaultCapId  = _audio.GetDefaultCaptureId();
+
+        foreach (var profile in _settings.Current.AudioProfiles)
+        {
+            bool hasPlayback  = !string.IsNullOrEmpty(profile.Playback);
+            bool hasCapture   = !string.IsNullOrEmpty(profile.Recording);
+
+            // Skip profiles with no devices configured — they match everything trivially.
+            if (!hasPlayback && !hasCapture) continue;
+
+            string? profilePlayId = FindDeviceId(profile.Playback);
+            string? profileCapId  = FindDeviceId(profile.Recording);
+
+            bool playbackMatches = !hasPlayback || profilePlayId == defaultPlayId;
+            bool captureMatches  = !hasCapture  || profileCapId  == defaultCapId;
+
+            if (!playbackMatches || !captureMatches) continue;
+
+            string matched = profile.Id == "radio" ? "Radio" : "PC";
+            if (matched != ActiveProfile)
+            {
+                Log.Information(
+                    "Audio profile synced from Windows defaults: {Old} → {New} " +
+                    "(playback: {Play}, capture: {Cap})",
+                    ActiveProfile, matched, DefaultPlaybackName, DefaultCaptureName);
+                ActiveProfile = matched;
+                _settings.Current.ActiveProfileId = profile.Id;
+                _settings.Save();
+            }
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Switches to the specified profile by ID ("pc" or "radio").
+    /// Used by both the manual button and the auto-switch hotplug path.
+    /// Returns true if the switch completed successfully.
+    /// </summary>
+    public async Task<bool> SwitchToProfileAsync(string profileId)
+    {
+        if (IsSwitching) return false;
+
         IsSwitching = true;
         SwitchProfileCommand.RaiseCanExecuteChanged();
         try
         {
-            string newProfile = IsRadioMode ? "PC" : "Radio";
+            string newProfile = profileId == "radio" ? "Radio" : "PC";
             Log.Information("Switching audio profile: {From} → {To}", ActiveProfile, newProfile);
 
-            var profileId = newProfile == "Radio" ? "radio" : "pc";
-            var profile   = _settings.Current.AudioProfiles.FirstOrDefault(p => p.Id == profileId);
+            var profile = _settings.Current.AudioProfiles.FirstOrDefault(p => p.Id == profileId);
 
-            string? playbackId = FindDeviceId(profile?.Playback  ?? string.Empty);
+            string? playbackId = FindDeviceId(profile?.Playback ?? string.Empty);
             string? captureId  = FindDeviceId(profile?.Recording ?? string.Empty);
+
+            // Step 4: if no exact name match on Radio profile, fall back to the first
+            // connected device classified as a radio interface.
+            if (profileId == "radio" && playbackId is null && captureId is null)
+            {
+                var allDevices = _audio.GetAllDevices();
+                playbackId = allDevices.FirstOrDefault(d => d.IsRadioInterface && d.IsUsb)?.Id;
+                captureId  = allDevices.FirstOrDefault(d => d.IsRadioInterface && d.IsUsb
+                                 && d.Id != playbackId)?.Id
+                             ?? playbackId;
+
+                if (playbackId is not null)
+                    Log.Information("Radio profile fallback: using first detected radio interface");
+            }
 
             bool ok = true;
             if (!string.IsNullOrEmpty(playbackId)) ok &= _audio.SetDefaultDevice(playbackId);
@@ -130,17 +194,16 @@ public sealed class AudioPanelViewModel : ViewModelBase
             if (ok || (string.IsNullOrEmpty(playbackId) && string.IsNullOrEmpty(captureId)))
             {
                 ActiveProfile = newProfile;
-                _settings.Current.ActiveProfileId = newProfile.ToLowerInvariant();
+                _settings.Current.ActiveProfileId = profileId;
                 _settings.Save();
                 ShowStatus($"Switched to {newProfile} mode");
-            }
-            else
-            {
-                ShowStatus("Profile switch incomplete — check Settings");
+                await Task.Delay(200);
+                Refresh();
+                return true;
             }
 
-            await Task.Delay(200); // small pause so the UI updates feel snappy
-            Refresh();
+            ShowStatus("Profile switch incomplete — check Settings");
+            return false;
         }
         finally
         {
@@ -148,6 +211,8 @@ public sealed class AudioPanelViewModel : ViewModelBase
             SwitchProfileCommand.RaiseCanExecuteChanged();
         }
     }
+
+    private void SwitchProfile() => _ = SwitchToProfileAsync(IsRadioMode ? "pc" : "radio");
 
     private string? FindDeviceId(string friendlyName)
     {
@@ -177,10 +242,10 @@ public sealed class AudioPanelViewModel : ViewModelBase
 /// </summary>
 public sealed class AudioDeviceViewModel : ViewModelBase
 {
-    public string Id              { get; }
-    public string FriendlyName   { get; }
-    public bool   IsDefault      { get; }
-    public bool   IsUsb          { get; }
+    public string Id               { get; }
+    public string FriendlyName    { get; }
+    public bool   IsDefault       { get; }
+    public bool   IsUsb           { get; }
     public bool   IsRadioInterface { get; }
 
     public AudioDeviceViewModel(AudioDeviceInfo d)
