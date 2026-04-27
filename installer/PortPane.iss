@@ -7,7 +7,7 @@
 ; See BrandingInfo.cs for all values sourced here.
 
 #define AppName        "PortPane"
-#define AppVersion     "0.5.7"
+#define AppVersion     "0.5.8"
 #define AppPublisher   "My Computer Guru LLC"
 #define AppURL         "https://shackdesk.com"
 #define AppExeName     "PortPane.exe"
