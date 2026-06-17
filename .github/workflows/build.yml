@@ -346,7 +346,7 @@ jobs:
 
       - name: Create GitHub Release
         id: gh_release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             ./release/PortPane-*.exe
@@ -428,7 +428,7 @@ jobs:
           exit 0
 
       - name: Update rolling latest-alpha release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: latest-alpha
           name: "Latest Alpha — ${{ needs.publish.outputs.version }}"
